@@ -1,0 +1,11 @@
+[Bb]in/
+[Oo]bj/
+.idea/
+.vs/
+.vscode/
+
+*.user
+*.db
+*.sqlite
+
+data.*

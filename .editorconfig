@@ -1,0 +1,32 @@
+root = true
+
+[*.cs]
+# Roslynator rules as warnings
+dotnet_analyzer_diagnostic.category-roslynator.severity = error
+
+# Allow unnecessary braces
+dotnet_diagnostic.RCS1251.severity = none
+
+# Parameter name differs from base name
+dotnet_diagnostic.RCS1168.severity = none
+
+# Use method chaining
+dotnet_diagnostic.RCS1201.severity = none
+
+# Use of curly braces to surround code blocks
+csharp_prefer_braces = true:error
+
+# Add summary to documentation comment
+dotnet_diagnostic.rcs1138.severity = warning
+
+# Don't require XML documentation
+dotnet_diagnostic.CS1591.severity = none
+
+# Remove unnecessary usings
+dotnet_diagnostic.IDE0005.severity = error
+
+# Disable for generated/external code
+[{**/Migrations/**}]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+
