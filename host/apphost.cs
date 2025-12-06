@@ -4,6 +4,7 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.Daab_Web>("api");
+builder.AddProject<Projects.Daab_Web>("api")
+    .WithExternalHttpEndpoints();
 
 builder.Build().Run();

@@ -25,8 +25,11 @@ dotnet_diagnostic.CS1591.severity = none
 # Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = error
 
+[{host/**}]
+generated_code = true
+dotnet_analyzer_diagnostic.severity = none
+
 # Disable for generated/external code
 [{**/Migrations/**}]
 generated_code = true
 dotnet_analyzer_diagnostic.severity = none
-
