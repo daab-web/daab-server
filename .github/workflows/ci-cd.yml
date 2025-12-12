@@ -61,5 +61,5 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            sudo systemctl restart myapp.service  # Change to your service name
-            sudo systemctl status myapp.service
+            sudo systemctl restart daab-server.service
+            sudo systemctl status daab-server.service
