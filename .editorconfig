@@ -25,6 +25,12 @@ dotnet_diagnostic.CS1591.severity = none
 # Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = error
 
+# Prefer traditional constructors over primary constructors
+# csharp_style_prefer_primary_constructors = false:error
+
+# Use read only auto implemented property
+dotnet_diagnostic.RCS1170.severity = none
+
 [{host/**}]
 generated_code = true
 dotnet_analyzer_diagnostic.severity = none

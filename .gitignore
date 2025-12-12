@@ -3,6 +3,7 @@
 .idea/
 .vs/
 .vscode/
+sqlite/
 
 *.user
 *.db

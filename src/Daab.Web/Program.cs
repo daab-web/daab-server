@@ -1,3 +1,6 @@
+using Daab.Modules.Scientists;
+using FastEndpoints;
+using Scalar.AspNetCore;
 using Serilog;
 
 var log = new LoggerConfiguration()
@@ -6,6 +9,7 @@ var log = new LoggerConfiguration()
     .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+var config = builder.Configuration;
 
 builder.AddServiceDefaults();
 
@@ -19,8 +23,21 @@ builder.Services.AddSerilog(
             .WriteTo.OpenTelemetry()
 );
 
+builder.Services.AddScientistsModule(config);
+
+builder.Services.AddOpenApi();
+builder.Services.AddFastEndpoints();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.InitializeScientistsModule();
+
+app.MapFastEndpoints();
+
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+    app.MapScalarApiReference();
+}
 
 app.Run();

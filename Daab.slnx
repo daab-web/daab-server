@@ -1,5 +1,9 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Daab.SharedKernel/Daab.SharedKernel.csproj" />
     <Project Path="src/Daab.Web/Daab.Web.csproj" />
+  </Folder>
+  <Folder Name="/src/scientists-module/">
+    <Project Path="src/Modules/Scientists/Daab.Modules.Scientists/Daab.Modules.Scientists.csproj" />
   </Folder>
 </Solution>

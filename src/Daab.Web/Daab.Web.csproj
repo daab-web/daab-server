@@ -7,11 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.1" />
+    <PackageReference Include="Scalar.AspNetCore" Version="2.11.5" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\host\Daab.ServiceDefaults\Daab.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\Modules\Scientists\Daab.Modules.Scientists\Daab.Modules.Scientists.csproj" />
   </ItemGroup>
 
 </Project>
