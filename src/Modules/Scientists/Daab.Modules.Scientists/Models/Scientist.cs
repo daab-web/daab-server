@@ -5,6 +5,7 @@ public class Scientist
     public string Id { get; private set; }
     public string? UserId { get; private set; }
 
+    public string FullName { get; private set; }
     public string Description { get; private set; }
     public string AcademicTitle { get; private set; }
     public string Institution { get; private set; }
@@ -13,6 +14,7 @@ public class Scientist
     public List<string> Areas { get; private set; }
 
     public Scientist(
+        string fullName,
         string description,
         string academicTitle,
         string institution,
@@ -21,6 +23,7 @@ public class Scientist
     )
     {
         Id = Guid.NewGuid().ToString();
+        FullName = fullName;
         Description = description;
         AcademicTitle = academicTitle;
         Institution = institution;
@@ -30,12 +33,13 @@ public class Scientist
 
     public Scientist(
         Guid userId,
+        string fullName,
         string description,
         string academicTitle,
         string institution,
         List<string> countries,
         List<string> areas
-    ) : this(description, academicTitle, institution, countries, areas)
+    ) : this(fullName, description, academicTitle, institution, countries, areas)
     {
         UserId = userId.ToString();
     }
