@@ -5,10 +5,19 @@ using MediatR;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
-public class GetAllScientistsQuery(PageRequest paginationOptions)
+public class GetAllScientistsQuery
     : IRequest<PagedResponse<Scientist>>
 {
-    public PageRequest PaginationOptions { get; } = paginationOptions;
+    public PageRequest PaginationOptions { get; }
+
+    public GetAllScientistsQuery(int pageNumber, int pageSize)
+    {
+        PaginationOptions = new PageRequest
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
+    }
 }
 
 public class GetAllScientistsQueryHandler(ScientistsContext context)

@@ -7,8 +7,6 @@ public class ScientistsContext : DbContext
 {
     internal DbSet<Scientist> Scientists { get; set; }
 
-    public ScientistsContext(DbContextOptions<ScientistsContext> options) : base(options)
-    {
-
-    }
+    public ScientistsContext(DbContextOptions<ScientistsContext> options)
+        : base(options) { }
 }

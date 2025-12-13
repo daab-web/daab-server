@@ -5,13 +5,16 @@ using MediatR;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
-public sealed class GetAllScientistsRequest
+public sealed record GetAllScientistsRequest
 {
-    [FromQuery]
-    public required PageRequest Request { get; set; }
+    [QueryParam]
+    public int PageNumber { get; set; }
+
+    [QueryParam]
+    public int PageSize { get; set; }
 }
 
-public class GetAllScientistsEndpoint(IMediator mediator)
+public sealed class GetAllScientistsEndpoint(IMediator mediator)
     : Endpoint<GetAllScientistsRequest, PagedResponse<Scientist>>
 {
     public override void Configure()
@@ -20,12 +23,11 @@ public class GetAllScientistsEndpoint(IMediator mediator)
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(
-        GetAllScientistsRequest request,
-        CancellationToken ct
-    )
+    public override async Task HandleAsync(GetAllScientistsRequest request, CancellationToken ct)
     {
-        await Send.OkAsync(await mediator.Send(new GetAllScientistsQuery(request.Request), ct), ct);
+        await Send.OkAsync(
+            await mediator.Send(new GetAllScientistsQuery(request.PageNumber, request.PageSize), ct),
+            ct
+        );
     }
 }
-
