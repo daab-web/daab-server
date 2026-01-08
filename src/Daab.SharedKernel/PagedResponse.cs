@@ -1,3 +1,4 @@
+using System.Collections;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.SharedKernel;
@@ -244,5 +245,20 @@ public static class PaginationExtensions
             totalCount
         );
     }
-}
 
+    public static async Task<PagedResponse<T>> ToPagedResponse<T>(
+        this IEnumerable<T> query,
+        PageRequest pageRequest
+    )
+    {
+        var totalCount = query.Count();
+        var items = query.Skip(pageRequest.Skip).Take(pageRequest.Take).ToList();
+
+        return PagedResponse<T>.Create(
+            items,
+            pageRequest.PageNumber,
+            pageRequest.PageSize,
+            totalCount
+        );
+    }
+}

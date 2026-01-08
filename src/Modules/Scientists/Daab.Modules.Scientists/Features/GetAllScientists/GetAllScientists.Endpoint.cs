@@ -1,21 +1,11 @@
-using Daab.Modules.Scientists.Models;
 using Daab.SharedKernel;
 using FastEndpoints;
 using MediatR;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
-public sealed record GetAllScientistsRequest
-{
-    [QueryParam]
-    public int PageNumber { get; set; }
-
-    [QueryParam]
-    public int PageSize { get; set; }
-}
-
 public sealed class GetAllScientistsEndpoint(IMediator mediator)
-    : Endpoint<GetAllScientistsRequest, PagedResponse<Scientist>>
+    : Endpoint<GetAllScientistsRequest, PagedResponse<GetAllScientistsResponse>>
 {
     public override void Configure()
     {
