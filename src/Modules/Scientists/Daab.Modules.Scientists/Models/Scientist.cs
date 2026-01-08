@@ -13,6 +13,11 @@ public class Scientist
     public IEnumerable<string> Countries { get; private set; }
     public IEnumerable<string> Areas { get; private set; }
 
+    public string Slug()
+    {
+        return $"{FullName.Replace(' ', '-')}-{Id[..5]}";
+    }
+
     public Scientist(
         string fullName,
         string description,
@@ -39,9 +44,9 @@ public class Scientist
         string institution,
         IEnumerable<string> countries,
         IEnumerable<string> areas
-    ) : this(fullName, description, academicTitle, institution, countries, areas)
+    )
+        : this(fullName, description, academicTitle, institution, countries, areas)
     {
         UserId = userId.ToString();
     }
 }
-
