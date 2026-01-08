@@ -3,7 +3,11 @@
     <Project Path="src/Daab.SharedKernel/Daab.SharedKernel.csproj" />
     <Project Path="src/Daab.Web/Daab.Web.csproj" />
   </Folder>
-  <Folder Name="/src/scientists-module/">
+  <Folder Name="/src/Modules/">
     <Project Path="src/Modules/Scientists/Daab.Modules.Scientists/Daab.Modules.Scientists.csproj" />
   </Folder>
+    <Folder Name="/host/">
+        <Project Path="host/Daab.AppHost/Daab.AppHost.csproj" />
+        <Project Path="host/Daab.ServiceDefaults/Daab.ServiceDefaults.csproj" />
+    </Folder>
 </Solution>

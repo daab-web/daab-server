@@ -10,12 +10,12 @@ public class GetAllScientistsQuery
 {
     public PageRequest PaginationOptions { get; }
 
-    public GetAllScientistsQuery(int pageNumber, int pageSize)
+    public GetAllScientistsQuery(GetAllScientistsRequest request)
     {
         PaginationOptions = new PageRequest
         {
-            PageNumber = pageNumber,
-            PageSize = pageSize
+            PageNumber = request.PageNumber,
+            PageSize = request.PageSize,
         };
     }
 }

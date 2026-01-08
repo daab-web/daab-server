@@ -25,9 +25,6 @@ public sealed class GetAllScientistsEndpoint(IMediator mediator)
 
     public override async Task HandleAsync(GetAllScientistsRequest request, CancellationToken ct)
     {
-        await Send.OkAsync(
-            await mediator.Send(new GetAllScientistsQuery(request.PageNumber, request.PageSize), ct),
-            ct
-        );
+        await Send.OkAsync(await mediator.Send(new GetAllScientistsQuery(request), ct), ct);
     }
 }

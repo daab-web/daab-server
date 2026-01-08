@@ -10,16 +10,16 @@ public class Scientist
     public string AcademicTitle { get; private set; }
     public string Institution { get; private set; }
 
-    public List<string> Countries { get; private set; }
-    public List<string> Areas { get; private set; }
+    public IEnumerable<string> Countries { get; private set; }
+    public IEnumerable<string> Areas { get; private set; }
 
     public Scientist(
         string fullName,
         string description,
         string academicTitle,
         string institution,
-        List<string> countries,
-        List<string> areas
+        IEnumerable<string> countries,
+        IEnumerable<string> areas
     )
     {
         Id = Guid.NewGuid().ToString();
@@ -37,8 +37,8 @@ public class Scientist
         string description,
         string academicTitle,
         string institution,
-        List<string> countries,
-        List<string> areas
+        IEnumerable<string> countries,
+        IEnumerable<string> areas
     ) : this(fullName, description, academicTitle, institution, countries, areas)
     {
         UserId = userId.ToString();
