@@ -4,7 +4,7 @@
     <Project Path="src/Daab.Web/Daab.Web.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
-    <Project Path="src/Modules/Scientists/Daab.Modules.Scientists/Daab.Modules.Scientists.csproj" />
+    <Project Path="src/Modules/Scientists/Daab.Modules.Scientists.csproj" />
     <Project Path="src/Modules/Auth/Daab.Modules.Auth.csproj" />
   </Folder>
   <Folder Name="/host/">
