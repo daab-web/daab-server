@@ -1,4 +1,5 @@
 name: Deploy to VPS using Docker
+
 on:
   push:
     branches: [master]
@@ -54,7 +55,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            sudo docker login -u ${{ DOCKER_USERNAME }} -p ${{ DOCKER_PASSWORD }}
+            sudo docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             sudo docker pull ${{ steps.meta.outputs.tags }}
             sudo docker stop daab-server || true
             sudo docker container rm daab-server || true
