@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\host\Daab.ServiceDefaults\Daab.ServiceDefaults.csproj" />
     <ProjectReference Include="..\Modules\Scientists\Daab.Modules.Scientists.csproj" />
+    <ProjectReference Include="..\Modules\Auth\Daab.Modules.Auth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

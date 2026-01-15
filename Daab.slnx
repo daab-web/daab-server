@@ -11,4 +11,5 @@
     <Project Path="host/Daab.AppHost/Daab.AppHost.csproj" />
     <Project Path="host/Daab.ServiceDefaults/Daab.ServiceDefaults.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Auth/" />
 </Solution>
