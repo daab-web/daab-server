@@ -12,7 +12,7 @@ public static class DependencyInjection
     {
         public IServiceCollection AddScientistsModule(IConfiguration config)
         {
-            var connectionString = config.GetConnectionString("default");
+            var connectionString = config.GetConnectionString("scientists-module");
             ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
             services.AddDbContext<ScientistsContext>(options =>

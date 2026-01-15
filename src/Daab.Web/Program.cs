@@ -1,6 +1,7 @@
 using Daab.Modules.Scientists;
+using Daab.Modules.Auth;
 using FastEndpoints;
-using FastEndpoints.Swagger; // Add this
+using FastEndpoints.Swagger;
 using Scalar.AspNetCore;
 using Serilog;
 
@@ -24,6 +25,7 @@ builder.Services.AddSerilog(
             .WriteTo.OpenTelemetry()
 );
 
+builder.Services.AddAuthModule(config);
 builder.Services.AddScientistsModule(config);
 
 builder
@@ -39,6 +41,7 @@ builder
 
 var app = builder.Build();
 
+app.UseAuthModule();
 app.InitializeScientistsModule();
 app.UseFastEndpoints();
 

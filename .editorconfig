@@ -2,7 +2,7 @@ root = true
 
 [*.cs]
 # Roslynator rules as warnings
-dotnet_analyzer_diagnostic.category-roslynator.severity = error
+# dotnet_analyzer_diagnostic.category-roslynator.severity = error
 
 # Allow unnecessary braces
 dotnet_diagnostic.RCS1251.severity = none
@@ -25,8 +25,8 @@ dotnet_diagnostic.CS1591.severity = none
 # Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = error
 
-# Prefer traditional constructors over primary constructors
-# csharp_style_prefer_primary_constructors = false:error
+# Use primary constructors
+dotnet_diagnostic.IDE0290.severity = none
 
 # Use read only auto implemented property
 dotnet_diagnostic.RCS1170.severity = none
