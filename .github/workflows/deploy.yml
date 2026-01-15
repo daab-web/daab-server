@@ -63,5 +63,5 @@ jobs:
             sudo docker pull ${{ steps.meta.outputs.tags }}
             sudo docker stop daab-server || true
             sudo docker container rm daab-server || true
-            sudo docker run -d --name daab-server -p 8080:8080 --restart unless-stopped -e ${{ secrets.DB_KEY }}=${{ secrets.DB_VALUE }} ${{ steps.meta.outputs.tags }}
+            sudo docker run -d --name daab-server -p 8080:8080 --restart unless-stopped -e --env-file ~/daab.env ${{ steps.meta.outputs.tags }}
             sudo docker logout
