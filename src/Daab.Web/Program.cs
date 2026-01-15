@@ -13,6 +13,11 @@ var log = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.AddServerHeader = false;
+});
+
 builder.AddServiceDefaults();
 
 builder.Services.AddSerilog(
