@@ -1,9 +1,12 @@
+using System.Text;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Daab.Modules.Auth;
 
@@ -26,13 +29,35 @@ public static class DependencyInjection
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
             );
+
+            var jwtOptions = config.GetRequiredSection(nameof(JwtOptions)).Get<JwtOptions>();
+            ArgumentNullException.ThrowIfNull(jwtOptions);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidateAudience = true,
+                    ValidAudience = jwtOptions.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.JwtSecret))
+                };
+            });
+            services.AddAuthorization();
         }
     }
 
-    extension(IHost host)
+    extension(WebApplication host)
     {
-        public IHost UseAuthModule()
+        public WebApplication UseAuthModule()
         {
+            host.UseAuthentication();
+            host.UseAuthorization();
+
             using var scope = host.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 

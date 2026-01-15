@@ -41,8 +41,8 @@ builder
 
 var app = builder.Build();
 
-app.InitializeScientistsModule();
 app.UseAuthModule();
+app.InitializeScientistsModule();
 app.UseFastEndpoints();
 
 if (app.Environment.IsDevelopment())
