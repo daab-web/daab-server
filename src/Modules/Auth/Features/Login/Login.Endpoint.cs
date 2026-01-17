@@ -15,8 +15,6 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
 
     public override async Task HandleAsync(LoginRequest req, CancellationToken ct)
     {
-        // TODO: Request validation
-
         var response = await mediator.Send(new LoginCommand(req), ct);
 
         _ = response.Match(

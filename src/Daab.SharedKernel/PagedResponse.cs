@@ -245,7 +245,7 @@ public static class PaginationExtensions
         );
     }
 
-    public static async Task<PagedResponse<T>> ToPagedResponse<T>(
+    public static Task<PagedResponse<T>> ToPagedResponse<T>(
         this IEnumerable<T> query,
         PageRequest pageRequest
     )
@@ -253,11 +253,11 @@ public static class PaginationExtensions
         var totalCount = query.Count();
         var items = query.Skip(pageRequest.Skip).Take(pageRequest.Take).ToList();
 
-        return PagedResponse<T>.Create(
+        return Task.FromResult(PagedResponse<T>.Create(
             items,
             pageRequest.PageNumber,
             pageRequest.PageSize,
             totalCount
-        );
+        ));
     }
 }
