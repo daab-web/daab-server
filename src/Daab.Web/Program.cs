@@ -13,7 +13,13 @@ var log = new LoggerConfiguration()
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.AddServiceDefaults();
+builder.Services.AddProblemDetails(options =>
+{
+    options.CustomizeProblemDetails = context =>
+    {
+        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+    };
+});
 
 builder.Services.AddSerilog(
     (services, loggerConfig) =>
@@ -41,6 +47,7 @@ builder
 
 var app = builder.Build();
 
+app.UseExceptionHandler();
 app.UseAuthModule();
 app.InitializeScientistsModule();
 app.UseFastEndpoints();
@@ -50,5 +57,7 @@ if (app.Environment.IsDevelopment())
     app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");
     app.MapScalarApiReference();
 }
+
+app.MapGet("/error", (context) => throw new Exception(context.TraceIdentifier));
 
 app.Run();
