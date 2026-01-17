@@ -4,6 +4,8 @@ using System.Text;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
+using LanguageExt;
+using LanguageExt.Common;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +15,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Daab.Modules.Auth.Features.Login;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse?>
+public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginResponse>>
 {
     private readonly JwtOptions _options;
     private readonly AuthDbContext _context;
@@ -26,7 +28,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse?>
         _logger = logger;
     }
 
-    public async Task<LoginResponse?> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Fin<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
         var user = await _context.Users
             .Include(u => u.Roles)
@@ -36,7 +38,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse?>
         // TODO: This does not look good
         if (user is null)
         {
-            return null;
+            return Error.New(404, "Requested user does not exist");
         }
 
         var hasher = new PasswordHasher<User>();
@@ -47,7 +49,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, LoginResponse?>
 
         if (result is PasswordVerificationResult.Failed)
         {
-            return null;
+            return Error.New(401, "Invalid credentials");
         }
 
         return new LoginResponse(GenerateAccessToken(user));

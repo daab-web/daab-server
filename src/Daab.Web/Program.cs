@@ -58,6 +58,4 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.MapGet("/error", (context) => throw new Exception(context.TraceIdentifier));
-
 app.Run();

@@ -1,5 +1,7 @@
+using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Auth.Features.Login;
 
@@ -17,12 +19,10 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
 
         var response = await mediator.Send(new LoginCommand(req), ct);
 
-        if (response is null)
-        {
-            await Send.UnauthorizedAsync(ct);
-            return;
-        }
-
-        await Send.OkAsync(response, ct);
+        _ = response.Match(
+            Send.OkAsync,
+            async err =>
+                await Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+        );
     }
 }
