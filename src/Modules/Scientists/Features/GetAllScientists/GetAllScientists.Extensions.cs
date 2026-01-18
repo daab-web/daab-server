@@ -22,9 +22,9 @@ public static class GetAllScientists
         }
     }
 
-    extension(IEnumerable<Scientist> scientists)
+    extension(IQueryable<Scientist> scientists)
     {
-        public IEnumerable<GetAllScientistsResponse> ToAllScientistsResponse()
-            => scientists.Select(s => s.ToAllScientistsResponse());
+        public IQueryable<GetAllScientistsResponse> ToAllScientistsResponse() =>
+            scientists.Select(s => s.ToAllScientistsResponse());
     }
 }

@@ -1,6 +1,7 @@
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
@@ -12,11 +13,18 @@ public class GetAllScientistsQueryHandler(ScientistsContext context)
         CancellationToken cancellationToken
     )
     {
-        var scientists = context.Scientists;
+        var scientists = context.Scientists.AsNoTracking();
+
+        if (!string.IsNullOrWhiteSpace(request.Country))
+        {
+            scientists = scientists.Where(s => s.Countries.Contains(request.Country));
+        }
+
         var response = scientists.ToAllScientistsResponse();
 
-        return await response
-            .AsQueryable()
-            .ToPagedResponseAsync(request.PaginationOptions, cancellationToken: cancellationToken);
+        return await response.ToPagedResponseAsync(
+            new PageRequest { PageNumber = request.PageNumber, PageSize = request.PageSize },
+            cancellationToken: cancellationToken
+        );
     }
 }

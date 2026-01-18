@@ -9,5 +9,7 @@ public sealed record GetAllScientistsRequest
 
     [QueryParam]
     public int PageSize { get; set; }
-}
 
+    [QueryParam]
+    public string? Country { get; init; }
+}

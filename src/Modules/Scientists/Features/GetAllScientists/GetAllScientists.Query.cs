@@ -3,18 +3,16 @@ using MediatR;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
-public class GetAllScientistsQuery
-    : IRequest<PagedResponse<GetAllScientistsResponse>>
+public class GetAllScientistsQuery : IRequest<PagedResponse<GetAllScientistsResponse>>
 {
-    public PageRequest PaginationOptions { get; }
+    public string? Country { get; }
+    public int PageNumber { get; }
+    public int PageSize { get; }
 
     public GetAllScientistsQuery(GetAllScientistsRequest request)
     {
-        PaginationOptions = new PageRequest
-        {
-            PageNumber = request.PageNumber,
-            PageSize = request.PageSize,
-        };
+        PageNumber = request.PageNumber;
+        PageSize = request.PageSize;
+        Country = request.Country;
     }
 }
-
