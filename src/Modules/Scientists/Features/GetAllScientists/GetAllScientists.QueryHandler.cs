@@ -15,6 +15,8 @@ public class GetAllScientistsQueryHandler(ScientistsContext context)
         var scientists = context.Scientists;
         var response = scientists.ToAllScientistsResponse();
 
-        return await response.ToPagedResponse(request.PaginationOptions);
+        return await response
+            .AsQueryable()
+            .ToPagedResponseAsync(request.PaginationOptions, cancellationToken: cancellationToken);
     }
 }
