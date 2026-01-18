@@ -14,8 +14,6 @@ public class AddScientistEndpoint(IMediator mediator)
 
     public override async Task HandleAsync(AddScientistRequest req, CancellationToken ct)
     {
-        // TODO: input validation
-
         var response = await mediator.Send(new AddScientistCommand(req), ct);
 
         await Send.CreatedAtAsync<AddScientistEndpoint>(

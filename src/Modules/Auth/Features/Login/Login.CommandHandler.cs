@@ -35,7 +35,6 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginRespon
             .AsNoTracking()
             .SingleOrDefaultAsync(u => u.Username == request.Username, cancellationToken: cancellationToken);
 
-        // TODO: This does not look good
         if (user is null)
         {
             return Error.New(404, "Requested user does not exist");
@@ -57,7 +56,8 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginRespon
 
     private string GenerateAccessToken(User user)
     {
-        List<Claim> claims = [
+        List<Claim> claims =
+        [
             new Claim(ClaimTypes.NameIdentifier, user.Id),
             new Claim(ClaimTypes.Name, user.Username),
         ];
