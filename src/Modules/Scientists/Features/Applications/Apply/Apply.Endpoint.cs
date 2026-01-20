@@ -9,7 +9,7 @@ public sealed class ApplyEndpoint(IMediator mediator) : Endpoint<ApplyRequest, A
 {
     public override void Configure()
     {
-        Post("/scientists/apllications");
+        Post("/applications");
         AllowAnonymous();
     }
 

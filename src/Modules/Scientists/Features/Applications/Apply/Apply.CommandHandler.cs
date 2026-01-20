@@ -1,7 +1,9 @@
 using Daab.Modules.Scientists.Persistence;
+using Grpc.Core;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Scientists.Features.Apply;
 
@@ -20,7 +22,7 @@ public sealed class ApplyCommandHandler(ScientistsContext context)
 
         if (entriesAffected <= 0)
         {
-            return Error.New("Unable to apply. Please try again later");
+            return Error.New(StatusCodes.Status500InternalServerError, "Unable to apply. Please try again later");
         }
 
         return new ApplyResponse(entityEntry.Entity.Id, true);

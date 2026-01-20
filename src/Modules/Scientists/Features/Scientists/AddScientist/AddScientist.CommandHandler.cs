@@ -19,4 +19,3 @@ public class AddScientistCommandHandler(ScientistsContext context)
         return e.Entity.ToAddResponse();
     }
 }
-
