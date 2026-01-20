@@ -23,9 +23,21 @@ public class Application : BaseEntity
     public string? PhotoUrl { get; init; }
     public string? CvUrl { get; init; }
 
-    public Application(string email, string name, string surname, string residence, string city, string phoneNumber,
-        string universityName, string fieldOfStudy, string academicDegree, string almaMater, string academicTitle,
-        string degreeInstitution, string contributionsToDaab)
+    public Application(
+        string email,
+        string name,
+        string surname,
+        string residence,
+        string city,
+        string phoneNumber,
+        string universityName,
+        string fieldOfStudy,
+        string academicDegree,
+        string almaMater,
+        string academicTitle,
+        string degreeInstitution,
+        string contributionsToDaab
+    )
     {
         Email = email;
         Name = name;

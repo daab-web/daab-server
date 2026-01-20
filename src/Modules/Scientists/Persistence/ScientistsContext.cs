@@ -6,7 +6,15 @@ namespace Daab.Modules.Scientists.Persistence;
 public class ScientistsContext : DbContext
 {
     internal DbSet<Scientist> Scientists { get; set; }
+    internal DbSet<Application> Applications { get; set; }
 
     public ScientistsContext(DbContextOptions<ScientistsContext> options)
         : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        var application = modelBuilder.Entity<Application>();
+
+        application.HasKey(s => s.Id);
+    }
 }
