@@ -5,7 +5,7 @@ EXPOSE 8080
 EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
-ARG BUILD_CONFIGURATION=Development
+ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Daab.Web/Daab.Web.csproj", "src/Daab.Web/"]
 COPY ["host/Daab.ServiceDefaults/Daab.ServiceDefaults.csproj", "host/Daab.ServiceDefaults/"]
@@ -18,7 +18,7 @@ WORKDIR "/src/src/Daab.Web"
 RUN dotnet build "./Daab.Web.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Development
+ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Daab.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
 FROM base AS final

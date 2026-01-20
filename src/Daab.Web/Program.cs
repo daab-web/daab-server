@@ -1,5 +1,5 @@
-using Daab.Modules.Scientists;
 using Daab.Modules.Auth;
+using Daab.Modules.Scientists;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Scalar.AspNetCore;
@@ -52,10 +52,7 @@ app.UseAuthModule();
 app.InitializeScientistsModule();
 app.UseFastEndpoints();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");
-    app.MapScalarApiReference();
-}
+app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");
+app.MapScalarApiReference();
 
 app.Run();
