@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.GetAllApplications;
 
-public sealed class GetAllApplicationsQueryHandler(ScientistsContext context)
+public sealed class GetAllApplicationsQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetAllApplicationsQuery, Fin<PagedResponse<ApplicationDto>>>
 {
     public async Task<Fin<PagedResponse<ApplicationDto>>> Handle(

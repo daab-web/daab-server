@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Daab.Modules.Scientists.Features.AddScientist;
 
-public class AddScientistCommandHandler(ScientistsContext context)
+public class AddScientistCommandHandler(ScientistsDbContext context)
     : IRequestHandler<AddScientistCommand, AddScientistResponse>
 {
     public async Task<AddScientistResponse> Handle(

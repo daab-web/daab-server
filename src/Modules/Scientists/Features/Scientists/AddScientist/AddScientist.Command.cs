@@ -5,7 +5,10 @@ namespace Daab.Modules.Scientists.Features.AddScientist;
 public record AddScientistCommand : IRequest<AddScientistResponse>
 {
     public string? UserId { get; }
-    public string FullName { get; }
+    public string FirstName { get; }
+    public string LastName { get; }
+    public string Email { get; }
+    public string? PhoneNumber { get; }
     public string Description { get; }
     public string AcademicTitle { get; }
     public string Institution { get; }
@@ -15,7 +18,10 @@ public record AddScientistCommand : IRequest<AddScientistResponse>
     public AddScientistCommand(AddScientistRequest request)
     {
         UserId = request.UserId;
-        FullName = request.FullName;
+        FirstName = request.FirstName;
+        LastName = request.LastName;
+        Email = request.Email;
+        PhoneNumber = request.PhoneNumber;
         Description = request.Description;
         AcademicTitle = request.AcademicTitle;
         Institution = request.Institution;

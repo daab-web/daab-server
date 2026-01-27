@@ -3,7 +3,10 @@ namespace Daab.Modules.Scientists.Features.AddScientist;
 public record AddScientistResponse(
     string Id,
     string? UserId,
-    string FullName,
+    string FirstName,
+    string LastName,
+    string Email,
+    string? PhoneNumber,
     string Description,
     string AcademicTitle,
     string Institution,

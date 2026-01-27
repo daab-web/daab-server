@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.GetScientist;
 
-public class GetScientistQueryHandler(ScientistsContext context)
+public class GetScientistQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetScientistQuery, GetScientistResponse?>
 {
     public async Task<GetScientistResponse?> Handle(

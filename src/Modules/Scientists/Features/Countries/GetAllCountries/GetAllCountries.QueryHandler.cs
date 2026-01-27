@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Daab.Modules.Scientists.Features.GetAllCountries;
 
-public sealed class GetAllCountriesQueryHandler(ScientistsContext context)
+public sealed class GetAllCountriesQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetAllCountriesQuery, GetAllCountriesResponse>
 {
     public Task<GetAllCountriesResponse> Handle(

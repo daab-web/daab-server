@@ -15,7 +15,7 @@ public static class DependencyInjection
             var connectionString = config.GetConnectionString("scientists-module");
             ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
 
-            services.AddDbContext<ScientistsContext>(options =>
+            services.AddDbContext<ScientistsDbContext>(options =>
                 options.UseSqlite(connectionString)
             );
 
@@ -32,7 +32,7 @@ public static class DependencyInjection
         public IHost InitializeScientistsModule()
         {
             using var scope = host.Services.CreateScope();
-            var context = scope.ServiceProvider.GetRequiredService<ScientistsContext>();
+            var context = scope.ServiceProvider.GetRequiredService<ScientistsDbContext>();
 
             context.Database.Migrate();
 

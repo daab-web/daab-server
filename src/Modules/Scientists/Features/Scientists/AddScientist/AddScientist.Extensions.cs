@@ -10,7 +10,10 @@ public static class AddScientistExtensions
         {
             return r.UserId is null
                 ? new Scientist(
-                    r.FullName,
+                    r.FirstName,
+                    r.LastName,
+                    r.Email,
+                    r.PhoneNumber,
                     r.Description,
                     r.AcademicTitle,
                     r.Institution,
@@ -18,8 +21,11 @@ public static class AddScientistExtensions
                     r.Areas
                 )
                 : new Scientist(
-                    Guid.Parse(r.UserId),
-                    r.FullName,
+                    Ulid.Parse(r.UserId),
+                    r.FirstName,
+                    r.LastName,
+                    r.Email,
+                    r.PhoneNumber,
                     r.Description,
                     r.AcademicTitle,
                     r.Institution,
@@ -36,7 +42,10 @@ public static class AddScientistExtensions
             return new AddScientistResponse(
                 s.Id,
                 s.UserId,
-                s.FullName,
+                s.FirstName,
+                s.LastName,
+                s.Email,
+                s.PhoneNumber,
                 s.Description,
                 s.AcademicTitle,
                 s.Institution,
@@ -46,4 +55,3 @@ public static class AddScientistExtensions
         }
     }
 }
-

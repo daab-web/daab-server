@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Scientists.Features.Apply;
 
-public sealed class ApplyCommandHandler(ScientistsContext context)
+public sealed class ApplyCommandHandler(ScientistsDbContext context)
     : IRequestHandler<ApplyCommand, Fin<ApplyResponse>>
 {
     public async Task<Fin<ApplyResponse>> Handle(

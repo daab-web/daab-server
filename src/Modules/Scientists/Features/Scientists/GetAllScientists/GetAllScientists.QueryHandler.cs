@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
-public class GetAllScientistsQueryHandler(ScientistsContext context)
+public class GetAllScientistsQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetAllScientistsQuery, PagedResponse<GetAllScientistsResponse>>
 {
     public async Task<PagedResponse<GetAllScientistsResponse>> Handle(

@@ -3,12 +3,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Persistence;
 
-public class ScientistsContext : DbContext
+public class ScientistsDbContext : DbContext
 {
     internal DbSet<Scientist> Scientists { get; set; }
     internal DbSet<Application> Applications { get; set; }
 
-    public ScientistsContext(DbContextOptions<ScientistsContext> options)
+    public ScientistsDbContext(DbContextOptions<ScientistsDbContext> options)
         : base(options) { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)

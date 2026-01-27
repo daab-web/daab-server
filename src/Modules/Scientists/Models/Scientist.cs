@@ -4,8 +4,10 @@ public class Scientist
 {
     public string Id { get; private set; }
     public string? UserId { get; private set; }
-
-    public string FullName { get; private set; }
+    public string Email { get; private set; }
+    public string? PhoneNumber { get; private set; }
+    public string FirstName { get; private set; }
+    public string LastName { get; private set; }
     public string Description { get; private set; }
     public string AcademicTitle { get; private set; }
     public string Institution { get; private set; }
@@ -15,11 +17,16 @@ public class Scientist
 
     public string Slug()
     {
-        return $"{FullName.Replace(' ', '-')}-{Id[..5]}";
+        var name = FirstName.Replace(' ', '-');
+        var lastName = LastName.Replace(' ', '-');
+        return $"{name}-{lastName}-{Id[..5]}";
     }
 
     public Scientist(
-        string fullName,
+        string firstName,
+        string lastName,
+        string email,
+        string? phoneNumber,
         string description,
         string academicTitle,
         string institution,
@@ -27,8 +34,11 @@ public class Scientist
         IEnumerable<string> areas
     )
     {
-        Id = Guid.NewGuid().ToString();
-        FullName = fullName;
+        Id = Ulid.NewUlid().ToString();
+        FirstName = firstName;
+        LastName = lastName;
+        Email = email;
+        PhoneNumber = phoneNumber;
         Description = description;
         AcademicTitle = academicTitle;
         Institution = institution;
@@ -37,15 +47,28 @@ public class Scientist
     }
 
     public Scientist(
-        Guid userId,
-        string fullName,
+        Ulid userId,
+        string firstName,
+        string lastName,
+        string email,
+        string? phoneNumber,
         string description,
         string academicTitle,
         string institution,
         IEnumerable<string> countries,
         IEnumerable<string> areas
     )
-        : this(fullName, description, academicTitle, institution, countries, areas)
+        : this(
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            description,
+            academicTitle,
+            institution,
+            countries,
+            areas
+        )
     {
         UserId = userId.ToString();
     }
