@@ -21,5 +21,6 @@ public sealed record ApplicationDto(
     string? AdditionalInformation,
     string? AdditionalInformationToShare,
     string? PhotoUrl,
-    string? CvUrl
+    string? CvUrl,
+    string Status
 );

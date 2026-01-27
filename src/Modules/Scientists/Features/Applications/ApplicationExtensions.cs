@@ -31,7 +31,8 @@ public static class ApplicationExtensions
                 a.AdditionalInformation,
                 a.AdditionalInformationToShare,
                 a.PhotoUrl,
-                a.CvUrl
+                a.CvUrl,
+                a.Status.ToString()
             );
         }
     }

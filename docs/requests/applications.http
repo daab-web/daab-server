@@ -26,7 +26,9 @@ Content-Type: application/json
 }
 
 ### Approve existing application
-
 @applicationId = 01KFZXK0AE2SQ29MVRYA48SDN9
 POST {{host}}/applications/{{applicationId}}/approve
 Content-Type: application/json
+
+### Get all applications
+GET {{host}}/applications
