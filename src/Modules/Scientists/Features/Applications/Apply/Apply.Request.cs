@@ -1,4 +1,4 @@
-namespace Daab.Modules.Scientists.Features.Apply;
+namespace Daab.Modules.Scientists.Features.Applications.Apply;
 
 public sealed record ApplyRequest(
     string Email,

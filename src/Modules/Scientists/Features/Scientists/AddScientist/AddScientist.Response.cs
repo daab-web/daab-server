@@ -7,11 +7,9 @@ public record AddScientistResponse(
     string LastName,
     string Email,
     string? PhoneNumber,
-    string Description,
+    string? Description,
     string AcademicTitle,
     string Institution,
     string[] Countries,
     string[] Areas
 );
-
-

@@ -1,5 +1,12 @@
 namespace Daab.Modules.Scientists.Models;
 
+public enum ApplicationStatus
+{
+    Accepted = 0,
+    Approved,
+    Rejected,
+}
+
 public class Application : BaseEntity
 {
     public string Email { get; init; }
@@ -22,6 +29,8 @@ public class Application : BaseEntity
     public string? AdditionalInformationToShare { get; init; }
     public string? PhotoUrl { get; init; }
     public string? CvUrl { get; init; }
+
+    public ApplicationStatus Status { get; set; } = ApplicationStatus.Accepted;
 
     public Application(
         string email,

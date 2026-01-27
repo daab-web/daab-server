@@ -8,7 +8,7 @@ public class Scientist
     public string? PhoneNumber { get; private set; }
     public string FirstName { get; private set; }
     public string LastName { get; private set; }
-    public string Description { get; private set; }
+    public string? Description { get; private set; }
     public string AcademicTitle { get; private set; }
     public string Institution { get; private set; }
 
@@ -27,7 +27,7 @@ public class Scientist
         string lastName,
         string email,
         string? phoneNumber,
-        string description,
+        string? description,
         string academicTitle,
         string institution,
         IEnumerable<string> countries,
@@ -52,7 +52,7 @@ public class Scientist
         string lastName,
         string email,
         string? phoneNumber,
-        string description,
+        string? description,
         string academicTitle,
         string institution,
         IEnumerable<string> countries,

@@ -2,6 +2,7 @@
 using Daab.Modules.Scientists.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -9,9 +10,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Daab.Modules.Scientists.Persistence.Migrations
 {
     [DbContext(typeof(ScientistsDbContext))]
-    partial class ScientistsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260127140215_ApplicationStatus")]
+    partial class ApplicationStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.1");

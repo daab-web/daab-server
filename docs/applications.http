@@ -1,0 +1,32 @@
+@host = http://localhost:5035
+
+### Create new application
+POST {{host}}/applications
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "name": "John",
+  "surname": "Doe",
+  "residence": "Germany",
+  "city": "Berlin",
+  "phoneNumber": "+49 151 23456789",
+  "universityName": "Technical University of Berlin",
+  "fieldOfStudy": "Computer Science",
+  "academicDegree": "PhD",
+  "almaMater": "Ludwig Maximilian University of Munich",
+  "academicTitle": "Dr.",
+  "degreeInstitution": "Ludwig Maximilian University of Munich",
+  "jobPosition": "Senior Researcher",
+  "previousJob": "Postdoctoral Fellow",
+  "contributionsToDaab": "Active participation in joint research projects and academic mentoring programs",
+  "engagedScientistFields": "Artificial Intelligence, Data Science",
+  "additionalInformation": "Experience in international academic collaborations",
+  "additionalInformationToShare": "Interested in long-term cooperation with DAAB"
+}
+
+### Approve existing application
+
+@applicationId = 01KFZXK0AE2SQ29MVRYA48SDN9
+POST {{host}}/applications/{{applicationId}}/approve
+Content-Type: application/json

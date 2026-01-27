@@ -6,7 +6,7 @@ public sealed record GetAllScientistsResponse(
     string Slug,
     string FirstName,
     string LastName,
-    string Description,
+    string? Description,
     string AcademicTitle,
     string Institution,
     string[] Countries,
