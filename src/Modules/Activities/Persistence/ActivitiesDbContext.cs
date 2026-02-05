@@ -4,7 +4,7 @@ using Daab.Modules.Activities.Models;
 
 namespace Daab.Modules.Activities.Persistence;
 
-public class NewsDbContext(DbContextOptions<NewsDbContext> options) : DbContext(options)
+public class ActivitiesDbContext(DbContextOptions<ActivitiesDbContext> options) : DbContext(options)
 {
     internal DbSet<News> News { get; init; }
 
