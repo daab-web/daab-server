@@ -11,7 +11,7 @@ public class CreateNewsEndpoint(IMediator mediator) : Endpoint<CreateNewsRequest
 {
     public override void Configure()
     {
-        Post("/api/news");
+        Post("/news");
 
         // TODO: This should not be public
         AllowAnonymous();
