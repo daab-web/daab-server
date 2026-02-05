@@ -7,7 +7,6 @@ using Serilog;
 
 var log = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.OpenTelemetry()
     .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +27,6 @@ builder.Services.AddSerilog(
             .ReadFrom.Services(services)
             .Enrich.FromLogContext()
             .WriteTo.Console()
-            .WriteTo.OpenTelemetry()
 );
 
 builder.Services.AddAuthModule(config);

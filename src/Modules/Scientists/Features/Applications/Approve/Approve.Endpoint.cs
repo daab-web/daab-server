@@ -9,7 +9,7 @@ public sealed class ApproveApplicetionEndpoint(IMediator mediator) : EndpointWit
 {
     public override void Configure()
     {
-        Post("/applications/{applicationId}/approve");
+        Put("/applications/{applicationId}/approve");
 
         // TODO: this should be available for admins only
         AllowAnonymous();

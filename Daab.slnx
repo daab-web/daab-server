@@ -7,9 +7,8 @@
     <Project Path="src/Modules/Scientists/Daab.Modules.Scientists.csproj" />
     <Project Path="src/Modules/Auth/Daab.Modules.Auth.csproj" />
   </Folder>
-  <Folder Name="/host/">
-    <Project Path="host/Daab.AppHost/Daab.AppHost.csproj" />
-    <Project Path="host/Daab.ServiceDefaults/Daab.ServiceDefaults.csproj" />
-  </Folder>
   <Folder Name="/src/Modules/Auth/" />
+  <Folder Name="/src/Modules/Activities/">
+    <Project Path="src\Modules\Activities\Daab.Modules.Activities.csproj" />
+  </Folder>
 </Solution>
