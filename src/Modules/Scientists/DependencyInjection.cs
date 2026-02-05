@@ -29,7 +29,7 @@ public static class DependencyInjection
 
     extension(IHost host)
     {
-        public IHost InitializeScientistsModule()
+        public IHost UseScientistsModule()
         {
             using var scope = host.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ScientistsDbContext>();

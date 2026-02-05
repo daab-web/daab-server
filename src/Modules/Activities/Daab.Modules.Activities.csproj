@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Daab.SharedKernel\Daab.SharedKernel.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,3 +1,4 @@
+using Daab.Modules.Activities;
 using Daab.Modules.Auth;
 using Daab.Modules.Scientists;
 using FastEndpoints;
@@ -31,6 +32,7 @@ builder.Services.AddSerilog(
 
 builder.Services.AddAuthModule(config);
 builder.Services.AddScientistsModule(config);
+builder.Services.AddActivitiesModule(config);
 
 builder
     .Services.AddFastEndpoints()
@@ -47,7 +49,8 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseAuthModule();
-app.InitializeScientistsModule();
+app.UseScientistsModule();
+app.UseActivitiesModule();
 app.UseFastEndpoints();
 
 app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");

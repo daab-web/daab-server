@@ -12,6 +12,7 @@ public class ActivitiesDbContext(DbContextOptions<ActivitiesDbContext> options) 
     {
         var news = modelBuilder.Entity<News>();
 
+        news.HasKey(n => n.Id);
         news.HasIndex(n => n.Title, "news_title_idx");
     }
 }
