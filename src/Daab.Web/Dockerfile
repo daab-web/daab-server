@@ -33,4 +33,5 @@ RUN dotnet publish "./Daab.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+RUN mkdir -p /app/sqlite && chmod 755 /app/sqlite
 ENTRYPOINT ["dotnet", "Daab.Web.dll"]

@@ -25,16 +25,16 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
+
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: tng1/daab-server
-          
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        
+
       - name: Build and push docker image
         id: push
         uses: docker/build-push-action@v6
@@ -44,7 +44,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          
+
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v3
         with:
@@ -63,5 +63,11 @@ jobs:
             sudo docker pull ${{ steps.meta.outputs.tags }}
             sudo docker stop daab-server || true
             sudo docker container rm daab-server || true
-            sudo docker run -d --name daab-server -p 8080:8080 --restart unless-stopped --env-file ~/daab.env ${{ steps.meta.outputs.tags }}
+            mkdir -p ~/daab-data/sqlite
+            sudo docker run -d --name daab-server \
+              -p 8080:8080 \
+              --restart unless-stopped \
+              --env-file ~/daab.env \
+              -v ~/daab-data/sqlite:/app/sqlite \
+              ${{ steps.meta.outputs.tags }}
             sudo docker logout
