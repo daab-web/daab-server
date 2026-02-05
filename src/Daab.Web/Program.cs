@@ -1,49 +1,22 @@
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
 using Daab.Modules.Scientists;
+using Daab.Web.Configuration;
 using FastEndpoints;
-using FastEndpoints.Swagger;
 using Scalar.AspNetCore;
-using Serilog;
-
-var log = new LoggerConfiguration()
-    .WriteTo.Console()
-    .CreateBootstrapLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.Services.AddProblemDetails(options =>
-{
-    options.CustomizeProblemDetails = context =>
-    {
-        context.ProblemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
-    };
-});
+builder.Services
+    .ConfigureLogging(config)
+    .ConfigureProblemDetails()
+    .ConfigureEndpoints();
 
-builder.Services.AddSerilog(
-    (services, loggerConfig) =>
-        loggerConfig
-            .ReadFrom.Configuration(builder.Configuration)
-            .ReadFrom.Services(services)
-            .Enrich.FromLogContext()
-            .WriteTo.Console()
-);
-
-builder.Services.AddAuthModule(config);
-builder.Services.AddScientistsModule(config);
-builder.Services.AddActivitiesModule(config);
-
-builder
-    .Services.AddFastEndpoints()
-    .SwaggerDocument(options =>
-    {
-        options.DocumentSettings = settings =>
-        {
-            settings.DocumentName = "v1";
-            settings.Version = "v1.0";
-        };
-    });
+builder.Services
+    .AddAuthModule(config)
+    .AddScientistsModule(config)
+    .AddActivitiesModule(config);
 
 var app = builder.Build();
 

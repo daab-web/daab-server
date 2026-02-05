@@ -14,7 +14,7 @@ public static class DependencyInjection
 {
     extension(IServiceCollection services)
     {
-        public void AddAuthModule(IConfiguration config)
+        public IServiceCollection AddAuthModule(IConfiguration config)
         {
             var connectionString =
                 config.GetConnectionString("auth-module")
@@ -52,6 +52,8 @@ public static class DependencyInjection
                     };
                 });
             services.AddAuthorization();
+
+            return services;
         }
     }
 

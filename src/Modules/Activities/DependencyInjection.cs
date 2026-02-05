@@ -10,7 +10,7 @@ public static class DependencyInjection
 {
     extension(IServiceCollection services)
     {
-        public void AddActivitiesModule(IConfiguration config)
+        public IServiceCollection AddActivitiesModule(IConfiguration config)
         {
             var connectionString =
                 config.GetConnectionString("activities-module")
@@ -20,6 +20,8 @@ public static class DependencyInjection
                 optionsBuilder.UseSqlite(connectionString));
 
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+
+            return services;
         }
     }
 
