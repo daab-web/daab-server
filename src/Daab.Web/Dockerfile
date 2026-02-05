@@ -8,9 +8,9 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Daab.Web/Daab.Web.csproj", "src/Daab.Web/"]
-COPY ["host/Daab.ServiceDefaults/Daab.ServiceDefaults.csproj", "host/Daab.ServiceDefaults/"]
 COPY ["src/Modules/Scientists/Daab.Modules.Scientists.csproj", "src/Modules/Scientists/"]
 COPY ["src/Modules/Auth/Daab.Modules.Auth.csproj", "src/Modules/Auth/"]
+COPY ["src/Modules/Activities/Daab.Modules.Activities.csproj", "src/Modules/Activities/"]
 COPY ["src/Daab.SharedKernel/Daab.SharedKernel.csproj", "src/Daab.SharedKernel/"]
 RUN dotnet restore "src/Daab.Web/Daab.Web.csproj"
 COPY . .
