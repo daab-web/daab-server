@@ -8,12 +8,10 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 
-# Copy solution and package management files first
 COPY ["Daab.slnx", "."]
 COPY ["Directory.Build.props", "."]
 COPY ["Directory.Packages.props", "."]
 
-# Copy all project files
 COPY ["src/Daab.Web/Daab.Web.csproj", "src/Daab.Web/"]
 COPY ["src/Daab.SharedKernel/Daab.SharedKernel.csproj", "src/Daab.SharedKernel/"]
 COPY ["src/Modules/Scientists/Daab.Modules.Scientists.csproj", "src/Modules/Scientists/"]
@@ -33,5 +31,4 @@ RUN dotnet publish "./Daab.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-RUN mkdir -p /app/sqlite && chmod 755 /app/sqlite
 ENTRYPOINT ["dotnet", "Daab.Web.dll"]
