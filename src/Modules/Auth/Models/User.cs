@@ -1,19 +1,27 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace Daab.Modules.Auth.Models;
 
 public class User
 {
-    public string Id { get; private set; }
+    public string Id { get; }
 
-    public string Username { get; private set; }
-    public string PasswordHash { get; private set; }
+    public string Username { get; }
+    public string PasswordHash { get; init; }
 
-    public ICollection<Role> Roles { get; private set; } = [];
+    public ICollection<Role> Roles { get; } = [];
 
-    public User(string username, string passwordHash)
+    protected User(string username)
     {
         Id = Ulid.NewUlid().ToString();
-
         Username = username;
-        PasswordHash = passwordHash;
+        PasswordHash = string.Empty;
+    }
+
+    public User(string username, string password)
+        : this(username)
+    {
+        var ph = new PasswordHasher<User>();
+        PasswordHash = ph.HashPassword(this, password);
     }
 }

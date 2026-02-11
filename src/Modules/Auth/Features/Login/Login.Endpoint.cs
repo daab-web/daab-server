@@ -17,8 +17,12 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
     {
         var response = await mediator.Send(new LoginCommand(req), ct);
 
-        _ = response.Match(
-            Send.OkAsync,
+        await response.Match(
+            async t =>
+            {
+                HttpContext.Response.Cookies.Append("daab.accessToken", t.AccesToken);
+                await Send.OkAsync(t, cancellation: ct);
+            },
             async err =>
                 await Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
         );

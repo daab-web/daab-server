@@ -42,8 +42,6 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginRespon
 
         var hasher = new PasswordHasher<User>();
 
-        _logger.LogInformation(hasher.HashPassword(user, request.Password));
-
         PasswordVerificationResult result = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
 
         if (result is PasswordVerificationResult.Failed)

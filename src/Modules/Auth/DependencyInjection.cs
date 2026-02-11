@@ -1,4 +1,5 @@
 using System.Text;
+using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -68,8 +69,32 @@ public static class DependencyInjection
             var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
 
             context.Database.Migrate();
+            SeedAuthDatabase(context);
 
             return host;
         }
+    }
+
+    private static void SeedAuthDatabase(AuthDbContext context)
+    {
+        var roles = context.Set<Role>();
+        var users = context.Set<User>();
+
+        if (roles.SingleOrDefault(r => r.Name == "admin") is null)
+        {
+            roles.Add(new Role("admin"));
+            context.SaveChanges();
+        }
+
+        if (users.SingleOrDefault(u => u.Username == "admin") is null)
+        {
+            var adminRole = roles.Single(r => r.Name == "admin");
+            var admin = new User("admin", "admin");
+            admin.Roles.Add(adminRole);
+
+            users.Add(admin);
+        }
+
+        context.SaveChanges();
     }
 }

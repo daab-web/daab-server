@@ -3,7 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Auth.Persistence;
 
-public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
+public class AuthDbContext(DbContextOptions<AuthDbContext> options)
+    : DbContext(options)
 {
     public DbSet<User> Users { get; init; }
     public DbSet<Role> Roles { get; init; }
@@ -13,6 +14,7 @@ public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(
         var user = modelBuilder.Entity<User>();
         var role = modelBuilder.Entity<Role>();
 
+        user.HasKey(u => u.Id);
         user.HasMany(u => u.Roles).WithMany(r => r.Users);
         user.HasIndex(u => u.Username);
 
