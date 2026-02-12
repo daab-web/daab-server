@@ -8,17 +8,11 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.Services.AddCors(policybuilder =>
-    policybuilder.AddDefaultPolicy(policy =>
-        policy
-            .WithOrigins("http://localhost:3000")
-            .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowCredentials()
-    )
-);
-
-builder.Services.ConfigureLogging(config).ConfigureProblemDetails().ConfigureEndpoints();
+builder.Services
+    .ConfigureLogging(config)
+    .ConfigureCors(config)
+    .ConfigureProblemDetails()
+    .ConfigureEndpoints();
 
 builder.Services.AddAuthModule(config).AddScientistsModule(config).AddActivitiesModule(config);
 
