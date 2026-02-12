@@ -63,5 +63,5 @@ jobs:
             sudo docker pull ${{ steps.meta.outputs.tags }}
             sudo docker stop daab-server || true
             sudo docker container rm daab-server || true
-            sudo docker run -d --name daab-server -p 8080:8080 --restart unless-stopped --env-file ~/daab.env ${{ steps.meta.outputs.tags }}
+            sudo docker run -d --name daab-server -p 8080:8080 --restart unless-stopped --env-file ${{ ENV_FILE }} -v ${{ VOLUME }} ${{ steps.meta.outputs.tags }}
             sudo docker logout
