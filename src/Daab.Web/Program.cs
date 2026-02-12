@@ -8,9 +8,10 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
-builder.Services
-    .ConfigureLogging(config)
+builder
+    .Services.ConfigureLogging(config)
     .ConfigureCors(config)
+    .ConfigureCache()
     .ConfigureProblemDetails()
     .ConfigureEndpoints();
 

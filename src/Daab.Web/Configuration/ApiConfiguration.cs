@@ -1,6 +1,8 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.Extensions.Caching.Memory;
 using Serilog;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Daab.Web.Configuration;
 
@@ -15,7 +17,8 @@ public static class ApiConfiguration
 
         public IServiceCollection ConfigureCors(IConfiguration config)
         {
-            var allowedOrigins = config.GetRequiredSection("Cors:AllowedOrigins")?.Get<string[]>()
+            var allowedOrigins =
+                config.GetRequiredSection("Cors:AllowedOrigins")?.Get<string[]>()
                 ?? throw new ArgumentException("There was no allowed origins in CORS config");
 
             Log.Information("CORS Allowed origins: {origins}", string.Join(',', allowedOrigins));
@@ -29,6 +32,21 @@ public static class ApiConfiguration
                         .AllowCredentials()
                 )
             );
+
+            return services;
+        }
+
+        public IServiceCollection ConfigureCache()
+        {
+            services
+                .AddFusionCache()
+                .WithDefaultEntryOptions(options =>
+                    options
+                        .SetDuration(TimeSpan.FromMinutes(2))
+                        .SetPriority(CacheItemPriority.High)
+                        .SetFailSafe(true, TimeSpan.FromHours(2))
+                        .SetFactoryTimeouts(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(2))
+                );
 
             return services;
         }

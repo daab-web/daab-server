@@ -8,16 +8,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Roslynator.Analyzers">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="MediatR"/>
-        <PackageReference Include="FastEndpoints"/>
-        <PackageReference Include="LanguageExt.Core"/>
-        <PackageReference Include="Ulid"/>
-        <PackageReference Include="Microsoft.EntityFrameworkCore"/>
+      <PackageReference Include="Roslynator.Analyzers">
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      </PackageReference>
+      <PackageReference Include="MediatR"/>
+      <PackageReference Include="FastEndpoints"/>
+      <PackageReference Include="LanguageExt.Core"/>
+      <PackageReference Include="Ulid"/>
+      <PackageReference Include="Microsoft.EntityFrameworkCore"/>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite"/>
+      <PackageReference Include="ZiggyCreatures.FusionCache" />
     </ItemGroup>
 
     <PropertyGroup>
