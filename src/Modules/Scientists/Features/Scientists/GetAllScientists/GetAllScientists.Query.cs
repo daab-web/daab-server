@@ -11,7 +11,7 @@ public class GetAllScientistsQuery : IRequest<PagedResponse<GetAllScientistsResp
 
     public GetAllScientistsQuery(GetAllScientistsRequest request)
     {
-        PageNumber = request.PageNumber;
+        PageNumber = request.Page;
         PageSize = request.PageSize;
         Country = request.Country;
     }

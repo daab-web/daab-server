@@ -1,10 +1,12 @@
 using Daab.SharedKernel;
 using FastEndpoints;
 using MediatR;
+using Microsoft.AspNetCore.Http.Extensions;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Daab.Modules.Scientists.Features.GetAllScientists;
 
-public sealed class GetAllScientistsEndpoint(IMediator mediator)
+public sealed class GetAllScientistsEndpoint(IMediator mediator, IFusionCache cache)
     : Endpoint<GetAllScientistsRequest, PagedResponse<GetAllScientistsResponse>>
 {
     public override void Configure()
@@ -15,6 +17,13 @@ public sealed class GetAllScientistsEndpoint(IMediator mediator)
 
     public override async Task HandleAsync(GetAllScientistsRequest request, CancellationToken ct)
     {
-        await Send.OkAsync(await mediator.Send(new GetAllScientistsQuery(request), ct), ct);
+        var response = await cache.GetOrSetAsync(
+            HttpContext.Request.GetEncodedUrl(),
+            async cancellationToken =>
+                await mediator.Send(new GetAllScientistsQuery(request), cancellationToken),
+            token: ct
+        );
+
+        await Send.OkAsync(response, ct);
     }
 }

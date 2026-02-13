@@ -1,0 +1,28 @@
+@host = http://localhost:5035
+
+### Get all scientists
+@page = 1
+@pageSize = 20
+@country =
+GET {{host}}/scientists?page={{page}}&pageSize={{pageSize}}&country={{country}}
+
+### Get single scientist by id or slug
+@idOrSlug = 01KH9MKPNZ6MEFQ3DRSWJT7GTH
+GET {{host}}/scientists/{{idOrSlug}}
+
+### Add new scientist
+POST {{host}}/scientists
+Content-Type: application/json
+
+{
+    "userId": null,
+    "firstName": "",
+    "lastName": "",
+    "email": "",
+    "phoneNumber": null,
+    "description": "",
+    "academicTitle": "",
+    "institution": "",
+    "countries": [],
+    "areas": []
+}
