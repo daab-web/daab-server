@@ -1,4 +1,4 @@
-namespace Daab.Modules.Scientists.Features.GetScientist;
+namespace Daab.Modules.Scientists.Features.Scientists.GetScientist;
 
 public record GetScientistResponse(
     string Id,

@@ -1,4 +1,4 @@
-namespace Daab.Modules.Scientists.Features.GetAllScientists;
+namespace Daab.Modules.Scientists.Features.Scientists.GetAllScientists;
 
 public sealed record GetAllScientistsRequest(
     string? Country,

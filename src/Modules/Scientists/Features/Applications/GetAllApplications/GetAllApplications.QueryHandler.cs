@@ -1,11 +1,10 @@
-using Daab.Modules.Scientists.Features.Applications;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using LanguageExt;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Daab.Modules.Scientists.Features.GetAllApplications;
+namespace Daab.Modules.Scientists.Features.Applications.GetAllApplications;
 
 public sealed class GetAllApplicationsQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetAllApplicationsQuery, Fin<PagedResponse<ApplicationDto>>>

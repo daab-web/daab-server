@@ -4,7 +4,7 @@ using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Daab.Modules.Scientists.Features.GetAllApplications;
+namespace Daab.Modules.Scientists.Features.Applications.GetAllApplications;
 
 public sealed class GetAllApplicationsEndpoint(IMediator mediator)
     : Endpoint<GetAllApplicationsRequest, PagedResponse<ApplicationDto>>

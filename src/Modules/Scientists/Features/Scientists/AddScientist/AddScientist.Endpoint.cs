@@ -1,7 +1,7 @@
 using FastEndpoints;
 using MediatR;
 
-namespace Daab.Modules.Scientists.Features.AddScientist;
+namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
 public class AddScientistEndpoint(IMediator mediator)
     : Endpoint<AddScientistRequest, AddScientistResponse>

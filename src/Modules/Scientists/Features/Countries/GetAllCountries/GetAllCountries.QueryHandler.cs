@@ -1,8 +1,9 @@
 using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
-namespace Daab.Modules.Scientists.Features.GetAllCountries;
+namespace Daab.Modules.Scientists.Features.Countries.GetAllCountries;
 
 public sealed class GetAllCountriesQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetAllCountriesQuery, GetAllCountriesResponse>
@@ -12,7 +13,8 @@ public sealed class GetAllCountriesQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        var countries = context.Scientists.Select(s => s.Countries).Flatten().Distinct().ToArray();
+        var countries = context.Scientists.AsNoTracking().Select(s => s.Countries).AsEnumerable().Flatten().Distinct()
+            .ToArray();
 
         return Task.FromResult(new GetAllCountriesResponse(countries));
     }

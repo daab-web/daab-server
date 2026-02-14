@@ -1,4 +1,3 @@
-using Daab.Modules.Scientists.Features.GetAllApplications;
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;

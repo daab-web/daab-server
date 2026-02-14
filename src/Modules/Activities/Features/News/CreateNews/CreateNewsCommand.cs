@@ -15,5 +15,5 @@ public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<Crea
     public string? AuthorName { get; } = req.AuthorName;
 
     public string? Category { get; } = req.Category;
-    public IList<string> Tags { get;  } = req.Tags;
+    public List<string> Tags { get;  } = req.Tags;
 }

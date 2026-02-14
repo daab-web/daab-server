@@ -1,7 +1,7 @@
 using Daab.SharedKernel;
 using MediatR;
 
-namespace Daab.Modules.Scientists.Features.GetAllScientists;
+namespace Daab.Modules.Scientists.Features.Scientists.GetAllScientists;
 
 public class GetAllScientistsQuery : IRequest<PagedResponse<GetAllScientistsResponse>>
 {

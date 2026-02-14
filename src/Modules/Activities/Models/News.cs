@@ -14,5 +14,5 @@ public class News
 
     public string? Category { get; init; }
     public string EditorState { get; set; } = string.Empty;
-    public IList<string> Tags { get; set; } = [];
+    public List<string> Tags { get; set; } = [];
 }

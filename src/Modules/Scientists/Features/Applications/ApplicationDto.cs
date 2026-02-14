@@ -1,4 +1,4 @@
-namespace Daab.Modules.Scientists.Features.GetAllApplications;
+namespace Daab.Modules.Scientists.Features.Applications;
 
 public sealed record ApplicationDto(
     string Id,

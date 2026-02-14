@@ -1,7 +1,7 @@
 using Daab.Modules.Scientists.Persistence;
 using MediatR;
 
-namespace Daab.Modules.Scientists.Features.AddScientist;
+namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
 public class AddScientistCommandHandler(ScientistsDbContext context)
     : IRequestHandler<AddScientistCommand, AddScientistResponse>

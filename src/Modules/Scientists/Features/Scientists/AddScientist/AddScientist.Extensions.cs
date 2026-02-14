@@ -1,6 +1,6 @@
 using Daab.Modules.Scientists.Models;
 
-namespace Daab.Modules.Scientists.Features.AddScientist;
+namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
 public static class AddScientistExtensions
 {

@@ -1,9 +1,8 @@
 using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
-namespace Daab.Modules.Scientists.Features.GetScientist;
+namespace Daab.Modules.Scientists.Features.Scientists.GetScientist;
 
 public class GetScientistQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetScientistQuery, GetScientistResponse?>
