@@ -1,10 +1,9 @@
-using Daab.Modules.Scientists.Features.Applications.Apply;
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Daab.Modules.Scientists.Features.Apply;
+namespace Daab.Modules.Scientists.Features.Applications.Apply;
 
 public sealed class ApplyEndpoint(IMediator mediator) : Endpoint<ApplyRequest, ApplyResponse>
 {

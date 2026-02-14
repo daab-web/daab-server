@@ -1,7 +1,6 @@
-using Daab.Modules.Scientists.Features.Applications.Apply;
 using Daab.Modules.Scientists.Models;
 
-namespace Daab.Modules.Scientists.Features.Apply;
+namespace Daab.Modules.Scientists.Features.Applications.Apply;
 
 public static class ApplyExtensions
 {

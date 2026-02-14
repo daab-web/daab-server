@@ -1,6 +1,6 @@
-namespace Daab.Modules.Activities.Features.News.GetNews;
+namespace Daab.Modules.Activities.Features.News.GetAllNews;
 
-public sealed record GetNewsResponse(
+public record GetAllNewsResponse(
     string Id,
     string Title,
     string Slug,
@@ -10,6 +10,4 @@ public sealed record GetNewsResponse(
     string? AuthorId,
     string? AuthorName,
     string? Category,
-    List<string> Tags,
-    object? EditorState
-);
+    List<string> Tags);

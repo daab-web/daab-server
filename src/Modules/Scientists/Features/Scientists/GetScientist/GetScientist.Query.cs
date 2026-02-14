@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace Daab.Modules.Scientists.Features.GetScientist;
+namespace Daab.Modules.Scientists.Features.Scientists.GetScientist;
 
 public record GetScientistQuery : IRequest<GetScientistResponse>
 {

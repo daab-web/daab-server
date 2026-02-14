@@ -1,3 +1,3 @@
-namespace Daab.Modules.Scientists.Features.Apply;
+namespace Daab.Modules.Scientists.Features.Applications.Apply;
 
 public sealed record ApplyResponse(string ApplicationId, bool Accepted);

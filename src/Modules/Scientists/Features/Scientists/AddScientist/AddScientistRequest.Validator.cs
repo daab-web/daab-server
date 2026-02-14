@@ -1,6 +1,6 @@
-namespace Daab.Modules.Scientists.Features.AddScientist;
-
 using FluentValidation;
+
+namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
 public sealed class AddScientistRequestValidator : AbstractValidator<AddScientistRequest>
 {

@@ -15,7 +15,14 @@ public sealed class CreateNewsCommandHandler(ActivitiesDbContext context)
         {
             Title = request.Title,
             EditorState = JsonSerializer.Serialize(request.EditorState),
-            Thumbnail = ""
+            Thumbnail = request.Thumbnail,
+            Slug = request.Slug,
+            PublishedDate = DateTimeOffset.UtcNow,
+            AuthorId = request.AuthorId,
+            AuthorName = request.AuthorName,
+            Category = request.Category,
+            Tags = request.Tags,
+            Excerpt = request.Excerpt,
         };
 
         var entityEntry = await context.News.AddAsync(news, cancellationToken);

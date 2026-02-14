@@ -1,7 +1,7 @@
 using FastEndpoints;
 using MediatR;
 
-namespace Daab.Modules.Scientists.Features.GetAllCountries;
+namespace Daab.Modules.Scientists.Features.Countries.GetAllCountries;
 
 public class GetAllCountriesEndpoint(IMediator mediator)
     : EndpointWithoutRequest<GetAllCountriesResponse>

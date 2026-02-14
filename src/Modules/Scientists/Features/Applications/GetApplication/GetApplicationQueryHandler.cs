@@ -1,4 +1,3 @@
-using Daab.Modules.Scientists.Features.GetAllApplications;
 using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;

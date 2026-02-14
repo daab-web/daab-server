@@ -4,7 +4,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http.Extensions;
 using ZiggyCreatures.Caching.Fusion;
 
-namespace Daab.Modules.Scientists.Features.GetAllScientists;
+namespace Daab.Modules.Scientists.Features.Scientists.GetAllScientists;
 
 public sealed class GetAllScientistsEndpoint(IMediator mediator, IFusionCache cache)
     : Endpoint<GetAllScientistsRequest, PagedResponse<GetAllScientistsResponse>>

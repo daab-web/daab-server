@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.Extensions.Caching.Memory;
@@ -79,5 +80,10 @@ public static class ApiConfiguration
                     };
                 });
         }
+    }
+    [ModuleInitializer]
+    public static void EnsureDbFolderCreated()
+    {
+        Directory.CreateDirectory("sqlite");
     }
 }

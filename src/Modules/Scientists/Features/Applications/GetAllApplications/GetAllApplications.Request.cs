@@ -1,6 +1,6 @@
 using FastEndpoints;
 
-namespace Daab.Modules.Scientists.Features.GetAllApplications;
+namespace Daab.Modules.Scientists.Features.Applications.GetAllApplications;
 
 public sealed record GetAllApplicationsRequest
 {

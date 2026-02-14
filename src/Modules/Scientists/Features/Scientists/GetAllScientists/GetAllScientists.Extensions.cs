@@ -1,6 +1,6 @@
 using Daab.Modules.Scientists.Models;
 
-namespace Daab.Modules.Scientists.Features.GetAllScientists;
+namespace Daab.Modules.Scientists.Features.Scientists.GetAllScientists;
 
 public static class GetAllScientists
 {

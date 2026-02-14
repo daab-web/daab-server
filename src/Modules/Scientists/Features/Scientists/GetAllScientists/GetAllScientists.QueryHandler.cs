@@ -1,4 +1,3 @@
-using Daab.Modules.Scientists.Features.GetAllScientists;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using MediatR;
