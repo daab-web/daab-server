@@ -2,6 +2,8 @@ using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Extensions;
+using ZiggyCreatures.Caching.Fusion;
 
 namespace Daab.Modules.Activities.Features.News.GetNews;
 
@@ -23,6 +25,12 @@ public class GetNewsEndpoint(IMediator mediator) : EndpointWithoutRequest<GetNew
             return;
         }
 
+        // var cached = await cache.TryGetAsync<GetNewsResponse>(HttpContext.Request.GetEncodedUrl(), token: ct);
+        // if (cached.HasValue)
+        // {
+        //     return;
+        // }
+        
         var res = await mediator.Send(new GetNewsQuery(newsId), ct);
 
         await res.Match(

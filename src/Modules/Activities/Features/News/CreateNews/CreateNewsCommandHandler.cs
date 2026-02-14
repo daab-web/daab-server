@@ -15,7 +15,7 @@ public sealed class CreateNewsCommandHandler(ActivitiesDbContext context)
         {
             Title = request.Title,
             EditorState = JsonSerializer.Serialize(request.EditorState),
-            Thumbnail = "",
+            Thumbnail = request.Thumbnail,
             Slug = request.Slug,
             PublishedDate = DateTimeOffset.UtcNow,
             AuthorId = request.AuthorId,
