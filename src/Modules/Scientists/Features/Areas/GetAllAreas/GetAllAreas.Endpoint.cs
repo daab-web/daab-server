@@ -15,14 +15,14 @@ public sealed class GetAllAreasQuery() : IRequest<GetAllAreasResponse>;
 public sealed class GetAllAreasQueryHandler(ScientistsDbContext context)
     : IRequestHandler<GetAllAreasQuery, GetAllAreasResponse>
 {
-    public async Task<GetAllAreasResponse> Handle(
+    public Task<GetAllAreasResponse> Handle(
         GetAllAreasQuery request,
         CancellationToken cancellationToken
     )
     {
-        return new GetAllAreasResponse([
+        return Task.FromResult(new GetAllAreasResponse([
             .. context.Scientists.AsNoTracking().Select(s => s.Countries).Flatten().Distinct(),
-        ]);
+        ]));
     }
 }
 
