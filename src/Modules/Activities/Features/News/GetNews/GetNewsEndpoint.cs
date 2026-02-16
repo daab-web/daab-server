@@ -17,7 +17,7 @@ public class GetNewsEndpoint(IMediator mediator) : EndpointWithoutRequest<GetNew
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var idOrSlug = Route<string>("newsId");
+        var idOrSlug = Route<string>("idOrSlug");
 
         if (string.IsNullOrWhiteSpace(idOrSlug))
         {
