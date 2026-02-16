@@ -11,15 +11,15 @@ public class GetNewsEndpoint(IMediator mediator) : EndpointWithoutRequest<GetNew
 {
     public override void Configure()
     {
-        Get("/news/{newsId}");
+        Get("/news/{idOrSlug}");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var newsId = Route<string>("newsId");
+        var idOrSlug = Route<string>("newsId");
 
-        if (string.IsNullOrWhiteSpace(newsId))
+        if (string.IsNullOrWhiteSpace(idOrSlug))
         {
             await Send.ErrorsAsync(StatusCodes.Status400BadRequest, ct);
             return;
@@ -30,8 +30,8 @@ public class GetNewsEndpoint(IMediator mediator) : EndpointWithoutRequest<GetNew
         // {
         //     return;
         // }
-        
-        var res = await mediator.Send(new GetNewsQuery(newsId), ct);
+
+        var res = await mediator.Send(new GetNewsQuery(idOrSlug), ct);
 
         await res.Match(
             news => Send.OkAsync(news, ct),
