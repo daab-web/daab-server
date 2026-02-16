@@ -4,10 +4,10 @@ public sealed record CreateNewsRequest(
     string Title,
     object EditorState,
     string Slug,
-    string ThumbnailUri,
+    string Thumbnail,
     string? Excerpt,
     string? AuthorId,
-    string? AuthorName,
+    string? Author,
     string? Category,
     List<string> Tags
 );

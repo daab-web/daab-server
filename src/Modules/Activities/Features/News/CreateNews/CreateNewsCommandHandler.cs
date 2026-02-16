@@ -9,7 +9,10 @@ namespace Daab.Modules.Activities.Features.News.CreateNews;
 public sealed class CreateNewsCommandHandler(ActivitiesDbContext context)
     : IRequestHandler<CreateNewsCommand, Fin<CreateNewsResponse>>
 {
-    public async Task<Fin<CreateNewsResponse>> Handle(CreateNewsCommand request, CancellationToken cancellationToken)
+    public async Task<Fin<CreateNewsResponse>> Handle(
+        CreateNewsCommand request,
+        CancellationToken cancellationToken
+    )
     {
         var news = new Models.News
         {

@@ -9,11 +9,11 @@ public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<Crea
     public object EditorState { get; } = req.EditorState;
     public string Slug { get; } = req.Slug;
 
-    public string Thumbnail { get; } = req.ThumbnailUri;
+    public string Thumbnail { get; } = req.Thumbnail;
     public string? Excerpt { get; } = req.Excerpt;
     public string? AuthorId { get; } = req.AuthorId;
-    public string? AuthorName { get; } = req.AuthorName;
+    public string? AuthorName { get; } = req.Author;
 
     public string? Category { get; } = req.Category;
-    public List<string> Tags { get;  } = req.Tags;
+    public List<string> Tags { get; } = req.Tags;
 }
