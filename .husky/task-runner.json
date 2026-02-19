@@ -5,14 +5,33 @@
          "name": "csharpier format",
          "group": "pre-commit",
          "command": "dotnet",
-         "args": ["csharpier", "format", "${staged}"],
-         "include": ["**/*.cs", "**/*.csproj"]
+         "args": [
+            "csharpier",
+            "format",
+            "${staged}"
+         ],
+         "include": [
+            "**/*.cs",
+            "**/*.csproj",
+            "**/*.sln",
+            "**/*.props",
+            "**/*.targets"
+         ]
       },
       {
          "name": "stage formatted files",
          "command": "git",
-         "args": ["add", "--update"],
-         "include": ["**/*.cs", "**/*.csproj"]
+         "args": [
+            "add",
+            "--update"
+         ],
+         "include": [
+            "**/*.cs",
+            "**/*.csproj",
+            "**/*.sln",
+            "**/*.props",
+            "**/*.targets"
+         ]
       }
    ]
 }
