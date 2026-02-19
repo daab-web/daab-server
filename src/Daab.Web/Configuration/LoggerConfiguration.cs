@@ -33,12 +33,13 @@ public static class L
     {
         public IServiceCollection ConfigureLogging(IConfiguration config)
         {
-            services.AddSerilog((services, loggerConfig) =>
-                loggerConfig
-                    .ReadFrom.Configuration(config)
-                    .ReadFrom.Services(services)
-                    .Enrich.FromLogContext()
-                    .WriteTo.Console()
+            services.AddSerilog(
+                (services, loggerConfig) =>
+                    loggerConfig
+                        .ReadFrom.Configuration(config)
+                        .ReadFrom.Services(services)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Console()
             );
 
             return services;

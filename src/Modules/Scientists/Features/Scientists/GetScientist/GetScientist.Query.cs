@@ -11,4 +11,3 @@ public record GetScientistQuery : IRequest<GetScientistResponse>
         IdOrSlug = idOrSlug;
     }
 }
-

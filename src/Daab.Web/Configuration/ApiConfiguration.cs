@@ -81,6 +81,7 @@ public static class ApiConfiguration
                 });
         }
     }
+
     [ModuleInitializer]
     public static void EnsureDbFolderCreated()
     {

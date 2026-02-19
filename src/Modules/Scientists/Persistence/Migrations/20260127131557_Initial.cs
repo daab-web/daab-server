@@ -32,14 +32,18 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     ContributionsToDaab = table.Column<string>(type: "TEXT", nullable: false),
                     EngagedScientistFields = table.Column<string>(type: "TEXT", nullable: true),
                     AdditionalInformation = table.Column<string>(type: "TEXT", nullable: true),
-                    AdditionalInformationToShare = table.Column<string>(type: "TEXT", nullable: true),
+                    AdditionalInformationToShare = table.Column<string>(
+                        type: "TEXT",
+                        nullable: true
+                    ),
                     PhotoUrl = table.Column<string>(type: "TEXT", nullable: true),
-                    CvUrl = table.Column<string>(type: "TEXT", nullable: true)
+                    CvUrl = table.Column<string>(type: "TEXT", nullable: true),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Applications", x => x.Id);
-                });
+                }
+            );
 
             migrationBuilder.CreateTable(
                 name: "Scientists",
@@ -55,22 +59,21 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     AcademicTitle = table.Column<string>(type: "TEXT", nullable: false),
                     Institution = table.Column<string>(type: "TEXT", nullable: false),
                     Countries = table.Column<string>(type: "TEXT", nullable: false),
-                    Areas = table.Column<string>(type: "TEXT", nullable: false)
+                    Areas = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Scientists", x => x.Id);
-                });
+                }
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Applications");
+            migrationBuilder.DropTable(name: "Applications");
 
-            migrationBuilder.DropTable(
-                name: "Scientists");
+            migrationBuilder.DropTable(name: "Scientists");
         }
     }
 }

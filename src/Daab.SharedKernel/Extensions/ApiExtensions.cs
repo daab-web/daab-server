@@ -13,7 +13,7 @@ public static class ApiExtensions
             {
                 Title = error.Message,
                 Status = error.Code,
-                Instance = httpContext.Request.Path
+                Instance = httpContext.Request.Path,
             };
         }
     }

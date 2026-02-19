@@ -25,24 +25,21 @@ namespace Daab.Modules.Activities.Persistence.Migrations
                     AuthorName = table.Column<string>(type: "TEXT", nullable: true),
                     Category = table.Column<string>(type: "TEXT", nullable: true),
                     EditorState = table.Column<string>(type: "TEXT", nullable: false),
-                    Tags = table.Column<string>(type: "TEXT", nullable: false)
+                    Tags = table.Column<string>(type: "TEXT", nullable: false),
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_News", x => x.Id);
-                });
+                }
+            );
 
-            migrationBuilder.CreateIndex(
-                name: "news_title_idx",
-                table: "News",
-                column: "Title");
+            migrationBuilder.CreateIndex(name: "news_title_idx", table: "News", column: "Title");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "News");
+            migrationBuilder.DropTable(name: "News");
         }
     }
 }

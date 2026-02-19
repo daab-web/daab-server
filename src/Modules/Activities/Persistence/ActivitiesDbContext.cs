@@ -1,6 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-
 using Daab.Modules.Activities.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Activities.Persistence;
 

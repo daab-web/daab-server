@@ -3,8 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Auth.Persistence;
 
-public class AuthDbContext(DbContextOptions<AuthDbContext> options)
-    : DbContext(options)
+public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
     public DbSet<User> Users { get; init; }
     public DbSet<Role> Roles { get; init; }

@@ -16,22 +16,22 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                 type: "TEXT",
                 nullable: true,
                 oldClrType: typeof(string),
-                oldType: "TEXT");
+                oldType: "TEXT"
+            );
 
             migrationBuilder.AddColumn<int>(
                 name: "Status",
                 table: "Applications",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "Status",
-                table: "Applications");
+            migrationBuilder.DropColumn(name: "Status", table: "Applications");
 
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
@@ -41,7 +41,8 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                 defaultValue: "",
                 oldClrType: typeof(string),
                 oldType: "TEXT",
-                oldNullable: true);
+                oldNullable: true
+            );
         }
     }
 }
