@@ -22,7 +22,12 @@ public sealed class GetAllAreasQueryHandler(ScientistsDbContext context)
     {
         return Task.FromResult(
             new GetAllAreasResponse([
-                .. context.Scientists.AsNoTracking().Select(s => s.Areas).Flatten().Distinct(),
+                .. context
+                    .Scientists.AsNoTracking()
+                    .Select(s => s.Areas)
+                    .Flatten()
+                    .Order()
+                    .Distinct(),
             ])
         );
     }

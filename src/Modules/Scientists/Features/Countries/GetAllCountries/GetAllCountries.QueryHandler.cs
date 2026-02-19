@@ -13,7 +13,12 @@ public sealed class GetAllCountriesQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        var countries = context.Scientists.AsNoTracking().Select(s => s.Countries).AsEnumerable().Flatten().Distinct()
+        var countries = context
+            .Scientists.AsNoTracking()
+            .Select(s => s.Countries)
+            .Flatten()
+            .Order()
+            .Distinct()
             .ToArray();
 
         return Task.FromResult(new GetAllCountriesResponse(countries));
