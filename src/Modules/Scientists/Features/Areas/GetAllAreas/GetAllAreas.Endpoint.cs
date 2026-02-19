@@ -20,9 +20,11 @@ public sealed class GetAllAreasQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        return Task.FromResult(new GetAllAreasResponse([
-            .. context.Scientists.AsNoTracking().Select(s => s.Countries).Flatten().Distinct(),
-        ]));
+        return Task.FromResult(
+            new GetAllAreasResponse([
+                .. context.Scientists.AsNoTracking().Select(s => s.Areas).Flatten().Distinct(),
+            ])
+        );
     }
 }
 
