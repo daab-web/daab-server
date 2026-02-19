@@ -20,6 +20,21 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
             scientists = scientists.Where(s => s.Countries.Contains(request.Country));
         }
 
+        if (!string.IsNullOrWhiteSpace(request.Area))
+        {
+            scientists = scientists.Where(s => s.Areas.Contains(request.Area));
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Search))
+        {
+            scientists = scientists.Where(s =>
+                s.FirstName.Contains(request.Search)
+                || s.LastName.Contains(request.Search)
+                || s.Institution.Contains(request.Search)
+                || s.Areas.Contains(request.Search)
+            );
+        }
+
         var response = scientists.ToAllScientistsResponse();
         return await response.ToPagedResponseAsync(
             new PageRequest { PageNumber = request.PageNumber, PageSize = request.PageSize },
