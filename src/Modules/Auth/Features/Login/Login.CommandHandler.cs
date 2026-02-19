@@ -21,19 +21,29 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginRespon
     private readonly AuthDbContext _context;
     private readonly ILogger<LoginCommandHandler> _logger;
 
-    public LoginCommandHandler(AuthDbContext context, IOptions<JwtOptions> options, ILogger<LoginCommandHandler> logger)
+    public LoginCommandHandler(
+        AuthDbContext context,
+        IOptions<JwtOptions> options,
+        ILogger<LoginCommandHandler> logger
+    )
     {
         _context = context;
         _options = options.Value;
         _logger = logger;
     }
 
-    public async Task<Fin<LoginResponse>> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<Fin<LoginResponse>> Handle(
+        LoginCommand request,
+        CancellationToken cancellationToken
+    )
     {
-        var user = await _context.Users
-            .Include(u => u.Roles)
+        var user = await _context
+            .Users.Include(u => u.Roles)
             .AsNoTracking()
-            .SingleOrDefaultAsync(u => u.Username == request.Username, cancellationToken: cancellationToken);
+            .SingleOrDefaultAsync(
+                u => u.Username == request.Username,
+                cancellationToken: cancellationToken
+            );
 
         if (user is null)
         {
@@ -42,7 +52,11 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginRespon
 
         var hasher = new PasswordHasher<User>();
 
-        PasswordVerificationResult result = hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+        PasswordVerificationResult result = hasher.VerifyHashedPassword(
+            user,
+            user.PasswordHash,
+            request.Password
+        );
 
         if (result is PasswordVerificationResult.Failed)
         {

@@ -51,6 +51,24 @@ public static class DependencyInjection
                             Encoding.UTF8.GetBytes(jwtOptions.JwtSecret)
                         ),
                     };
+
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = (context) =>
+                        {
+                            var hasToken = context.Request.Cookies.TryGetValue(
+                                "daab.accessToken",
+                                out string? token
+                            );
+
+                            if (hasToken)
+                            {
+                                context.Token = token;
+                            }
+
+                            return Task.CompletedTask;
+                        },
+                    };
                 });
             services.AddAuthorization();
 
