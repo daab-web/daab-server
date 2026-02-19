@@ -1,5 +1,6 @@
 using LanguageExt;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Activities.Features.News.CreateNews;
 
@@ -9,7 +10,7 @@ public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<Crea
     public object EditorState { get; } = req.EditorState;
     public string Slug { get; } = req.Slug;
 
-    public string Thumbnail { get; } = req.Thumbnail;
+    public IFormFile? Thumbnail { get; } = req.Thumbnail;
     public string? Excerpt { get; } = req.Excerpt;
     public string? AuthorId { get; } = req.AuthorId;
     public string? AuthorName { get; } = req.Author;

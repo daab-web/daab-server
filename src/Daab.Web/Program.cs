@@ -1,3 +1,4 @@
+using Daab.Infrastructure;
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
 using Daab.Modules.Scientists;
@@ -15,7 +16,11 @@ builder
     .ConfigureProblemDetails()
     .ConfigureEndpoints();
 
-builder.Services.AddAuthModule(config).AddScientistsModule(config).AddActivitiesModule(config);
+builder
+    .Services.AddInfrastructure(config)
+    .AddAuthModule(config)
+    .AddScientistsModule(config)
+    .AddActivitiesModule(config);
 
 var app = builder.Build();
 

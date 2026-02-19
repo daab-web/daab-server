@@ -32,7 +32,7 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
         return new GetNewsResponse(
             news.Id,
             news.Title,
-            news.Thumbnail,
+            news.Slug,
             news.Thumbnail,
             news.Excerpt,
             news.PublishedDate.ToString("yyyy-MM-dd"),

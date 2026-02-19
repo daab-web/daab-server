@@ -4,10 +4,11 @@ public record GetAllNewsResponse(
     string Id,
     string Title,
     string Slug,
-    string Thumbnail,
+    string? Thumbnail,
     string? Excerpt,
     string PublishedDate,
     string? AuthorId,
     string? AuthorName,
     string? Category,
-    List<string> Tags);
+    List<string> Tags
+);

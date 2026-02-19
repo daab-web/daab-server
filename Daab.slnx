@@ -1,14 +1,16 @@
 <Solution>
   <Folder Name="/src/">
+    <Project Path="src/Daab.Infrastructure/Daab.Infrastructure.csproj" />
     <Project Path="src/Daab.SharedKernel/Daab.SharedKernel.csproj" />
     <Project Path="src/Daab.Web/Daab.Web.csproj" />
   </Folder>
   <Folder Name="/src/Modules/Scientists/">
     <Project Path="src/Modules/Scientists/Daab.Modules.Scientists.csproj" />
   </Folder>
-  <Folder Name="/src/Modules/Auth/" >
+  <Folder Name="/src/Modules/Auth/">
     <Project Path="src/Modules/Auth/Daab.Modules.Auth.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/" />
   <Folder Name="/src/Modules/Activities/">
     <Project Path="src\Modules\Activities\Daab.Modules.Activities.csproj" />
   </Folder>

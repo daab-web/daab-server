@@ -1,3 +1,8 @@
+using System.Threading.Channels;
+using Daab.Modules.Activities.BackgroundWorkers;
+using Daab.Modules.Activities.Common;
+using Daab.Modules.Activities.Configuration;
+using Daab.Modules.Activities.Messages;
 using Daab.Modules.Activities.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +19,25 @@ public static class DependencyInjection
         {
             var connectionString =
                 config.GetConnectionString("activities-module")
-                ?? throw new ArgumentException("Activities module connection string cannot be null");
+                ?? throw new ArgumentException(
+                    "Activities module connection string cannot be null"
+                );
+
+            services.Configure<MinioOptions>(config.GetRequiredSection("Minio"));
+
+            services.AddKeyedSingleton(
+                ChannelKeys.ThumbnailUpload,
+                (_, _) => Channel.CreateUnbounded<ThumbnailUploadMessage>()
+            );
+            services.AddHostedService<ImageUploadWorker>();
 
             services.AddDbContextPool<ActivitiesDbContext>(optionsBuilder =>
-                optionsBuilder.UseSqlite(connectionString));
+                optionsBuilder.UseSqlite(connectionString)
+            );
 
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
+            services.AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
+            );
 
             return services;
         }
