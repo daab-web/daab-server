@@ -45,7 +45,7 @@ public class TokenService(IOptions<JwtOptions> options) : ITokenService
             issuer: _options.Issuer,
             audience: _options.Audience,
             claims: claims,
-            expires: DateTime.UtcNow.AddSeconds(_options.ExpiresMinutes),
+            expires: DateTime.UtcNow.AddMinutes(_options.ExpiresMinutes),
             signingCredentials: credentials
         );
 

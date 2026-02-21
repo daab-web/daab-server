@@ -49,7 +49,7 @@ public sealed class RefreshTokenEndpoint(IMediator mediator, IOptions<JwtOptions
                         HttpOnly = true,
                         Secure = true,
                         SameSite = SameSiteMode.Lax,
-                        Expires = DateTimeOffset.UtcNow.AddSeconds(_options.ExpiresMinutes),
+                        Expires = DateTimeOffset.UtcNow.AddMinutes(_options.ExpiresMinutes),
                     }
                 );
                 HttpContext.Response.Cookies.Append(
