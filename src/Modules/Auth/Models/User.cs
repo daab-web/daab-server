@@ -10,6 +10,7 @@ public class User
     public string PasswordHash { get; init; }
 
     public ICollection<Role> Roles { get; } = [];
+    public ICollection<RefreshToken> RefreshTokens { get; } = [];
 
     protected User(string username)
     {

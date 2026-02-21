@@ -1,17 +1,7 @@
 using System.Security.Cryptography;
+using Daab.Modules.Auth.Models;
 
 namespace Daab.Modules.Auth.Common;
-
-public class RefreshToken
-{
-    public required string Token { get; init; }
-    public required string UserId { get; init; }
-    public DateTimeOffset CreatedAt { get; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset ExpiresAt { get; } = DateTimeOffset.UtcNow.AddDays(7);
-    public bool IsRevoked { get; private set; }
-
-    public void Revoke() => IsRevoked = true;
-}
 
 public static class TokenService
 {
