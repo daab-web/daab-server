@@ -1,4 +1,5 @@
 using System.Text;
+using Daab.Modules.Auth.Common;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
@@ -26,6 +27,8 @@ public static class DependencyInjection
             services.AddDbContext<AuthDbContext>(optionsBuilder =>
                 optionsBuilder.UseSqlite(connectionString)
             );
+
+            services.AddScoped<ITokenService, TokenService>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)

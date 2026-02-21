@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Daab.Infrastructure;
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
@@ -29,7 +30,7 @@ app.UseCors();
 app.UseAuthModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();
-app.UseFastEndpoints();
+app.UseFastEndpoints(c => c.Security.RoleClaimType = ClaimTypes.Role);
 
 app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");
 app.MapScalarApiReference();

@@ -23,7 +23,7 @@ public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(
 
         refreshToken.HasKey(rt => rt.Id);
         refreshToken
-            .HasOne(rt => rt.Users)
+            .HasOne(rt => rt.User)
             .WithMany(u => u.RefreshTokens)
             .HasForeignKey(rt => rt.UserId);
     }
