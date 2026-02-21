@@ -27,7 +27,6 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
                     new CookieOptions
                     {
                         HttpOnly = true,
-                        Secure = true,
                         SameSite = SameSiteMode.Lax,
                         Expires = DateTimeOffset.UtcNow.AddMinutes(15),
                     }
@@ -38,7 +37,6 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
                     new CookieOptions
                     {
                         HttpOnly = true,
-                        Secure = true,
                         SameSite = SameSiteMode.Lax,
                         Expires = refreshToken.ExpiresAt,
                     }
