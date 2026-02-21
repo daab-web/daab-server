@@ -1,3 +1,3 @@
 namespace Daab.Modules.Auth.Features.Login;
 
-public sealed record LoginResponse(string AccesToken);
+public sealed record LoginResponse(string AccessToken);

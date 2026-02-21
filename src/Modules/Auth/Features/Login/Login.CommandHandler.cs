@@ -1,6 +1,4 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
+using Daab.Modules.Auth.Common;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
@@ -11,28 +9,31 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Daab.Modules.Auth.Features.Login;
 
-public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginResponse>>
+public class LoginCommandHandler
+    : IRequestHandler<LoginCommand, Fin<(LoginResponse, Models.RefreshToken refreshToken)>>
 {
     private readonly JwtOptions _options;
     private readonly AuthDbContext _context;
+    private readonly ITokenService _tokenService;
     private readonly ILogger<LoginCommandHandler> _logger;
 
     public LoginCommandHandler(
         AuthDbContext context,
+        ITokenService tokenService,
         IOptions<JwtOptions> options,
         ILogger<LoginCommandHandler> logger
     )
     {
         _context = context;
+        _tokenService = tokenService;
         _options = options.Value;
         _logger = logger;
     }
 
-    public async Task<Fin<LoginResponse>> Handle(
+    public async Task<Fin<(LoginResponse, Models.RefreshToken refreshToken)>> Handle(
         LoginCommand request,
         CancellationToken cancellationToken
     )
@@ -63,31 +64,12 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<LoginRespon
             return Error.New(401, "Invalid credentials");
         }
 
-        return new LoginResponse(GenerateAccessToken(user));
-    }
+        var refreshToken = _tokenService.GenerateRefreshToken(user.Id);
+        var accessToken = _tokenService.GenerateAccessToken(user);
 
-    private string GenerateAccessToken(User user)
-    {
-        List<Claim> claims =
-        [
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.Username),
-        ];
+        await _context.RefreshTokens.AddAsync(refreshToken, cancellationToken);
+        await _context.SaveChangesAsync(cancellationToken);
 
-        claims.AddRange(user.Roles.Select(r => new Claim(ClaimTypes.Role, r.Name)));
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.JwtSecret));
-
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha512);
-
-        var token = new JwtSecurityToken(
-            issuer: _options.Issuer,
-            audience: _options.Audience,
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(_options.ExpiresMinutes),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return (new LoginResponse(accessToken), refreshToken);
     }
 }

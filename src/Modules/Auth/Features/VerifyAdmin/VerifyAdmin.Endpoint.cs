@@ -8,18 +8,11 @@ public class VerifyAdminEndpoint : EndpointWithoutRequest
     public override void Configure()
     {
         Get("/admin");
+        Roles("admin");
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var roleClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role);
-
-        if (roleClaim is not { Value: "admin" })
-        {
-            await Send.ForbiddenAsync(ct);
-            return;
-        }
-
         await Send.OkAsync(cancellation: ct);
     }
 }
