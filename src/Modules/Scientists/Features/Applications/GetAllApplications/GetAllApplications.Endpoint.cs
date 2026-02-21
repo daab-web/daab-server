@@ -19,8 +19,6 @@ public sealed class GetAllApplicationsEndpoint(IMediator mediator)
 
     public override async Task HandleAsync(GetAllApplicationsRequest req, CancellationToken ct)
     {
-        // TODO: request validation
-
         var result = await mediator.Send(new GetAllApplicationsQuery(req), ct);
 
         await result.Match(
