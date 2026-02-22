@@ -4,16 +4,16 @@ public class Scientist
 {
     public string Id { get; private set; }
     public string? UserId { get; private set; }
-    public string Email { get; private set; }
-    public string? PhoneNumber { get; private set; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
-    public string? Description { get; private set; }
-    public string AcademicTitle { get; private set; }
-    public string Institution { get; private set; }
+    public string Email { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string? Description { get; set; }
+    public string AcademicTitle { get; set; }
+    public string Institution { get; set; }
 
-    public IEnumerable<string> Countries { get; private set; }
-    public IEnumerable<string> Areas { get; private set; }
+    public IEnumerable<string> Countries { get; set; }
+    public IEnumerable<string> Areas { get; set; }
 
     public string Slug()
     {
