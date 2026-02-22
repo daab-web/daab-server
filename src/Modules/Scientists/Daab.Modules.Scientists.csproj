@@ -12,5 +12,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Daab.SharedKernel\Daab.SharedKernel.csproj" />
+    <ProjectReference Include="..\Activities\Daab.Modules.Activities.csproj" />
   </ItemGroup>
 </Project>
