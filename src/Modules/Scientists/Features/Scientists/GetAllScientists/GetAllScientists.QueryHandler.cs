@@ -27,11 +27,13 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
 
         if (!string.IsNullOrWhiteSpace(request.Search))
         {
+            var search = request.Search.ToLower();
+
             scientists = scientists.Where(s =>
-                s.FirstName.Contains(request.Search)
-                || s.LastName.Contains(request.Search)
-                || s.Institution.Contains(request.Search)
-                || s.Areas.Contains(request.Search)
+                s.FirstName.Contains(search)
+                || s.LastName.Contains(search)
+                || s.Institution.Contains(search)
+                || s.Areas.Any(x => x.ToLower().Contains(search))
             );
         }
 
