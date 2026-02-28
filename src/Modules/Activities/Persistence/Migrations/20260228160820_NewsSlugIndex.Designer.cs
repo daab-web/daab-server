@@ -3,6 +3,7 @@ using System;
 using Daab.Modules.Activities.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Daab.Modules.Activities.Persistence.Migrations
 {
     [DbContext(typeof(ActivitiesDbContext))]
-    partial class ActivitiesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260228160820_NewsSlugIndex")]
+    partial class NewsSlugIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");

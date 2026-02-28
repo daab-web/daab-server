@@ -13,5 +13,7 @@ public class ActivitiesDbContext(DbContextOptions<ActivitiesDbContext> options) 
 
         news.HasKey(n => n.Id);
         news.HasIndex(n => n.Title, "news_title_idx");
+
+        modelBuilder.Entity<News>().HasIndex(n => n.Slug).IsUnique();
     }
 }

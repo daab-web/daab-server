@@ -1,4 +1,7 @@
 using Daab.Modules.Scientists.Persistence;
+using Daab.SharedKernel;
+using FluentValidation;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +25,10 @@ public static class DependencyInjection
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
             );
+
+            // services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            // services.AddFluentValidationAutoValidation();
 
             return services;
         }

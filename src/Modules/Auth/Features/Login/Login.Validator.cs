@@ -1,8 +1,9 @@
+using FastEndpoints;
 using FluentValidation;
 
 namespace Daab.Modules.Auth.Features.Login;
 
-public class LoginRequestValidator : AbstractValidator<LoginRequest>
+public class LoginRequestValidator : Validator<LoginRequest>
 {
     public LoginRequestValidator()
     {

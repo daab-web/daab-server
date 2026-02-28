@@ -1,12 +1,17 @@
+using FastEndpoints;
 using FluentValidation;
 
 namespace Daab.Modules.Scientists.Features.Scientists.UpdateScientist;
 
-public class UpdateScientistRequestValidator : AbstractValidator<UpdateScientistRequest>
+public class UpdateScientistRequestValidator : Validator<UpdateScientistRequest>
 {
     public UpdateScientistRequestValidator()
     {
-        RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256);
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .WithMessage("Email can't be null")
+            .EmailAddress()
+            .MaximumLength(256);
 
         RuleFor(x => x.PhoneNumber)
             .MaximumLength(32)
