@@ -14,4 +14,7 @@
   <Folder Name="/src/Modules/Activities/">
     <Project Path="src\Modules\Activities\Daab.Modules.Activities.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Scientists/Daab.Modules.Scientists.Tests.csproj" />
+  </Folder>
 </Solution>

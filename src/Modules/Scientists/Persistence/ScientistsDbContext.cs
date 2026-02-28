@@ -5,8 +5,8 @@ namespace Daab.Modules.Scientists.Persistence;
 
 public class ScientistsDbContext : DbContext
 {
-    internal DbSet<Scientist> Scientists { get; set; }
-    internal DbSet<Application> Applications { get; set; }
+    public DbSet<Scientist> Scientists { get; set; }
+    public DbSet<Application> Applications { get; set; }
 
     public ScientistsDbContext(DbContextOptions<ScientistsDbContext> options)
         : base(options) { }

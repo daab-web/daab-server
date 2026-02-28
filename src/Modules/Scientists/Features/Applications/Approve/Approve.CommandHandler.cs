@@ -37,6 +37,7 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             application.FieldOfStudy.Split(',')
         );
 
+        application.Status = ApplicationStatus.Approved;
         var scientistEntity = await context.Scientists.AddAsync(scientist, cancellationToken);
         var statesWritten = await context.SaveChangesAsync(cancellationToken);
 
