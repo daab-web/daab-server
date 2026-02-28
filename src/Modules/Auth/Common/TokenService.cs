@@ -4,7 +4,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
-using LanguageExt;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
