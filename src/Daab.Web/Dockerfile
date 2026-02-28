@@ -9,8 +9,8 @@ ARG BUILD_CONFIGURATION
 WORKDIR /src
 
 COPY ["Daab.slnx", "."]
-COPY ["src/Directory.Build.props", "./src"]
-COPY ["src/Directory.Packages.props", "./src"]
+COPY ["./src/Directory.Build.props", "./src/"]
+COPY ["./src/Directory.Packages.props", "./src/"]
 
 COPY ["src/Daab.Web/Daab.Web.csproj", "src/Daab.Web/"]
 COPY ["src/Daab.SharedKernel/Daab.SharedKernel.csproj", "src/Daab.SharedKernel/"]
