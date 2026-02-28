@@ -1,4 +1,3 @@
-using Daab.Modules.Activities.Features.News.UpdateNews;
 using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;

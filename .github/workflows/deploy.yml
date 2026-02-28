@@ -3,6 +3,8 @@ name: Deploy to VPS using Docker
 on:
   push:
     branches: [master]
+    paths-ignore:
+      - 'tests/**'
   workflow_dispatch:
 
 jobs:
