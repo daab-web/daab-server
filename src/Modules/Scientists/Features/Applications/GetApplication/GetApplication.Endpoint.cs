@@ -30,7 +30,7 @@ public sealed class GetApplicationEndpoint(IMediator mediator)
 
         await result.Match(
             application => Send.OkAsync(application, ct),
-            err => Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            err => err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

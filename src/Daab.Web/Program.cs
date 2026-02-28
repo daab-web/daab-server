@@ -30,7 +30,11 @@ app.UseCors();
 app.UseAuthModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();
-app.UseFastEndpoints(c => c.Security.RoleClaimType = ClaimTypes.Role);
+app.UseFastEndpoints(static c =>
+{
+    c.Errors.UseProblemDetails();
+    c.Security.RoleClaimType = ClaimTypes.Role;
+});
 
 app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");
 app.MapScalarApiReference();

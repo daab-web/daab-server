@@ -35,7 +35,7 @@ public class GetNewsEndpoint(IMediator mediator) : EndpointWithoutRequest<GetNew
 
         await res.Match(
             news => Send.OkAsync(news, ct),
-            err => Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            err => err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

@@ -23,7 +23,7 @@ public sealed class GetAllApplicationsEndpoint(IMediator mediator)
 
         await result.Match(
             Send.OkAsync,
-            err => Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            err => err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

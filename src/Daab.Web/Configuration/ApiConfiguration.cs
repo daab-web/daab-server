@@ -58,9 +58,9 @@ public static class ApiConfiguration
             {
                 options.CustomizeProblemDetails = context =>
                 {
-                    context.ProblemDetails.Extensions["traceId"] = context
-                        .HttpContext
-                        .TraceIdentifier;
+                    context.ProblemDetails.Detail =
+                        "An unexpected error occurred. Please contact support with trace ID.";
+                    context.ProblemDetails.Instance = context.HttpContext.Request.Path;
                 };
             });
 

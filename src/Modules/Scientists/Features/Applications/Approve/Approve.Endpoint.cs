@@ -36,7 +36,7 @@ public sealed class ApproveApplicetionEndpoint(IMediator mediator) : EndpointWit
                     generateAbsoluteUrl: true,
                     cancellation: ct
                 ),
-            error => Send.ResultAsync(TypedResults.Problem(error.ToProblemDetails(HttpContext)))
+            error => error.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

@@ -64,8 +64,7 @@ public sealed class RefreshTokenEndpoint(IMediator mediator, IOptions<JwtOptions
 
                 await Send.OkAsync(new { AccessToken = accessToken }, ct);
             },
-            async error =>
-                await Send.ResultAsync(TypedResults.Problem(error.ToProblemDetails(HttpContext)))
+            async error => await error.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

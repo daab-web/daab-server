@@ -26,8 +26,7 @@ public sealed class ApplyEndpoint(IMediator mediator) : Endpoint<ApplyRequest, A
                     generateAbsoluteUrl: true,
                     cancellation: ct
                 ),
-            async err =>
-                await Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            async err => await err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

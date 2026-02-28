@@ -39,7 +39,7 @@ public class CreateNewsEndpoint(IMediator mediator)
                     generateAbsoluteUrl: true,
                     cancellation: ct
                 ),
-            err => Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            err => err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using FastEndpoints;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Http;
 
@@ -7,13 +9,14 @@ public static class ApiExtensions
 {
     extension(Error error)
     {
-        public Microsoft.AspNetCore.Mvc.ProblemDetails ToProblemDetails(HttpContext httpContext)
+        public ProblemDetails ToProblemDetails(HttpContext httpContext)
         {
-            return new Microsoft.AspNetCore.Mvc.ProblemDetails
+            return new ProblemDetails
             {
-                Title = error.Message,
+                Detail = error.Message,
                 Status = error.Code,
                 Instance = httpContext.Request.Path,
+                TraceId = Activity.Current?.Id ?? httpContext.TraceIdentifier,
             };
         }
     }

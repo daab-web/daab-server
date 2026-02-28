@@ -43,8 +43,7 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
                 );
                 await Send.OkAsync(loginResponse, cancellation: ct);
             },
-            async err =>
-                await Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            async err => await err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }
