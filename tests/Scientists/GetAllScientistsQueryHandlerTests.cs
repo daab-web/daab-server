@@ -9,11 +9,16 @@ public class GetAllScientistsQueryHandlerTests
 {
     private static ScientistsDbContext CreateInMemoryContext()
     {
+        var dbName = Path.GetTempFileName();
         var options = new DbContextOptionsBuilder<ScientistsDbContext>()
-            .UseInMemoryDatabase(databaseName: Ulid.NewUlid().ToString())
+            .UseSqlite($"Data Source={dbName}")
             .Options;
 
-        return new ScientistsDbContext(options);
+        var context = new ScientistsDbContext(options);
+
+        context.Database.Migrate();
+
+        return context;
     }
 
     [Fact]
