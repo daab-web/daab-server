@@ -1,12 +1,13 @@
+using FastEndpoints;
 using FluentValidation;
 
 namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
-public sealed class AddScientistRequestValidator : AbstractValidator<AddScientistRequest>
+public sealed class AddScientistRequestValidator : Validator<AddScientistRequest>
 {
     public AddScientistRequestValidator()
     {
-        RuleFor(x => x.FirstName).NotEmpty().WithMessage("Firt name is required");
+        RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required");
         RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required");
 
         RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required");

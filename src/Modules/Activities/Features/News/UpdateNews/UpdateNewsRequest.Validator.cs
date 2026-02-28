@@ -1,9 +1,10 @@
+using FastEndpoints;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Activities.Features.News.UpdateNews;
 
-public class UpdateNewsRequestValidator : AbstractValidator<UpdateNewsRequest>
+public class UpdateNewsRequestValidator : Validator<UpdateNewsRequest>
 {
     private const int MaxThumbnailSizeMb = 5;
     private const int MaxThumbnailSizeBytes = MaxThumbnailSizeMb * 1024 * 1024;

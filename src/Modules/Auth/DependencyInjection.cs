@@ -3,6 +3,9 @@ using Daab.Modules.Auth.Common;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
+using Daab.SharedKernel;
+using FluentValidation;
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -33,6 +36,9 @@ public static class DependencyInjection
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
             );
+
+            // services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
+            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             var jwtOptions = config.GetRequiredSection(nameof(JwtOptions)).Get<JwtOptions>();
             ArgumentNullException.ThrowIfNull(jwtOptions);
