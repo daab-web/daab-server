@@ -27,7 +27,7 @@ public class DeleteScientistEndpoint(IMediator mediator) : EndpointWithoutReques
 
         await res.Match(
             entity => Send.OkAsync(entity, cancellation: ct),
-            err => Send.ResultAsync(TypedResults.Problem(err.ToProblemDetails(HttpContext)))
+            err => err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
     }
 }
