@@ -7,7 +7,7 @@ public sealed record UpdateScientistRequest(
     string LastName,
     string? Description,
     string AcademicTitle,
-    string Institution,
-    IEnumerable<string> Countries,
-    IEnumerable<string> Areas
+    string[] Institution,
+    string[] Countries,
+    string[] Areas
 );

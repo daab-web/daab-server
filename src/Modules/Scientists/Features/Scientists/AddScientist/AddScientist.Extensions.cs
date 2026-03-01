@@ -48,7 +48,7 @@ public static class AddScientistExtensions
                 s.PhoneNumber,
                 s.Description,
                 s.AcademicTitle,
-                s.Institution,
+                [.. s.Institutions],
                 [.. s.Countries],
                 [.. s.Areas]
             );

@@ -27,7 +27,12 @@ public class UpdateScientistRequestValidator : Validator<UpdateScientistRequest>
 
         RuleFor(x => x.AcademicTitle).NotEmpty().MaximumLength(150);
 
-        RuleFor(x => x.Institution).NotEmpty().MaximumLength(200);
+        RuleFor(x => x.Institution)
+            .NotNull()
+            .Must(i => i.Any())
+            .WithMessage("At least one institution must be specified.");
+
+        RuleForEach(x => x.Institution).NotEmpty().MaximumLength(200);
 
         RuleFor(x => x.Countries)
             .NotNull()

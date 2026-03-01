@@ -11,7 +11,7 @@ public record AddScientistCommand : IRequest<AddScientistResponse>
     public string? PhoneNumber { get; }
     public string Description { get; }
     public string AcademicTitle { get; }
-    public string Institution { get; }
+    public string[] Institution { get; }
     public string[] Countries { get; }
     public string[] Areas { get; }
 

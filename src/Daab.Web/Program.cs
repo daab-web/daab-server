@@ -10,6 +10,8 @@ using Scalar.AspNetCore;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+builder.WebHost.ConfigureKestrel(options => options.AddServerHeader = false);
+
 builder
     .Services.ConfigureLogging(config)
     .ConfigureCors(config)

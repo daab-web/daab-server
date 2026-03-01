@@ -35,7 +35,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Princeton",
+                institutions: ["Princeton"],
                 countries: ["USA"],
                 areas: ["Physics"]
             ),
@@ -46,7 +46,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Sorbonne",
+                institutions: ["Sorbonne"],
                 countries: ["France"],
                 areas: ["Chemistry"]
             ),
@@ -57,7 +57,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Sir",
-                institution: "Cambridge",
+                institutions: ["Cambridge"],
                 countries: ["UK"],
                 areas: ["Physics"]
             )
@@ -96,7 +96,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Princeton",
+                institutions: ["Princeton"],
                 countries: ["USA"],
                 areas: ["Physics"]
             ),
@@ -107,7 +107,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Sorbonne",
+                institutions: ["Sorbonne"],
                 countries: ["France"],
                 areas: ["Chemistry"]
             ),
@@ -118,7 +118,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Caltech",
+                institutions: ["Caltech"],
                 countries: ["USA"],
                 areas: ["Physics"]
             )
@@ -157,7 +157,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Princeton",
+                institutions: ["Princeton"],
                 countries: ["USA"],
                 areas: ["Physics"]
             ),
@@ -168,7 +168,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Sorbonne",
+                institutions: ["Sorbonne"],
                 countries: ["France"],
                 areas: ["Chemistry"]
             ),
@@ -179,7 +179,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Sir",
-                institution: "Cambridge",
+                institutions: ["Cambridge"],
                 countries: ["UK"],
                 areas: ["Physics"]
             )
@@ -218,7 +218,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Princeton",
+                institutions: ["Princeton"],
                 countries: ["USA"],
                 areas: ["Physics"]
             ),
@@ -229,7 +229,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Sorbonne",
+                institutions: ["Sorbonne"],
                 countries: ["France"],
                 areas: ["Chemistry"]
             ),
@@ -240,7 +240,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Sir",
-                institution: "Cambridge",
+                institutions: ["Cambridge"],
                 countries: ["UK"],
                 areas: ["Physics"]
             )
@@ -279,7 +279,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Princeton",
+                institutions: ["Princeton"],
                 countries: ["USA"],
                 areas: ["Physics"]
             ),
@@ -290,7 +290,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Caltech",
+                institutions: ["Caltech"],
                 countries: ["USA"],
                 areas: ["Physics"]
             ),
@@ -301,7 +301,7 @@ public class GetAllScientistsQueryHandlerTests
                 phoneNumber: null,
                 description: null,
                 academicTitle: "Dr.",
-                institution: "Sorbonne",
+                institutions: ["Sorbonne"],
                 countries: ["France"],
                 areas: ["Chemistry"]
             )
@@ -349,7 +349,7 @@ public class GetAllScientistsQueryHandlerTests
                     phoneNumber: null,
                     description: null,
                     academicTitle: "Dr.",
-                    institution: "University",
+                    institutions: ["University"],
                     countries: ["Country"],
                     areas: ["Science"]
                 )

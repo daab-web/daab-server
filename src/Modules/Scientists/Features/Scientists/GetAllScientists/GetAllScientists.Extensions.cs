@@ -16,7 +16,7 @@ public static class GetAllScientists
                 s.LastName,
                 s.Description,
                 s.AcademicTitle,
-                s.Institution,
+                [.. s.Institutions],
                 [.. s.Countries],
                 [.. s.Areas]
             );

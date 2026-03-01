@@ -25,7 +25,7 @@ public class UpdateScientistCommandHandler(ScientistsDbContext context)
         scientist.LastName = request.LastName;
         scientist.Countries = request.Countries;
         scientist.Areas = request.Areas;
-        scientist.Institution = request.Institution;
+        scientist.Institutions = request.Institution;
         scientist.FirstName = request.FirstName;
         scientist.Description = request.Description;
 

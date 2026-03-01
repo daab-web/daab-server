@@ -9,7 +9,7 @@ public record AddScientistResponse(
     string? PhoneNumber,
     string? Description,
     string AcademicTitle,
-    string Institution,
+    string[] Institution,
     string[] Countries,
     string[] Areas
 );

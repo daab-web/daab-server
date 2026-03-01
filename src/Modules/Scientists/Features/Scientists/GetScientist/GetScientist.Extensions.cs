@@ -16,7 +16,7 @@ public static class GetScientistExtensions
                 s.LastName,
                 s.Description,
                 s.AcademicTitle,
-                s.Institution,
+                [.. s.Institutions],
                 [.. s.Countries],
                 [.. s.Areas]
             );

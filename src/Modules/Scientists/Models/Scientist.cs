@@ -1,19 +1,35 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Daab.Modules.Scientists.Models;
 
 public class Scientist
 {
-    public string Id { get; private set; }
-    public string? UserId { get; private set; }
-    public string Email { get; set; }
-    public string? PhoneNumber { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string? Description { get; set; }
-    public string AcademicTitle { get; set; }
-    public string Institution { get; set; }
+    [MaxLength(36)]
+    public string Id { get; init; } = Ulid.NewUlid().ToString();
 
-    public IEnumerable<string> Countries { get; set; }
-    public IEnumerable<string> Areas { get; set; }
+    [MaxLength(36)]
+    public string? UserId { get; init; }
+
+    [MaxLength(320)]
+    public string Email { get; set; }
+
+    [MaxLength(15)]
+    public string? PhoneNumber { get; set; }
+
+    [MaxLength(64)]
+    public string FirstName { get; set; }
+
+    [MaxLength(64)]
+    public string LastName { get; set; }
+
+    public string? Description { get; set; }
+
+    [MaxLength(320)]
+    public string AcademicTitle { get; set; }
+
+    public ICollection<string> Institutions { get; set; }
+    public ICollection<string> Countries { get; set; }
+    public ICollection<string> Areas { get; set; }
 
     public string Slug()
     {
@@ -29,19 +45,18 @@ public class Scientist
         string? phoneNumber,
         string? description,
         string academicTitle,
-        string institution,
-        IEnumerable<string> countries,
-        IEnumerable<string> areas
+        ICollection<string> institutions,
+        ICollection<string> countries,
+        ICollection<string> areas
     )
     {
-        Id = Ulid.NewUlid().ToString();
-        FirstName = firstName;
-        LastName = lastName;
         Email = email;
         PhoneNumber = phoneNumber;
+        FirstName = firstName;
+        LastName = lastName;
         Description = description;
         AcademicTitle = academicTitle;
-        Institution = institution;
+        Institutions = institutions;
         Countries = countries;
         Areas = areas;
     }
@@ -54,9 +69,9 @@ public class Scientist
         string? phoneNumber,
         string? description,
         string academicTitle,
-        string institution,
-        IEnumerable<string> countries,
-        IEnumerable<string> areas
+        ICollection<string> institutions,
+        ICollection<string> countries,
+        ICollection<string> areas
     )
         : this(
             firstName,
@@ -65,7 +80,7 @@ public class Scientist
             phoneNumber,
             description,
             academicTitle,
-            institution,
+            institutions,
             countries,
             areas
         )
