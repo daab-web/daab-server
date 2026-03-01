@@ -32,7 +32,7 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             application.PhoneNumber,
             application.AdditionalInformation,
             application.AcademicTitle,
-            application.DegreeInstitution,
+            [application.DegreeInstitution],
             application.Residence.Split(','),
             application.FieldOfStudy.Split(',')
         );

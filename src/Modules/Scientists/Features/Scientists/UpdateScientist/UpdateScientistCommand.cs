@@ -28,7 +28,7 @@ public sealed class UpdateScientistCommand : IRequest<Fin<UpdateScientistRespons
     public string LastName { get; private set; }
     public string? Description { get; private set; }
     public string AcademicTitle { get; private set; }
-    public string Institution { get; private set; }
-    public IEnumerable<string> Countries { get; set; }
-    public IEnumerable<string> Areas { get; set; }
+    public string[] Institution { get; private set; }
+    public string[] Countries { get; set; }
+    public string[] Areas { get; set; }
 }

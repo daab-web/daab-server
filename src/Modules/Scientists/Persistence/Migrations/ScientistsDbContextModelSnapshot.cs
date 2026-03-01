@@ -14,7 +14,7 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "10.0.1");
+            modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
 
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Application", b =>
                 {
@@ -105,10 +105,12 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Scientist", b =>
                 {
                     b.Property<string>("Id")
+                        .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AcademicTitle")
                         .IsRequired()
+                        .HasMaxLength(320)
                         .HasColumnType("TEXT");
 
                     b.PrimitiveCollection<string>("Areas")
@@ -124,24 +126,29 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasMaxLength(320)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
+                        .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Institution")
+                    b.PrimitiveCollection<string>("Institutions")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
                         .IsRequired()
+                        .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PhoneNumber")
+                        .HasMaxLength(15)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
+                        .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

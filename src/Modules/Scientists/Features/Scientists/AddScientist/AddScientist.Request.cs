@@ -8,7 +8,7 @@ public record AddScientistRequest(
     string? PhoneNumber,
     string Description,
     string AcademicTitle,
-    string Institution,
+    string[] Institution,
     string[] Countries,
     string[] Areas
 );

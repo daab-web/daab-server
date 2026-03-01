@@ -34,7 +34,7 @@ public class UpdateScientistCommandHandlerTests
             phoneNumber: "+1234567890",
             description: "Theoretical physicist",
             academicTitle: "Dr.",
-            institution: "Princeton",
+            institutions: ["Princeton"],
             countries: ["USA"],
             areas: ["Physics"]
         );
@@ -50,7 +50,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Einstein Updated",
             Description: "Updated description",
             AcademicTitle: "Prof.",
-            Institution: "Princeton University",
+            Institution: ["Princeton University"],
             Countries: ["USA", "Germany"],
             Areas: ["Physics", "Mathematics"]
         );
@@ -75,7 +75,7 @@ public class UpdateScientistCommandHandlerTests
         Assert.Equal("+9876543210", updatedScientist.PhoneNumber);
         Assert.Equal("Updated description", updatedScientist.Description);
         Assert.Equal("Prof.", updatedScientist.AcademicTitle);
-        Assert.Equal("Princeton University", updatedScientist.Institution);
+        Assert.Equal(["Princeton University"], updatedScientist.Institutions);
         Assert.Equal(["USA", "Germany"], updatedScientist.Countries);
         Assert.Equal(["Physics", "Mathematics"], updatedScientist.Areas);
     }
@@ -93,7 +93,7 @@ public class UpdateScientistCommandHandlerTests
             phoneNumber: "+1234567890",
             description: "Physicist and chemist",
             academicTitle: "Dr.",
-            institution: "Sorbonne",
+            institutions: ["Sorbonne"],
             countries: ["France"],
             areas: ["Chemistry"]
         );
@@ -109,7 +109,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Curie",
             Description: null,
             AcademicTitle: "Dr.",
-            Institution: "Sorbonne",
+            Institution: ["Sorbonne"],
             Countries: ["France"],
             Areas: ["Chemistry", "Physics"]
         );
@@ -142,7 +142,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Scientist",
             Description: null,
             AcademicTitle: "Dr.",
-            Institution: "University",
+            Institution: ["University"],
             Countries: ["Country"],
             Areas: ["Science"]
         );
@@ -173,7 +173,7 @@ public class UpdateScientistCommandHandlerTests
             phoneNumber: null,
             description: null,
             academicTitle: "Dr.",
-            institution: "Princeton",
+            institutions: ["Princeton"],
             countries: ["USA"],
             areas: ["Physics"]
         );
@@ -185,7 +185,7 @@ public class UpdateScientistCommandHandlerTests
             phoneNumber: null,
             description: null,
             academicTitle: "Sir",
-            institution: "Cambridge",
+            institutions: ["Cambridge"],
             countries: ["UK"],
             areas: ["Physics"]
         );
@@ -201,7 +201,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Einstein Updated",
             Description: null,
             AcademicTitle: "Prof.",
-            Institution: "Princeton",
+            Institution: ["Princeton"],
             Countries: ["USA"],
             Areas: ["Physics"]
         );
@@ -238,7 +238,7 @@ public class UpdateScientistCommandHandlerTests
             phoneNumber: null,
             description: null,
             academicTitle: "Dr.",
-            institution: "University",
+            institutions: ["University"],
             countries: ["Country"],
             areas: ["Science"]
         );
@@ -254,7 +254,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Name",
             Description: null,
             AcademicTitle: "Dr.",
-            Institution: "University",
+            Institution: ["University"],
             Countries: ["Country"],
             Areas: ["Science"]
         );

@@ -32,7 +32,7 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
             scientists = scientists.Where(s =>
                 EF.Functions.Like(s.FirstName, search)
                 || EF.Functions.Like(s.LastName, search)
-                || EF.Functions.Like(s.Institution, search)
+                || s.Institutions.Any(x => EF.Functions.Like(x, search))
                 || s.Areas.Any(x => EF.Functions.Like(x, search))
             );
         }

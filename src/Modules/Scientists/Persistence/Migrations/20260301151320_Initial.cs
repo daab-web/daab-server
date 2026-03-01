@@ -38,6 +38,7 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     ),
                     PhotoUrl = table.Column<string>(type: "TEXT", nullable: true),
                     CvUrl = table.Column<string>(type: "TEXT", nullable: true),
+                    Status = table.Column<int>(type: "INTEGER", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -49,15 +50,19 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                 name: "Scientists",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "TEXT", nullable: false),
-                    UserId = table.Column<string>(type: "TEXT", nullable: true),
-                    Email = table.Column<string>(type: "TEXT", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "TEXT", nullable: true),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: false),
-                    LastName = table.Column<string>(type: "TEXT", nullable: false),
-                    Description = table.Column<string>(type: "TEXT", nullable: false),
-                    AcademicTitle = table.Column<string>(type: "TEXT", nullable: false),
-                    Institution = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", maxLength: 36, nullable: false),
+                    UserId = table.Column<string>(type: "TEXT", maxLength: 36, nullable: true),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 320, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "TEXT", maxLength: 15, nullable: true),
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 64, nullable: false),
+                    Description = table.Column<string>(type: "TEXT", nullable: true),
+                    AcademicTitle = table.Column<string>(
+                        type: "TEXT",
+                        maxLength: 320,
+                        nullable: false
+                    ),
+                    Institutions = table.Column<string>(type: "TEXT", nullable: false),
                     Countries = table.Column<string>(type: "TEXT", nullable: false),
                     Areas = table.Column<string>(type: "TEXT", nullable: false),
                 },
