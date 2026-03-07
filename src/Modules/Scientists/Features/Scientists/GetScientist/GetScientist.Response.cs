@@ -8,7 +8,7 @@ public record GetScientistResponse(
     string LastName,
     string? Description,
     string AcademicTitle,
-    string[] Institution,
+    string[] Institutions,
     string[] Countries,
     string[] Areas
 );
