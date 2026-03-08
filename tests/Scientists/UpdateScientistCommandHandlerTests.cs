@@ -50,7 +50,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Einstein Updated",
             Description: "Updated description",
             AcademicTitle: "Prof.",
-            Institution: ["Princeton University"],
+            Institutions: ["Princeton University"],
             Countries: ["USA", "Germany"],
             Areas: ["Physics", "Mathematics"]
         );
@@ -109,7 +109,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Curie",
             Description: null,
             AcademicTitle: "Dr.",
-            Institution: ["Sorbonne"],
+            Institutions: ["Sorbonne"],
             Countries: ["France"],
             Areas: ["Chemistry", "Physics"]
         );
@@ -142,7 +142,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Scientist",
             Description: null,
             AcademicTitle: "Dr.",
-            Institution: ["University"],
+            Institutions: ["University"],
             Countries: ["Country"],
             Areas: ["Science"]
         );
@@ -201,7 +201,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Einstein Updated",
             Description: null,
             AcademicTitle: "Prof.",
-            Institution: ["Princeton"],
+            Institutions: ["Princeton"],
             Countries: ["USA"],
             Areas: ["Physics"]
         );
@@ -254,7 +254,7 @@ public class UpdateScientistCommandHandlerTests
             LastName: "Name",
             Description: null,
             AcademicTitle: "Dr.",
-            Institution: ["University"],
+            Institutions: ["University"],
             Countries: ["Country"],
             Areas: ["Science"]
         );

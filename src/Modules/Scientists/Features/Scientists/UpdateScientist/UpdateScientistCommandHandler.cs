@@ -2,6 +2,7 @@ using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.Scientists.UpdateScientist;
 
@@ -13,24 +14,28 @@ public class UpdateScientistCommandHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        var scientist = await context.Scientists.FindAsync([request.Id], cancellationToken);
-        if (scientist is null)
+        var rowsAffected = await context
+            .Scientists.Where(s => s.Id == request.Id)
+            .ExecuteUpdateAsync(
+                x =>
+                    x.SetProperty(s => s.Email, request.Email)
+                        .SetProperty(s => s.PhoneNumber, request.PhoneNumber)
+                        .SetProperty(s => s.AcademicTitle, request.AcademicTitle)
+                        .SetProperty(s => s.LastName, request.LastName)
+                        .SetProperty(s => s.Countries, request.Countries)
+                        .SetProperty(s => s.Areas, request.Areas)
+                        .SetProperty(s => s.Institutions, request.Institution)
+                        .SetProperty(s => s.FirstName, request.FirstName)
+                        .SetProperty(s => s.Description, request.Description),
+                cancellationToken: cancellationToken
+            );
+
+        if (rowsAffected == 0)
         {
             return Error.New($"Scientist with an Id of {request.Id} not found.");
         }
 
-        scientist.Email = request.Email;
-        scientist.PhoneNumber = request.PhoneNumber;
-        scientist.AcademicTitle = request.AcademicTitle;
-        scientist.LastName = request.LastName;
-        scientist.Countries = request.Countries;
-        scientist.Areas = request.Areas;
-        scientist.Institutions = request.Institution;
-        scientist.FirstName = request.FirstName;
-        scientist.Description = request.Description;
-
-        context.Scientists.Update(scientist);
         await context.SaveChangesAsync(cancellationToken);
-        return new UpdateScientistResponse(scientist.Id);
+        return new UpdateScientistResponse(request.Id);
     }
 }

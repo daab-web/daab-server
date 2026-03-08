@@ -11,24 +11,24 @@ public sealed class UpdateScientistCommand : IRequest<Fin<UpdateScientistRespons
         Id = id;
         Email = request.Email;
         AcademicTitle = request.AcademicTitle;
-        Institution = request.Institution;
+        Institution = request.Institutions;
         PhoneNumber = request.PhoneNumber;
         LastName = request.LastName;
-        Institution = request.Institution;
+        Institution = request.Institutions;
         FirstName = request.FirstName;
         Description = request.Description;
         Countries = request.Countries;
         Areas = request.Areas;
     }
 
-    public string Id { get; set; }
-    public string Email { get; private set; }
-    public string? PhoneNumber { get; private set; }
-    public string FirstName { get; private set; }
-    public string LastName { get; private set; }
-    public string? Description { get; private set; }
-    public string AcademicTitle { get; private set; }
-    public string[] Institution { get; private set; }
-    public string[] Countries { get; set; }
-    public string[] Areas { get; set; }
+    public string Id { get; }
+    public string? Email { get; }
+    public string? PhoneNumber { get; }
+    public string FirstName { get; }
+    public string LastName { get; }
+    public string? Description { get; }
+    public string AcademicTitle { get; }
+    public string[] Institution { get; }
+    public string[] Countries { get; }
+    public string[] Areas { get; }
 }

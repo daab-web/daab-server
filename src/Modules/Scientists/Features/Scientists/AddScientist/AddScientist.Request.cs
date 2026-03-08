@@ -4,11 +4,11 @@ public record AddScientistRequest(
     string? UserId,
     string FirstName,
     string LastName,
-    string Email,
+    string? Email,
     string? PhoneNumber,
     string Description,
     string AcademicTitle,
-    string[] Institution,
+    string[] Institutions,
     string[] Countries,
     string[] Areas
 );

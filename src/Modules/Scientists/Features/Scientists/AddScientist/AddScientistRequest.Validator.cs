@@ -14,12 +14,12 @@ public sealed class AddScientistRequestValidator : Validator<AddScientistRequest
 
         RuleFor(x => x.AcademicTitle).NotEmpty().WithMessage("Academic title is required");
 
-        RuleFor(x => x.Institution)
+        RuleFor(x => x.Institutions)
             .NotNull()
             .NotEmpty()
             .WithMessage("At least one institution must be specified");
 
-        RuleForEach(x => x.Institution).NotEmpty().WithMessage("Institution cannot be empty");
+        RuleForEach(x => x.Institutions).NotEmpty().WithMessage("Institution cannot be empty");
 
         RuleFor(x => x.Countries)
             .NotNull()

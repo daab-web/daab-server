@@ -8,10 +8,10 @@ public class Scientist
     public string Id { get; init; } = Ulid.NewUlid().ToString();
 
     [MaxLength(36)]
-    public string? UserId { get; init; }
+    public string? UserId { get; private set; }
 
     [MaxLength(320)]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [MaxLength(15)]
     public string? PhoneNumber { get; set; }
@@ -41,7 +41,7 @@ public class Scientist
     public Scientist(
         string firstName,
         string lastName,
-        string email,
+        string? email,
         string? phoneNumber,
         string? description,
         string academicTitle,
@@ -61,30 +61,10 @@ public class Scientist
         Areas = areas;
     }
 
-    public Scientist(
-        Ulid userId,
-        string firstName,
-        string lastName,
-        string email,
-        string? phoneNumber,
-        string? description,
-        string academicTitle,
-        ICollection<string> institutions,
-        ICollection<string> countries,
-        ICollection<string> areas
-    )
-        : this(
-            firstName,
-            lastName,
-            email,
-            phoneNumber,
-            description,
-            academicTitle,
-            institutions,
-            countries,
-            areas
-        )
+    public void LinkUser(string userId)
     {
-        UserId = userId.ToString();
+        UserId = Ulid.TryParse(userId, out _)
+            ? userId
+            : throw new ArgumentException("Invalid ID format");
     }
 }

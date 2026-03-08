@@ -7,11 +7,7 @@ public class UpdateScientistRequestValidator : Validator<UpdateScientistRequest>
 {
     public UpdateScientistRequestValidator()
     {
-        RuleFor(x => x.Email)
-            .NotEmpty()
-            .WithMessage("Email can't be null")
-            .EmailAddress()
-            .MaximumLength(256);
+        RuleFor(x => x.Email).EmailAddress().MaximumLength(320);
 
         RuleFor(x => x.PhoneNumber)
             .MaximumLength(32)
@@ -27,12 +23,9 @@ public class UpdateScientistRequestValidator : Validator<UpdateScientistRequest>
 
         RuleFor(x => x.AcademicTitle).NotEmpty().MaximumLength(150);
 
-        RuleFor(x => x.Institution)
-            .NotNull()
-            .Must(i => i.Any())
-            .WithMessage("At least one institution must be specified.");
+        RuleFor(x => x.Institutions).NotNull();
 
-        RuleForEach(x => x.Institution).NotEmpty().MaximumLength(200);
+        RuleForEach(x => x.Institutions).NotEmpty().MaximumLength(200);
 
         RuleFor(x => x.Countries)
             .NotNull()

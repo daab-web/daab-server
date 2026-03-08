@@ -1,7 +1,6 @@
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Scientists.Features.Scientists.UpdateScientist;
 
