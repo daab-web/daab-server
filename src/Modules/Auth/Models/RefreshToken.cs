@@ -5,8 +5,8 @@ public class RefreshToken
     public string Id { get; init; } = Ulid.NewUlid().ToString();
     public required string Token { get; init; }
     public required string UserId { get; init; }
-    public DateTimeOffset CreatedAt { get; } = DateTimeOffset.UtcNow;
-    public DateTimeOffset ExpiresAt { get; } = DateTimeOffset.UtcNow.AddDays(7);
+    public DateTimeOffset CreatedAt { get; private init; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset ExpiresAt { get; private init; } = DateTimeOffset.UtcNow.AddDays(7);
     public DateTimeOffset? RevokedAt { get; private set; }
     public string? ReplacedByToken { get; private set; }
     public bool IsRevoked { get; private set; }

@@ -19,13 +19,13 @@ public static class ApiConfiguration
         public IServiceCollection ConfigureCors(IConfiguration config)
         {
             var allowedOrigins =
-                config.GetRequiredSection("Cors:AllowedOrigins")?.Get<string[]>()
+                config.GetRequiredSection("Cors:AllowedOrigins").Get<string[]>()
                 ?? throw new ArgumentException("There was no allowed origins in CORS config");
 
             Log.Information("CORS Allowed origins: {origins}", string.Join(',', allowedOrigins));
 
-            services.AddCors(policybuilder =>
-                policybuilder.AddDefaultPolicy(policy =>
+            services.AddCors(policyBuilder =>
+                policyBuilder.AddDefaultPolicy(policy =>
                     policy
                         .WithOrigins(allowedOrigins)
                         .AllowAnyHeader()
@@ -71,14 +71,14 @@ public static class ApiConfiguration
         {
             services
                 .AddFastEndpoints()
+                .AddResponseCaching()
                 .SwaggerDocument(options =>
-                {
                     options.DocumentSettings = settings =>
                     {
                         settings.DocumentName = "v1";
                         settings.Version = "v1.0";
-                    };
-                });
+                    }
+                );
         }
     }
 
