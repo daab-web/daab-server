@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
 public record AddScientistRequest(
@@ -8,7 +10,7 @@ public record AddScientistRequest(
     string? PhoneNumber,
     string Description,
     string AcademicTitle,
-    string? PhotoUrl,
+    IFormFile? Photo,
     string? LinkedInUrl,
     string? Orcid,
     string? Website,

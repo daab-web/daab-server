@@ -1,5 +1,4 @@
 using System.Threading.Channels;
-using Daab.Modules.Activities.Common;
 using Daab.Modules.Activities.Messages;
 using Daab.Modules.Activities.Persistence;
 using Daab.SharedKernel;
