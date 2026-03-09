@@ -2,6 +2,7 @@ using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
 using FastEndpoints.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -36,8 +37,10 @@ public static class DependencyInjection
             ArgumentNullException.ThrowIfNull(jwtOptions);
 
             services
-                .AddAuthenticationJwtBearer(s => s.SigningKey = jwtOptions.JwtSecret)
-                .AddAuthenticationCookie(TimeSpan.FromMinutes(15))
+                .AddAuthenticationJwtBearer(
+                    s => s.SigningKey = jwtOptions.JwtSecret,
+                    JwtBearerOptions
+                )
                 .AddAuthorization();
 
             return services;
@@ -83,4 +86,17 @@ public static class DependencyInjection
 
         context.SaveChanges();
     }
+
+    private static readonly Action<JwtBearerOptions> JwtBearerOptions = options =>
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                if (context.Request.Cookies.TryGetValue("daab.accessToken", out var accessToken))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            },
+        };
 }

@@ -22,7 +22,7 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, T
         await response.Match(
             async user =>
             {
-                var response = await CreateTokenWith<TokenService>(
+                var tokenResponse = await CreateTokenWith<TokenService>(
                     user.Id,
                     p =>
                     {
@@ -34,7 +34,9 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, T
                     }
                 );
 
-                await Send.OkAsync(response, cancellation: ct);
+                HttpContext.SetAuthCookies(tokenResponse);
+
+                await Send.OkAsync(tokenResponse, cancellation: ct);
             },
             async err => await err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );

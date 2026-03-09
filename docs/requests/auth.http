@@ -1,0 +1,19 @@
+@host = http://localhost:5035
+
+### Login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+### Refresh Token
+POST {{host}}/auth/refresh-token
+Content-Type: application/json
+
+{
+  "userId": "",
+  "refreshToken": ""
+}
