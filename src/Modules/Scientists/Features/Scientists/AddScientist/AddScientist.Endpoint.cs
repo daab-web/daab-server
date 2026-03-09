@@ -30,6 +30,8 @@ public class AddScientistEndpoint(IMediator mediator)
 
     public override Scientist MapToEntity(AddScientistRequest r)
     {
+        List<Publication> publications = [];
+
         var scientist = new Scientist(
             r.FirstName,
             r.LastName,
@@ -39,8 +41,26 @@ public class AddScientistEndpoint(IMediator mediator)
             r.AcademicTitle,
             r.Institutions,
             r.Countries,
-            r.Areas
-        );
+            r.Areas,
+            r.PhotoUrl,
+            r.LinkedInUrl,
+            r.Orcid,
+            r.Website
+        )
+        {
+            Publications = publications,
+        };
+
+        if (r.Publications is not null)
+        {
+            publications.AddRange(
+                r.Publications.Select(p => new Publication(p.Url)
+                {
+                    Title = p.Title,
+                    ScientistId = scientist.Id,
+                })
+            );
+        }
 
         if (r.UserId is not null)
         {

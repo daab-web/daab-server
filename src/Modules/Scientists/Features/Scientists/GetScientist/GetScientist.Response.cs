@@ -8,6 +8,10 @@ public record GetScientistResponse(
     string LastName,
     string? Description,
     string AcademicTitle,
+    string? PhotoUrl,
+    string? LinkedInUrl,
+    string? Orcid,
+    string? Website,
     string[] Institutions,
     string[] Countries,
     string[] Areas

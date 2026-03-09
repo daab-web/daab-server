@@ -27,16 +27,16 @@ public class Scientist
     [MaxLength(320)]
     public string AcademicTitle { get; set; }
 
+    public string Slug { get; init; }
+    public string? PhotoUrl { get; set; }
+    public string? LinkedInUrl { get; set; }
+    public string? Orcid { get; set; }
+    public string? Website { get; set; }
+
     public ICollection<string> Institutions { get; set; }
     public ICollection<string> Countries { get; set; }
     public ICollection<string> Areas { get; set; }
-
-    public string Slug()
-    {
-        var name = FirstName.Replace(' ', '-');
-        var lastName = LastName.Replace(' ', '-');
-        return $"{name}-{lastName}-{Id[..5]}";
-    }
+    public ICollection<Publication> Publications { get; set; } = [];
 
     public Scientist(
         string firstName,
@@ -47,7 +47,11 @@ public class Scientist
         string academicTitle,
         ICollection<string> institutions,
         ICollection<string> countries,
-        ICollection<string> areas
+        ICollection<string> areas,
+        string? photoUrl,
+        string? linkedInUrl,
+        string? orcid,
+        string? website
     )
     {
         Email = email;
@@ -59,6 +63,12 @@ public class Scientist
         Institutions = institutions;
         Countries = countries;
         Areas = areas;
+        PhotoUrl = photoUrl;
+        LinkedInUrl = linkedInUrl;
+        Orcid = orcid;
+        Website = website;
+
+        Slug = $"{FirstName.Replace(' ', '-')}-{LastName.Replace(' ', '-')}-{Id[..5]}";
     }
 
     public void LinkUser(string userId)

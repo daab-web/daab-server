@@ -13,10 +13,27 @@ public class AddScientistCommandHandler(ScientistsDbContext context)
     )
     {
         var scientist = request.Scientist;
+        var publications = request.Scientist.Publications;
 
-        var e = await context.Scientists.AddAsync(scientist, cancellationToken: cancellationToken);
-        await context.SaveChangesAsync(cancellationToken);
+        await using var transaction = await context.Database.BeginTransactionAsync(
+            cancellationToken
+        );
 
-        return e.Entity;
+        try
+        {
+            await context.Publications.AddRangeAsync(publications, cancellationToken);
+            var e = await context.Scientists.AddAsync(
+                scientist,
+                cancellationToken: cancellationToken
+            );
+            await context.SaveChangesAsync(cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
+            return e.Entity;
+        }
+        catch
+        {
+            await transaction.RollbackAsync(cancellationToken);
+            throw;
+        }
     }
 }

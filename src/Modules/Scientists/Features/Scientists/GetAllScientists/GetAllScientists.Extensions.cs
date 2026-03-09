@@ -11,7 +11,7 @@ public static class GetAllScientists
             return new GetAllScientistsResponse(
                 s.Id,
                 s.UserId,
-                s.Slug(),
+                s.Slug,
                 s.FirstName,
                 s.LastName,
                 s.Description,

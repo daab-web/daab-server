@@ -1,6 +1,7 @@
 using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.Scientists.GetScientist;
 
@@ -12,9 +13,11 @@ public class GetScientistQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        bool filter(Scientist s) => s.Id == request.IdOrSlug || s.Slug() == request.IdOrSlug;
+        bool filter(Scientist s) => s.Id == request.IdOrSlug || s.Slug == request.IdOrSlug;
         var scientist = await context
-            .Scientists.AsAsyncEnumerable()
+            .Scientists.AsNoTracking()
+            .Include(s => s.Publications)
+            .AsAsyncEnumerable()
             .SingleOrDefaultAsync(filter, cancellationToken);
 
         return scientist?.ToGetScientistResponse();

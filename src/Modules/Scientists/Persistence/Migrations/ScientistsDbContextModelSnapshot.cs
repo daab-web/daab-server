@@ -102,6 +102,29 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.ToTable("Applications");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.Publication", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ScientistId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Url")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScientistId");
+
+                    b.ToTable("Publications");
+                });
+
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Scientist", b =>
                 {
                     b.Property<string>("Id")
@@ -142,17 +165,49 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                         .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("LinkedInUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Orcid")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("PhoneNumber")
                         .HasMaxLength(15)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
                         .HasMaxLength(36)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.ToTable("Scientists");
+                });
+
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.Publication", b =>
+                {
+                    b.HasOne("Daab.Modules.Scientists.Models.Scientist", "Scientist")
+                        .WithMany("Publications")
+                        .HasForeignKey("ScientistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Scientist");
+                });
+
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.Scientist", b =>
+                {
+                    b.Navigation("Publications");
                 });
 #pragma warning restore 612, 618
         }
