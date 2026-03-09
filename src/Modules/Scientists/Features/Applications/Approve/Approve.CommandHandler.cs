@@ -34,7 +34,11 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             application.AcademicTitle,
             [application.DegreeInstitution],
             application.Residence.Split(','),
-            application.FieldOfStudy.Split(',')
+            application.FieldOfStudy.Split(','),
+            null,
+            null,
+            null,
+            null
         );
 
         application.Status = ApplicationStatus.Approved;

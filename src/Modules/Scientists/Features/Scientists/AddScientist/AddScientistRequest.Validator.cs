@@ -10,8 +10,6 @@ public sealed class AddScientistRequestValidator : Validator<AddScientistRequest
         RuleFor(x => x.FirstName).NotEmpty().WithMessage("First name is required");
         RuleFor(x => x.LastName).NotEmpty().WithMessage("Last name is required");
 
-        RuleFor(x => x.Description).NotEmpty().WithMessage("Description is required");
-
         RuleFor(x => x.AcademicTitle).NotEmpty().WithMessage("Academic title is required");
 
         RuleFor(x => x.Institutions)

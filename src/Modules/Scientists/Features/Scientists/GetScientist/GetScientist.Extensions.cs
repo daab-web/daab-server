@@ -11,11 +11,15 @@ public static class GetScientistExtensions
             return new GetScientistResponse(
                 s.Id,
                 s.UserId,
-                s.Slug(),
+                s.Slug,
                 s.FirstName,
                 s.LastName,
                 s.Description,
                 s.AcademicTitle,
+                s.PhotoUrl,
+                s.LinkedInUrl,
+                s.Orcid,
+                s.Website,
                 [.. s.Institutions],
                 [.. s.Countries],
                 [.. s.Areas]
