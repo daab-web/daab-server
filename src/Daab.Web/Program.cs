@@ -1,10 +1,10 @@
-using System.Security.Claims;
 using Daab.Infrastructure;
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
 using Daab.Modules.Scientists;
 using Daab.Web.Configuration;
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,14 +16,14 @@ builder
     .Services.ConfigureLogging(config)
     .ConfigureCors(config)
     .ConfigureCache()
-    .ConfigureProblemDetails()
-    .ConfigureEndpoints();
+    .ConfigureProblemDetails();
 
 builder
     .Services.AddInfrastructure(config)
     .AddAuthModule(config)
     .AddScientistsModule(config)
-    .AddActivitiesModule(config);
+    .AddActivitiesModule(config)
+    .ConfigureEndpoints();
 
 var app = builder.Build();
 
@@ -32,13 +32,9 @@ app.UseCors();
 app.UseAuthModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();
-app.UseFastEndpoints(static c =>
-{
-    c.Errors.UseProblemDetails();
-    c.Security.RoleClaimType = ClaimTypes.Role;
-});
+app.UseFastEndpoints(static c => c.Errors.UseProblemDetails());
 
-app.UseOpenApi(options => options.Path = "/openapi/{documentName}.json");
+app.UseSwaggerGen(options => options.Path = "/openapi/{documentName}.json");
 app.MapScalarApiReference();
 
 app.Run();

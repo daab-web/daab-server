@@ -1,17 +1,11 @@
-using System.Text;
-using Daab.Modules.Auth.Common;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
-using Daab.SharedKernel;
-using FluentValidation;
-using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FastEndpoints.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Daab.Modules.Auth;
 
@@ -31,8 +25,6 @@ public static class DependencyInjection
                 optionsBuilder.UseSqlite(connectionString)
             );
 
-            services.AddScoped<ITokenService, TokenService>();
-
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
             );
@@ -44,42 +36,9 @@ public static class DependencyInjection
             ArgumentNullException.ThrowIfNull(jwtOptions);
 
             services
-                .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtOptions.Issuer,
-                        ValidateAudience = true,
-                        ValidAudience = jwtOptions.Audience,
-                        ValidateLifetime = true,
-                        ClockSkew = TimeSpan.Zero,
-                        ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(jwtOptions.JwtSecret)
-                        ),
-                    };
-
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = (context) =>
-                        {
-                            var hasToken = context.Request.Cookies.TryGetValue(
-                                "daab.accessToken",
-                                out string? token
-                            );
-
-                            if (hasToken)
-                            {
-                                context.Token = token;
-                            }
-
-                            return Task.CompletedTask;
-                        },
-                    };
-                });
-            services.AddAuthorization();
+                .AddAuthenticationJwtBearer(s => s.SigningKey = jwtOptions.JwtSecret)
+                .AddAuthenticationCookie(TimeSpan.FromMinutes(15))
+                .AddAuthorization();
 
             return services;
         }

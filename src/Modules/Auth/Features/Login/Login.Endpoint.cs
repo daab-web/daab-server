@@ -1,11 +1,13 @@
+using System.Security.Claims;
+using Daab.Modules.Auth.Common;
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
+using FastEndpoints.Security;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Auth.Features.Login;
 
-public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, LoginResponse>
+public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, TokenResponse>
 {
     public override void Configure()
     {
@@ -18,30 +20,21 @@ public sealed class LoginEndpoint(IMediator mediator) : Endpoint<LoginRequest, L
         var response = await mediator.Send(new LoginCommand(req), ct);
 
         await response.Match(
-            async success =>
+            async user =>
             {
-                var (loginResponse, refreshToken) = success;
-                HttpContext.Response.Cookies.Append(
-                    "daab.accessToken",
-                    loginResponse.AccessToken,
-                    new CookieOptions
+                var response = await CreateTokenWith<TokenService>(
+                    user.Id,
+                    p =>
                     {
-                        HttpOnly = true,
-                        SameSite = SameSiteMode.Lax,
-                        Expires = DateTimeOffset.UtcNow.AddMinutes(15),
+                        p.Claims.AddRange([
+                            new Claim(ClaimTypes.NameIdentifier, user.Id),
+                            new Claim(ClaimTypes.Name, user.Username),
+                        ]);
+                        p.Roles.AddRange(user.Roles.Select(r => r.Name));
                     }
                 );
-                HttpContext.Response.Cookies.Append(
-                    "daab.refreshToken",
-                    refreshToken.Token,
-                    new CookieOptions
-                    {
-                        HttpOnly = true,
-                        SameSite = SameSiteMode.Lax,
-                        Expires = refreshToken.ExpiresAt,
-                    }
-                );
-                await Send.OkAsync(loginResponse, cancellation: ct);
+
+                await Send.OkAsync(response, cancellation: ct);
             },
             async err => await err.ToProblemDetails(HttpContext).ExecuteAsync(HttpContext)
         );
