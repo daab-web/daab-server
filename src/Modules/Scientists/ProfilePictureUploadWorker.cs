@@ -1,7 +1,8 @@
 using System.Threading.Channels;
+using Daab.Modules.Activities.BackgroundWorkers;
 using Daab.Modules.Activities.Configuration;
-using Daab.Modules.Activities.Messages;
-using Daab.Modules.Activities.Persistence;
+using Daab.Modules.Scientists.Messages;
+using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,20 +10,20 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 
-namespace Daab.Modules.Activities.BackgroundWorkers;
+namespace Daab.Modules.Scientists;
 
-public sealed class ImageUploadWorker(
-    [FromKeyedServices(ChannelKeys.ThumbnailUpload)] Channel<ThumbnailUploadMessage> channel,
+public class ProfilePictureUploadWorker(
+    [FromKeyedServices(ChannelKeys.ProfilePictureUpload)]
+        Channel<ProfilePictureUploadMessage> channel,
     IServiceScopeFactory serviceScopeFactory,
     IOptions<MinioOptions> minioOptions,
-    ILogger<ImageUploadWorker> logger
+    ILogger<ProfilePictureUploadWorker> logger
 ) : BackgroundService
 {
     private readonly MinioOptions _options = minioOptions.Value;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // TODO: Handle OperationCanceledException
         while (await channel.Reader.WaitToReadAsync(stoppingToken))
         {
             try
@@ -36,29 +37,32 @@ public sealed class ImageUploadWorker(
 
                 using var scope = serviceScopeFactory.CreateScope();
                 var blobStorage = scope.ServiceProvider.GetRequiredService<IBlobStorage>();
-                var context = scope.ServiceProvider.GetRequiredService<ActivitiesDbContext>();
+                var context = scope.ServiceProvider.GetRequiredService<ScientistsDbContext>();
 
                 using var image = Image.Load(message.ImageData);
                 await using var outputStream = new MemoryStream();
 
                 await image.SaveAsWebpAsync(outputStream, stoppingToken);
 
-                var name = $"news/{message.NewsId}.webp";
+                var name = $"profile-pictures/{message.ScientistId}.webp";
 
-                await blobStorage.UploadAsync("activities", name, outputStream, stoppingToken);
+                await blobStorage.UploadAsync("scientists", name, outputStream, stoppingToken);
 
-                var news = await context.News.FindAsync([message.NewsId], stoppingToken);
+                var scientist = await context.Scientists.FindAsync(
+                    [message.ScientistId],
+                    stoppingToken
+                );
 
-                if (news is null)
+                if (scientist is null)
                 {
                     logger.LogWarning(
-                        "News with ID {NewsId} not found for thumbnail upload",
-                        message.NewsId
+                        "Scientist with ID {ScientistId} not found for profile picture upload",
+                        message.ScientistId
                     );
                     continue;
                 }
 
-                news.Thumbnail = $"{_options.Endpoint}/activities/{name}";
+                scientist.PhotoUrl = $"{_options.Endpoint}/scientists/{name}";
                 await context.SaveChangesAsync(stoppingToken);
             }
             catch (OperationCanceledException)
@@ -67,7 +71,7 @@ public sealed class ImageUploadWorker(
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error processing thumbnail upload");
+                logger.LogError(ex, "Error processing profile picture upload");
             }
         }
     }

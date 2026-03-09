@@ -1,6 +1,7 @@
 using Daab.Modules.Scientists.Models;
 using FastEndpoints;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
 
@@ -10,13 +11,25 @@ public class AddScientistEndpoint(IMediator mediator)
     public override void Configure()
     {
         Post("/scientists");
+        AllowFormData();
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(AddScientistRequest req, CancellationToken ct)
     {
         var scientist = MapToEntity(req);
-        var entity = await mediator.Send(new AddScientistCommand(scientist), ct);
+
+        if (req.Photo?.ContentType.StartsWith("image/") == false)
+        {
+            await Send.ResultAsync(
+                TypedResults.BadRequest(
+                    "Invalid profile picture format. Only image files are allowed."
+                )
+            );
+            return;
+        }
+
+        var entity = await mediator.Send(new AddScientistCommand(scientist, req.Photo), ct);
 
         var response = MapFromEntity(entity);
 
@@ -42,7 +55,7 @@ public class AddScientistEndpoint(IMediator mediator)
             r.Institutions,
             r.Countries,
             r.Areas,
-            r.PhotoUrl,
+            null,
             r.LinkedInUrl,
             r.Orcid,
             r.Website

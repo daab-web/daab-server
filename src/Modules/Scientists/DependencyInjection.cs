@@ -1,7 +1,7 @@
+using System.Threading.Channels;
+using Daab.Modules.Scientists.Messages;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
-using FluentValidation;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,13 +22,16 @@ public static class DependencyInjection
                 options.UseSqlite(connectionString)
             );
 
+            services.AddKeyedSingleton(
+                ChannelKeys.ProfilePictureUpload,
+                (_, _) => Channel.CreateUnbounded<ProfilePictureUploadMessage>()
+            );
+
+            services.AddHostedService<ProfilePictureUploadWorker>();
+
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
             );
-
-            // services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-            // services.AddFluentValidationAutoValidation();
 
             return services;
         }

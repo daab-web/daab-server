@@ -1,9 +1,9 @@
 using System.Threading.Channels;
 using Daab.Modules.Activities.BackgroundWorkers;
-using Daab.Modules.Activities.Common;
 using Daab.Modules.Activities.Configuration;
 using Daab.Modules.Activities.Messages;
 using Daab.Modules.Activities.Persistence;
+using Daab.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
