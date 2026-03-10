@@ -20,4 +20,4 @@ public record AddScientistRequest(
     CreatePublicationDto[]? Publications
 );
 
-public sealed record CreatePublicationDto(String Title, string? Url);
+public sealed record CreatePublicationDto(string Title, string? Url);
