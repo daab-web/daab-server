@@ -14,6 +14,7 @@ public static class GetScientistExtensions
                 s.Slug,
                 s.FirstName,
                 s.LastName,
+                s.Email,
                 s.Description,
                 s.AcademicTitle,
                 s.PhotoUrl,
