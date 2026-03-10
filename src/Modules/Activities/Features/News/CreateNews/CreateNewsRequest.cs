@@ -11,5 +11,6 @@ public sealed record CreateNewsRequest(
     string? AuthorId,
     string? Author,
     string? Category,
-    List<string> Tags
+    List<string> Tags,
+    DateTime PublishedDate
 );

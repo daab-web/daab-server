@@ -28,7 +28,7 @@ public sealed class CreateNewsCommandHandler(
             Title = request.Title,
             EditorState = JsonSerializer.Serialize(request.EditorState),
             Slug = request.Slug,
-            PublishedDate = DateTimeOffset.UtcNow,
+            PublishedDate = request.PublishedDate,
             AuthorId = request.AuthorId,
             AuthorName = request.AuthorName,
             Category = request.Category,
