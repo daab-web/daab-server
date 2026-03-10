@@ -17,4 +17,5 @@ public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<Crea
 
     public string? Category { get; } = req.Category;
     public List<string> Tags { get; } = req.Tags;
+    public DateTime PublishedDate { get; set; } = req.PublishedDate;
 }
