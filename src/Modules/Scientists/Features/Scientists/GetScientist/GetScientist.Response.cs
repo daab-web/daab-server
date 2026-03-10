@@ -6,6 +6,7 @@ public record GetScientistResponse(
     string Slug,
     string FirstName,
     string LastName,
+    string? Email,
     string? Description,
     string AcademicTitle,
     string? PhotoUrl,

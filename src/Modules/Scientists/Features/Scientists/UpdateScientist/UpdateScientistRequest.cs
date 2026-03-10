@@ -7,6 +7,9 @@ public sealed record UpdateScientistRequest(
     string LastName,
     string? Description,
     string AcademicTitle,
+    string? LinkedInUrl,
+    string? Orcid,
+    string? Website,
     string[] Institutions,
     string[] Countries,
     string[] Areas

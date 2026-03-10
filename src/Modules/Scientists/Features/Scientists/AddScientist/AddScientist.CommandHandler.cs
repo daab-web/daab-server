@@ -36,12 +36,12 @@ public class AddScientistCommandHandler(
             await context.SaveChangesAsync(cancellationToken);
             await transaction.CommitAsync(cancellationToken);
 
-            await using var stream = new MemoryStream();
-
             if (request.Photo is null)
             {
                 return e.Entity;
             }
+
+            await using var stream = new MemoryStream();
 
             await request.Photo.CopyToAsync(stream, cancellationToken);
             stream.Position = 0;
