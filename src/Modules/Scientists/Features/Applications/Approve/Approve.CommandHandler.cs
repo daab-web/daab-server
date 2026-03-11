@@ -50,7 +50,7 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
         };
 
         scientist.Slug = slugExists
-            ? $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}-{scientist.Id[..5]} "
+            ? $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}-{scientist.Id[..5]}"
             : $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}";
 
         application.Status = ApplicationStatus.Approved;

@@ -28,7 +28,7 @@ public class AddScientistCommandHandler(
         );
 
         scientist.Slug = slugExists
-            ? $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}-{scientist.Id[..5]} "
+            ? $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}-{scientist.Id[..5]}"
             : $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}";
 
         var publications = request.Scientist.Publications;
