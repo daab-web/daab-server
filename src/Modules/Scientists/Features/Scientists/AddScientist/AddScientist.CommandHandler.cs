@@ -4,6 +4,7 @@ using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Daab.Modules.Scientists.Features.Scientists.AddScientist;
@@ -20,6 +21,16 @@ public class AddScientistCommandHandler(
     )
     {
         var scientist = request.Scientist;
+
+        var slugExists = await context.Scientists.AnyAsync(
+            x => x.FirstName == scientist.FirstName && x.LastName == scientist.LastName,
+            cancellationToken
+        );
+
+        scientist.Slug = slugExists
+            ? $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}-{scientist.Id[..5]}"
+            : $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}";
+
         var publications = request.Scientist.Publications;
 
         await using var transaction = await context.Database.BeginTransactionAsync(

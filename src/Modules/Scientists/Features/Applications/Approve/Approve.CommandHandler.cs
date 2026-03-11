@@ -25,6 +25,11 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             return Error.New("Requested application does not exist");
         }
 
+        var slugExists = await context.Scientists.AnyAsync(
+            x => x.FirstName == application.Name && x.LastName == application.Surname,
+            cancellationToken
+        );
+
         var scientist = new Scientist(
             application.Name,
             application.Surname,
@@ -39,7 +44,14 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             null,
             null,
             null
-        );
+        )
+        {
+            Slug = string.Empty,
+        };
+
+        scientist.Slug = slugExists
+            ? $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}-{scientist.Id[..5]}"
+            : $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}";
 
         application.Status = ApplicationStatus.Approved;
         var scientistEntity = await context.Scientists.AddAsync(scientist, cancellationToken);
@@ -50,7 +62,6 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             return Error.New("Unable to approve application. Please try again later");
         }
 
-        application.Status = ApplicationStatus.Approved;
         await context.SaveChangesAsync(cancellationToken);
 
         return new ApproveApplicationResponse(scientistEntity.Entity.Id);
