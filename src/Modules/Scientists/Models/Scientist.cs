@@ -27,7 +27,7 @@ public class Scientist
     [MaxLength(320)]
     public string AcademicTitle { get; set; }
 
-    public string Slug { get; init; }
+    public required string Slug { get; set; }
     public string? PhotoUrl { get; set; }
     public string? LinkedInUrl { get; set; }
     public string? Orcid { get; set; }
@@ -67,8 +67,6 @@ public class Scientist
         LinkedInUrl = linkedInUrl;
         Orcid = orcid;
         Website = website;
-
-        Slug = $"{FirstName.Replace(' ', '-')}-{LastName.Replace(' ', '-')}-{Id[..5]}";
     }
 
     public void LinkUser(string userId)

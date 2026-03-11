@@ -62,6 +62,7 @@ public class AddScientistEndpoint(IMediator mediator)
         )
         {
             Publications = publications,
+            Slug = string.Empty,
         };
 
         if (r.Publications is not null)
