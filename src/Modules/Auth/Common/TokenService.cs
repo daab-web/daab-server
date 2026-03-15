@@ -1,129 +1,46 @@
-using System.Net;
-using System.Security.Claims;
+using System.Text;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
-using Daab.Modules.Auth.Persistence;
-using FastEndpoints;
-using FastEndpoints.Security;
-using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Daab.Modules.Auth.Common;
 
-public class TokenService : RefreshTokenService<TokenRequest, TokenResponse>
+public interface ITokenService
 {
-    private readonly AuthDbContext _context;
-    private readonly JwtOptions _options;
+    string GenerateAccessToken(User user);
+}
 
-    public TokenService(AuthDbContext context, IOptions<JwtOptions> options)
+public class TokenService(IOptions<JwtOptions> options) : ITokenService
+{
+    private readonly JwtOptions _options = options.Value;
+
+    public string GenerateAccessToken(User user)
     {
-        _context = context;
-        _options = options.Value;
+        var handler = new JsonWebTokenHandler();
 
-        Setup(x =>
-        {
-            x.TokenSigningKey = _options.JwtSecret;
-            x.AccessTokenValidity = TimeSpan.FromMinutes(_options.ExpiresMinutes);
-            x.RefreshTokenValidity = TimeSpan.FromDays(7);
-            x.Issuer = _options.Issuer;
-            x.Audience = _options.Audience;
-            x.Endpoint("/auth/refresh-token", ep => ep.Tags("Auth"));
-        });
-    }
-
-    public override Task OnAfterRenewalTokenCreationAsync(
-        TokenRequest? request,
-        TokenResponse response
-    )
-    {
-        HttpContext.SetAuthCookies(response);
-        return Task.CompletedTask;
-    }
-
-    public override void OnBeforeHandle(TokenRequest req)
-    {
-        if (string.IsNullOrEmpty(req.RefreshToken))
-        {
-            var hasRefreshToken = HttpContext.Request.Cookies.TryGetValue(
-                "daab.refreshToken",
-                out var refreshToken
-            );
-
-            var hasUserId = HttpContext.Request.Cookies.TryGetValue("daab.userId", out var userId);
-
-            if (!hasRefreshToken || string.IsNullOrEmpty(refreshToken))
+        return handler.CreateToken(
+            new SecurityTokenDescriptor
             {
-                AddError("Refresh token is required", nameof(HttpStatusCode.BadRequest));
-                return;
-            }
-
-            if (!hasUserId || string.IsNullOrEmpty(userId))
-            {
-                AddError("User ID is required", nameof(HttpStatusCode.BadRequest));
-                return;
-            }
-
-            req.RefreshToken = refreshToken;
-            req.UserId = userId;
-        }
-    }
-
-    public override async Task PersistTokenAsync(TokenResponse response)
-    {
-        _context.RefreshTokens.Add(
-            new RefreshToken
-            {
-                Token = response.RefreshToken,
-                UserId = response.UserId,
-                ExpiresAt = DateTime.UtcNow.AddDays(7),
+                Claims = new Dictionary<string, object>
+                {
+                    [JwtRegisteredClaimNames.Sub] = user.Id,
+                    [JwtRegisteredClaimNames.Name] = user.Username,
+                    [JwtRegisteredClaimNames.Email] = "admin@waas.org",
+                    ["roles"] = string.Join(',', user.Roles.Select(r => r.Name)),
+                },
+                IssuedAt = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddMinutes(_options.AccessExpiryMinutes),
+                TokenType = "Bearer",
+                Issuer = _options.Issuer,
+                Audience = _options.Audience,
+                // TODO: Change this
+                SigningCredentials = new SigningCredentials(
+                    new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.JwtSecret)),
+                    SecurityAlgorithms.HmacSha256
+                ),
             }
         );
-
-        await _context.SaveChangesAsync();
-    }
-
-    public override Task RefreshRequestValidationAsync(TokenRequest req)
-    {
-        var refreshToken = _context.RefreshTokens.SingleOrDefault(rt =>
-            rt.Token == req.RefreshToken
-        );
-
-        var err = refreshToken switch
-        {
-            null => "Invalid refresh token",
-            { ExpiresAt: var exp } when exp < DateTimeOffset.UtcNow => "Refresh token has expired",
-            { IsRevoked: true } => "Refresh token has been revoked",
-            { UserId: var id } when id != req.UserId =>
-                "Refresh token does not belong to the specified user",
-            _ => null,
-        };
-
-        if (err is not null)
-        {
-            AddError(err, nameof(HttpStatusCode.Unauthorized));
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public override Task SetRenewalPrivilegesAsync(TokenRequest request, UserPrivileges privileges)
-    {
-        var refreshToken = _context
-            .RefreshTokens.AsNoTracking()
-            .Single(rt => rt.Token == request.RefreshToken);
-
-        var user = _context
-            .Users.AsNoTracking()
-            .Include(u => u.Roles)
-            .Single(u => u.Id == refreshToken.UserId);
-
-        privileges.Claims.AddRange([
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.Username),
-        ]);
-        privileges.Roles.AddRange(user.Roles.Select(r => r.Name));
-
-        return Task.CompletedTask;
     }
 }
