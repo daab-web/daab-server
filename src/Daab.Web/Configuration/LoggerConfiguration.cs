@@ -20,8 +20,6 @@ public static class L
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Is(level)
-            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .Enrich.FromLogContext()
             .WriteTo.Console()
             .CreateBootstrapLogger();
@@ -33,9 +31,19 @@ public static class L
     {
         public IServiceCollection ConfigureLogging(IConfiguration config)
         {
+            var envName =
+                Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")
+                ?? Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT")
+                ?? "Production";
+
+            var level = envName.Equals("Development", StringComparison.OrdinalIgnoreCase)
+                ? LogEventLevel.Debug
+                : LogEventLevel.Information;
+
             services.AddSerilog(
                 (services, loggerConfig) =>
                     loggerConfig
+                        .MinimumLevel.Is(level)
                         .ReadFrom.Configuration(config)
                         .ReadFrom.Services(services)
                         .Enrich.FromLogContext()

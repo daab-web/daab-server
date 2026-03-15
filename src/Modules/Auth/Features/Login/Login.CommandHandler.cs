@@ -1,25 +1,20 @@
-using Daab.Modules.Auth.Common;
 using Daab.Modules.Auth.Models;
-using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 namespace Daab.Modules.Auth.Features.Login;
 
 public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<User>>
 {
-    private readonly JwtOptions _options;
     private readonly AuthDbContext _context;
 
-    public LoginCommandHandler(AuthDbContext context, IOptions<JwtOptions> options)
+    public LoginCommandHandler(AuthDbContext context)
     {
         _context = context;
-        _options = options.Value;
     }
 
     public async Task<Fin<User>> Handle(LoginCommand request, CancellationToken cancellationToken)

@@ -1,12 +1,14 @@
+using System.Text;
+using Daab.Modules.Auth.Common;
 using Daab.Modules.Auth.Models;
 using Daab.Modules.Auth.Options;
 using Daab.Modules.Auth.Persistence;
-using FastEndpoints.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Daab.Modules.Auth;
 
@@ -30,18 +32,43 @@ public static class DependencyInjection
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)
             );
 
-            // services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-            // services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
             var jwtOptions = config.GetRequiredSection(nameof(JwtOptions)).Get<JwtOptions>();
             ArgumentNullException.ThrowIfNull(jwtOptions);
 
+            services.AddScoped<ITokenService, TokenService>();
+
             services
-                .AddAuthenticationJwtBearer(
-                    s => s.SigningKey = jwtOptions.JwtSecret,
-                    JwtBearerOptions
-                )
-                .AddAuthorization();
+                .AddAuthentication("cookie")
+                .AddCookie("cookie", options => options.LoginPath = "/auth/login")
+                .AddJwtBearer(options =>
+                {
+                    options.MapInboundClaims = false;
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidIssuer = jwtOptions.Issuer,
+                        ValidAudience = jwtOptions.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(jwtOptions.JwtSecret)
+                        ),
+                    };
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            if (
+                                context.Request.Cookies.TryGetValue(
+                                    "daab.accessToken",
+                                    out var accessToken
+                                )
+                            )
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        },
+                    };
+                });
+            services.AddAuthorization();
 
             return services;
         }
@@ -86,17 +113,4 @@ public static class DependencyInjection
 
         context.SaveChanges();
     }
-
-    private static readonly Action<JwtBearerOptions> JwtBearerOptions = options =>
-        options.Events = new JwtBearerEvents
-        {
-            OnMessageReceived = context =>
-            {
-                if (context.Request.Cookies.TryGetValue("daab.accessToken", out var accessToken))
-                {
-                    context.Token = accessToken;
-                }
-                return Task.CompletedTask;
-            },
-        };
 }

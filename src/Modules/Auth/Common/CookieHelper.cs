@@ -1,4 +1,3 @@
-using FastEndpoints.Security;
 using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Auth.Common;
@@ -7,11 +6,11 @@ public static class CookieHelper
 {
     extension(HttpContext httpContext)
     {
-        public void SetAuthCookies(TokenResponse response)
+        public void SetAuthCookies(string accessToken, string refreshToken, string userId)
         {
             httpContext.Response.Cookies.Append(
                 "daab.accessToken",
-                response.AccessToken,
+                accessToken,
                 new CookieOptions
                 {
                     HttpOnly = true,
@@ -21,7 +20,7 @@ public static class CookieHelper
             );
             httpContext.Response.Cookies.Append(
                 "daab.refreshToken",
-                response.RefreshToken,
+                refreshToken,
                 new CookieOptions
                 {
                     HttpOnly = true,
@@ -31,7 +30,7 @@ public static class CookieHelper
             );
             httpContext.Response.Cookies.Append(
                 "daab.userId",
-                response.UserId,
+                userId,
                 new CookieOptions
                 {
                     HttpOnly = true,
