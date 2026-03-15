@@ -17,7 +17,8 @@ public record AddScientistRequest(
     string[] Institutions,
     string[] Countries,
     string[] Areas,
-    CreatePublicationDto[]? Publications
+    CreatePublicationDto[]? Publications,
+    DateTime? DateOfBirth
 );
 
 public sealed record CreatePublicationDto(string Title, string? Url);
