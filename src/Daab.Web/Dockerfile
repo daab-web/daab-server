@@ -26,8 +26,8 @@ RUN dotnet publish "./Daab.Web.csproj" -c $BUILD_CONFIGURATION -o /app/publish /
 FROM base AS final
 WORKDIR /app
 
-RUN addgroup --system --gid 1002 dotnet && \
-    adduser --system --uid 1002 --ingroup dotnet aspnet
+RUN groupadd --system --gid 1002 dotnet && \
+    useradd --system --uid 1002 --gid dotnet aspnet
 
 RUN mkdir -p /app/data && chown -R 1002:1002 /app/data
 
