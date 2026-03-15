@@ -65,7 +65,7 @@ jobs:
             docker pull ${{ steps.meta.outputs.tags }}
             docker stop daab-server || true
             docker container rm daab-server || true
-            docker run -d --name daab-server -p 8080:8080 \ 
+            docker run -d --name daab-server -p 8080:8080 \
               --restart unless-stopped \
               -e ASPNETCORE_ENVIRONMENT=Production \
               --env-file ${{ secrets.ENV_FILE }} \
