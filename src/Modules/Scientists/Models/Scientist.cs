@@ -33,6 +33,20 @@ public class Scientist
     public string? Orcid { get; set; }
     public string? Website { get; set; }
 
+    public DateTime? DateOfBirth
+    {
+        get;
+        set
+        {
+            if (value > DateTime.UtcNow)
+            {
+                throw new ArgumentException("Date of birth must not be in the future");
+            }
+
+            field = value;
+        }
+    }
+
     public ICollection<string> Institutions { get; set; }
     public ICollection<string> Countries { get; set; }
     public ICollection<string> Areas { get; set; }
@@ -51,7 +65,8 @@ public class Scientist
         string? photoUrl,
         string? linkedInUrl,
         string? orcid,
-        string? website
+        string? website,
+        DateTime? dateOfBirth
     )
     {
         Email = email;
@@ -67,6 +82,7 @@ public class Scientist
         LinkedInUrl = linkedInUrl;
         Orcid = orcid;
         Website = website;
+        DateOfBirth = dateOfBirth;
     }
 
     public void LinkUser(string userId)

@@ -43,6 +43,7 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             null,
             null,
             null,
+            null,
             null
         )
         {

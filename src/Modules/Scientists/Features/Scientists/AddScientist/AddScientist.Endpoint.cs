@@ -58,7 +58,8 @@ public class AddScientistEndpoint(IMediator mediator)
             null,
             r.LinkedInUrl,
             r.Orcid,
-            r.Website
+            r.Website,
+            r.DateOfBirth
         )
         {
             Publications = publications,
