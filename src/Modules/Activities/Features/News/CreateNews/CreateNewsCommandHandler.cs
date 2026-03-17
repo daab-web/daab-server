@@ -1,10 +1,8 @@
 using System.Text.Json;
 using System.Threading.Channels;
-using Daab.Modules.Activities.BackgroundWorkers;
 using Daab.Modules.Activities.Messages;
 using Daab.Modules.Activities.Persistence;
 using Daab.SharedKernel;
-using FastEndpoints;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;

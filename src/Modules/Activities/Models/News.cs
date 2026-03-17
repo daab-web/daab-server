@@ -15,4 +15,6 @@ public class News
     public string? Category { get; set; }
     public string EditorState { get; set; } = string.Empty;
     public List<string> Tags { get; set; } = [];
+
+    public ICollection<Attachment> Attachments { get; set; } = [];
 }

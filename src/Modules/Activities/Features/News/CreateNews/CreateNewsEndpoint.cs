@@ -13,6 +13,7 @@ public class CreateNewsEndpoint(IMediator mediator)
         Post("/news");
 
         AllowFormData();
+        AllowFileUploads();
 
         // TODO: This should not be public
         AllowAnonymous();

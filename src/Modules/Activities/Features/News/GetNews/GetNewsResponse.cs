@@ -11,5 +11,14 @@ public sealed record GetNewsResponse(
     string? AuthorName,
     string? Category,
     List<string> Tags,
-    object? EditorState
+    object? EditorState,
+    List<AttachmentDto> Attachments
+);
+
+public sealed record AttachmentDto(
+    string Id,
+    string FileUrl,
+    string? Caption,
+    string? FileType,
+    string ParentObjectId
 );

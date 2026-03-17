@@ -1,3 +1,4 @@
+using Daab.SharedKernel;
 using LanguageExt;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +9,7 @@ public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<Crea
 {
     public string Title { get; } = req.Title;
     public object EditorState { get; } = req.EditorState;
-    public string Slug { get; } = req.Slug;
+    public string Slug { get; } = SlugHelper.GenerateSlug(req.Title);
 
     public IFormFile? Thumbnail { get; } = req.Thumbnail;
     public string? Excerpt { get; } = req.Excerpt;

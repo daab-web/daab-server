@@ -17,6 +17,32 @@ namespace Daab.Modules.Activities.Persistence.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.2");
 
+            modelBuilder.Entity("Daab.Modules.Activities.Models.Attachment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Caption")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileType")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FileUrl")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ParentObjectId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentObjectId");
+
+                    b.ToTable("Attachments");
+                });
+
             modelBuilder.Entity("Daab.Modules.Activities.Models.News", b =>
                 {
                     b.Property<string>("Id")
@@ -64,6 +90,20 @@ namespace Daab.Modules.Activities.Persistence.Migrations
                     b.HasIndex(new[] { "Title" }, "news_title_idx");
 
                     b.ToTable("News");
+                });
+
+            modelBuilder.Entity("Daab.Modules.Activities.Models.Attachment", b =>
+                {
+                    b.HasOne("Daab.Modules.Activities.Models.News", null)
+                        .WithMany("Attachments")
+                        .HasForeignKey("ParentObjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Daab.Modules.Activities.Models.News", b =>
+                {
+                    b.Navigation("Attachments");
                 });
 #pragma warning restore 612, 618
         }

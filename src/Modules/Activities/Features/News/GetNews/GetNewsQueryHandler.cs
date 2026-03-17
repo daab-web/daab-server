@@ -4,9 +4,7 @@ using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.EntityFrameworkCore;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace Daab.Modules.Activities.Features.News.GetNews;
 
@@ -18,10 +16,13 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
         CancellationToken cancellationToken
     )
     {
-        var news = await context.News.SingleOrDefaultAsync(
-            n => n.Slug == request.IdOrSlug || n.Id == request.IdOrSlug,
-            cancellationToken: cancellationToken
-        );
+        var news = await context
+            .News.AsNoTracking()
+            .Include(n => n.Attachments)
+            .SingleOrDefaultAsync(
+                n => n.Slug == request.IdOrSlug || n.Id == request.IdOrSlug,
+                cancellationToken: cancellationToken
+            );
         if (news is null)
         {
             return Error.New(StatusCodes.Status404NotFound, "Requested news does not exist");
@@ -40,7 +41,14 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
             news.AuthorName,
             news.Category,
             news.Tags.ToList(),
-            state
+            state,
+            news.Attachments.Select(n => new AttachmentDto(
+                n.Id,
+                n.FileUrl,
+                n.Caption,
+                n.FileType,
+                n.ParentObjectId
+            )).ToList()
         );
     }
 }
