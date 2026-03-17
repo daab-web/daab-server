@@ -12,8 +12,7 @@ namespace Daab.Modules.Activities.Features.News.UpdateNews;
 public sealed class UpdateNewsCommandHandler(
     ActivitiesDbContext context,
     IBlobStorage blobStorage,
-    [FromKeyedServices(ChannelKeys.ThumbnailUpload)]
-        Channel<ThumbnailUploadMessage> thumbnailUploadChannel
+    [FromKeyedServices(ChannelKeys.ThumbnailUpload)] Channel<UploadMessage> thumbnailUploadChannel
 ) : IRequestHandler<UpdateNewsCommand, Fin<UpdateNewsResponse>>
 {
     public async Task<Fin<UpdateNewsResponse>> Handle(
@@ -60,7 +59,12 @@ public sealed class UpdateNewsCommandHandler(
                     $"news/{news.Id}.webp",
                     cancellationToken
                 );
-                var message = new ThumbnailUploadMessage(news.Id, stream.ToArray());
+                var message = new UploadMessage(
+                    news.Id,
+                    news.Id,
+                    stream.ToArray(),
+                    MessageType.Thumbnail
+                );
                 await thumbnailUploadChannel.Writer.WriteAsync(message, cancellationToken);
             }
         }

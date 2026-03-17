@@ -27,7 +27,7 @@ public static class DependencyInjection
 
             services.AddKeyedSingleton(
                 ChannelKeys.ThumbnailUpload,
-                (_, _) => Channel.CreateUnbounded<ThumbnailUploadMessage>()
+                (_, _) => Channel.CreateUnbounded<UploadMessage>()
             );
             services.AddHostedService<ImageUploadWorker>();
 

@@ -12,8 +12,7 @@ namespace Daab.Modules.Activities.Features.News.CreateNews;
 
 public sealed class CreateNewsCommandHandler(
     ActivitiesDbContext context,
-    [FromKeyedServices(ChannelKeys.ThumbnailUpload)]
-        Channel<ThumbnailUploadMessage> thumbnailUploadChannel
+    [FromKeyedServices(ChannelKeys.ThumbnailUpload)] Channel<UploadMessage> thumbnailUploadChannel
 ) : IRequestHandler<CreateNewsCommand, Fin<CreateNewsResponse>>
 {
     public async Task<Fin<CreateNewsResponse>> Handle(
@@ -44,11 +43,14 @@ public sealed class CreateNewsCommandHandler(
 
         if (request.Thumbnail is not null)
         {
-            await using var stream = new MemoryStream();
-            await request.Thumbnail.CopyToAsync(stream, cancellationToken);
-            stream.Position = 0;
-
-            var message = new ThumbnailUploadMessage(entityEntry.Entity.Id, stream.ToArray());
+            var bytes = new byte[request.Thumbnail.Length];
+            await request.Thumbnail.OpenReadStream().ReadExactlyAsync(bytes, cancellationToken);
+            var message = new UploadMessage(
+                entityEntry.Entity.Id,
+                entityEntry.Entity.Id,
+                bytes,
+                MessageType.Thumbnail
+            );
 
             await thumbnailUploadChannel.Writer.WriteAsync(message, cancellationToken);
         }
