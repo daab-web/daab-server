@@ -112,7 +112,7 @@ public sealed class ImageUploadWorker(
                     return;
                 }
 
-                news.Thumbnail = $"{_options.Endpoint}/{path}";
+                news.Thumbnail = $"{_options.Endpoint}/activities/{path}";
                 await ctx.SaveChangesAsync(stoppingToken);
                 break;
 
