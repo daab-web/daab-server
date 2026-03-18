@@ -69,6 +69,6 @@ jobs:
               --restart unless-stopped \
               -e ASPNETCORE_ENVIRONMENT=Production \
               --env-file ${{ secrets.ENV_FILE }} \
-              -v /home/${{ secrets.VPS_USERNAME }}/daab-data/server:/app/sqlite \
+              -v ${{ secrets.VOLUME }} \
               ${{ steps.meta.outputs.tags }}
             docker logout

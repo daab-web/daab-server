@@ -29,7 +29,7 @@ WORKDIR /app
 RUN groupadd --system --gid 1002 dotnet && \
     useradd --system --uid 1002 --gid dotnet aspnet
 
-RUN mkdir -p /app/data && chown -R 1002:1002 /app/data
+RUN mkdir -p /app/sqlite && chown -R 1002:1002 /app/sqlite
 
 COPY --from=publish --chown=aspnet:dotnet /app/publish .
 
