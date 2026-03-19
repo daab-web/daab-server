@@ -36,6 +36,10 @@ app.UseActivitiesModule();
 app.UseFastEndpoints(static c => c.Errors.UseProblemDetails());
 
 app.UseSwaggerGen(options => options.Path = "/openapi/{documentName}.json");
-app.MapScalarApiReference();
-
+app.MapScalarApiReference(options =>
+{
+    options.Theme = ScalarTheme.DeepSpace;
+    options.DarkMode = true;
+    options.Layout = ScalarLayout.Modern;
+});
 app.Run();

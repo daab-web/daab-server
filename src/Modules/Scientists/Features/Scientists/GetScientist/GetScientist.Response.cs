@@ -13,6 +13,7 @@ public record GetScientistResponse(
     string? LinkedInUrl,
     string? Orcid,
     string? Website,
+    string? DateOfBirth,
     string[] Institutions,
     string[] Countries,
     string[] Areas
