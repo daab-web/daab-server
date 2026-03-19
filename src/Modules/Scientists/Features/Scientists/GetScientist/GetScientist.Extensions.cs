@@ -21,6 +21,7 @@ public static class GetScientistExtensions
                 s.LinkedInUrl,
                 s.Orcid,
                 s.Website,
+                s.DateOfBirth?.ToString("dd/MM/yyyy"),
                 [.. s.Institutions],
                 [.. s.Countries],
                 [.. s.Areas]
