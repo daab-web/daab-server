@@ -3,6 +3,7 @@ using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.Applications.Approve;
@@ -22,7 +23,7 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
 
         if (application is null)
         {
-            return Error.New("Requested application does not exist");
+            return Error.New(StatusCodes.Status404NotFound, "Requested application does not exist");
         }
 
         var slugExists = await context.Scientists.AnyAsync(
@@ -60,7 +61,10 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
 
         if (statesWritten <= 0)
         {
-            return Error.New("Unable to approve application. Please try again later");
+            return Error.New(
+                StatusCodes.Status500InternalServerError,
+                "Unable to approve application. Please try again later"
+            );
         }
 
         await context.SaveChangesAsync(cancellationToken);

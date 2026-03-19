@@ -2,6 +2,7 @@ using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.Scientists.UpdateScientist;
@@ -35,7 +36,10 @@ public class UpdateScientistCommandHandler(ScientistsDbContext context)
 
         if (rowsAffected == 0)
         {
-            return Error.New($"Scientist with an Id of {request.Id} not found.");
+            return Error.New(
+                StatusCodes.Status404NotFound,
+                $"Scientist with an Id of {request.Id} not found."
+            );
         }
 
         await context.SaveChangesAsync(cancellationToken);
