@@ -1,8 +1,8 @@
 using Daab.Modules.Scientists.Persistence;
-using FastEndpoints;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Scientists.Features.Scientists.DeleteScientist;
 
@@ -17,7 +17,10 @@ public class DeleteScientistCommandHandler(ScientistsDbContext context)
         var news = await context.Scientists.FindAsync([request.Id], cancellationToken);
         if (news is null)
         {
-            return Error.New($"News with an Id of ${request.Id} not found");
+            return Error.New(
+                StatusCodes.Status404NotFound,
+                $"News with an Id of {request.Id} not found"
+            );
         }
         context.Scientists.Remove(news);
         await context.SaveChangesAsync(cancellationToken);

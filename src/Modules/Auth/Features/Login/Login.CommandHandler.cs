@@ -3,6 +3,7 @@ using Daab.Modules.Auth.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,7 +30,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<User>>
 
         if (user is null)
         {
-            return Error.New(404, "Requested user does not exist");
+            return Error.New(StatusCodes.Status404NotFound, "Requested user does not exist");
         }
 
         var hasher = new PasswordHasher<User>();
@@ -42,7 +43,7 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<User>>
 
         if (result is PasswordVerificationResult.Failed)
         {
-            return Error.New(401, "Invalid credentials");
+            return Error.New(StatusCodes.Status401Unauthorized, "Invalid credentials");
         }
 
         return user;

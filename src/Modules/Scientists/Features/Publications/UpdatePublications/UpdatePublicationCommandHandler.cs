@@ -2,6 +2,7 @@ using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Scientists.Features.Publications.UpdatePublications;
 
@@ -16,7 +17,10 @@ public class UpdatePublicationCommandHandler(ScientistsDbContext context)
         var publication = await context.Publications.FindAsync([request.Id], cancellationToken);
         if (publication is null)
         {
-            return Error.New(400, $"Publication with an Id of {request.Id} not found");
+            return Error.New(
+                StatusCodes.Status404NotFound,
+                $"Publication with an Id of {request.Id} not found"
+            );
         }
 
         publication.Url = request.Url;

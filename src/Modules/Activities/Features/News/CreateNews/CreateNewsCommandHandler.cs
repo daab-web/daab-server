@@ -6,6 +6,7 @@ using Daab.SharedKernel;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Daab.Modules.Activities.Features.News.CreateNews;
@@ -38,7 +39,10 @@ public sealed class CreateNewsCommandHandler(
 
         if (statesWritten <= 0)
         {
-            return Error.New("Unable to save news... Please try again");
+            return Error.New(
+                StatusCodes.Status500InternalServerError,
+                "Unable to save news... Please try again"
+            );
         }
 
         if (request.Thumbnail is not null)

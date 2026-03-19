@@ -5,6 +5,7 @@ using Daab.SharedKernel;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Daab.Modules.Activities.Features.News.UpdateNews;
@@ -23,7 +24,10 @@ public sealed class UpdateNewsCommandHandler(
         var news = await context.News.FindAsync([request.Id], cancellationToken);
         if (news is null)
         {
-            return Error.New($"News with an Id of {request.Id} not found");
+            return Error.New(
+                StatusCodes.Status404NotFound,
+                $"News with an Id of {request.Id} not found"
+            );
         }
 
         news.EditorState = request.EditorState;

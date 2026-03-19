@@ -3,6 +3,7 @@ using Daab.SharedKernel;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Activities.Features.News.DeleteNews;
 
@@ -17,7 +18,10 @@ public sealed class DeleteNewsCommandHandler(ActivitiesDbContext context, IBlobS
         var news = await context.News.FindAsync([request.Id], cancellationToken);
         if (news is null)
         {
-            return Error.New($"News with an Id of ${request.Id} not found");
+            return Error.New(
+                StatusCodes.Status404NotFound,
+                $"News with an Id of {request.Id} not found"
+            );
         }
 
         if (
