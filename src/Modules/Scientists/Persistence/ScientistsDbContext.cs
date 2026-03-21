@@ -9,6 +9,7 @@ public class ScientistsDbContext : DbContext
     public DbSet<Scientist> Scientists { get; set; }
     public DbSet<Application> Applications { get; set; }
     public DbSet<Publication> Publications { get; set; }
+    public DbSet<Director> Directors { get; set; }
 
     public ScientistsDbContext(DbContextOptions<ScientistsDbContext> options)
         : base(options) { }
