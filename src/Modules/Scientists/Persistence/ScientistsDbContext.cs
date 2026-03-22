@@ -19,5 +19,7 @@ public class ScientistsDbContext : DbContext
         var application = modelBuilder.Entity<Application>();
 
         application.HasKey(s => s.Id);
+
+        modelBuilder.Entity<Director>().HasIndex(d => d.ScientistId).IsUnique();
     }
 }
