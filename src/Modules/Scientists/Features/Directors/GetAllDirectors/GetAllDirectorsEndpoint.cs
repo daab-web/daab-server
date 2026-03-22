@@ -1,9 +1,6 @@
 using Daab.Modules.Scientists.Models;
-using Daab.SharedKernel;
 using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Http.Extensions;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace Daab.Modules.Scientists.Features.Directors.GetAllDirectors;
 
@@ -35,7 +32,7 @@ public class GetAllDirectorsEndpoint(IMediator mediator)
 
             return new DirectorResponse(
                 director.Id,
-                director.Scientist.UserId,
+                director.ScientistId,
                 director.Scientist.PhotoUrl,
                 director.Scientist.FirstName,
                 director.Scientist.LastName,

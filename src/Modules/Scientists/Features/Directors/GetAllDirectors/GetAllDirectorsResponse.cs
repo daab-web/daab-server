@@ -4,7 +4,7 @@ public sealed record GetAllDirectorsResponse(IEnumerable<DirectorResponse> Direc
 
 public sealed record DirectorResponse(
     string Id,
-    string? UserId,
+    string? ScientistId,
     string? ProfilePictureUrl,
     string FirstName,
     string LastName,
