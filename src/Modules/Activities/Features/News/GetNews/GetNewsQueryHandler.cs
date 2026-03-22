@@ -43,12 +43,13 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
             news.Tags.ToList(),
             state,
             news.Attachments.Select(n => new AttachmentDto(
-                n.Id,
-                n.FileUrl,
-                n.Caption,
-                n.FileType,
-                n.ParentObjectId
-            )).ToList()
+                    n.Id,
+                    n.FileUrl,
+                    n.Caption,
+                    n.FileType,
+                    n.ParentObjectId
+                ))
+                .ToList()
         );
     }
 }
