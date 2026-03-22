@@ -11,8 +11,6 @@ public class CreateDirectorEndpoint(IMediator mediator)
     {
         Post("/directors");
 
-        AllowFormData();
-
         // TODO: This should not be public
         AllowAnonymous();
     }
