@@ -1,3 +1,4 @@
+using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using LanguageExt;
@@ -16,6 +17,7 @@ public sealed class GetAllApplicationsQueryHandler(ScientistsDbContext context)
     {
         var applications = await context
             .Applications.AsNoTracking()
+            .Where(x => x.Status == ApplicationStatus.Accepted)
             .ToDto()
             .ToPagedResponseAsync(
                 new PageRequest { PageNumber = request.Page, PageSize = request.PageSize },
