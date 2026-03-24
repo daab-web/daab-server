@@ -7,7 +7,10 @@ public class UpdateScientistRequestValidator : Validator<UpdateScientistRequest>
 {
     public UpdateScientistRequestValidator()
     {
-        RuleFor(x => x.Email).EmailAddress().MaximumLength(320);
+        RuleFor(x => x.Email)
+            .EmailAddress()
+            .MaximumLength(320)
+            .When(x => !string.IsNullOrEmpty(x.Email));
 
         RuleFor(x => x.PhoneNumber)
             .MaximumLength(32)
