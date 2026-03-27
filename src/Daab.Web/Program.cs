@@ -7,6 +7,7 @@ using Daab.Web.Configuration;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Scalar.AspNetCore;
+using SixLabors.ImageSharp.Web.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -20,6 +21,12 @@ builder
     .ConfigureProblemDetails();
 
 builder
+    .Services.AddImageSharp()
+    .ClearProviders()
+    .AddScientistsModuleImages(config)
+    .AddActivitiesModuleImages(config);
+
+builder
     .Services.AddInfrastructure(config)
     .AddAuthModule(config)
     .AddScientistsModule(config)
@@ -30,6 +37,8 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseCors();
+app.UseImageSharp();
+app.UseStaticFiles();
 app.UseAuthModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();

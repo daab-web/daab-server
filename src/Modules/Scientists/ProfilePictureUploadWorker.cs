@@ -1,6 +1,4 @@
 using System.Threading.Channels;
-using Daab.Modules.Activities.BackgroundWorkers;
-using Daab.Modules.Activities.Configuration;
 using Daab.Modules.Scientists.Messages;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;

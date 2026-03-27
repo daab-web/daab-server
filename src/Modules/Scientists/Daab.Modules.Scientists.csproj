@@ -6,11 +6,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.Core" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="SixLabors.ImageSharp" />
     <ProjectReference Include="..\..\Daab.SharedKernel\Daab.SharedKernel.csproj" />
     <ProjectReference Include="..\Activities\Daab.Modules.Activities.csproj" />
   </ItemGroup>
