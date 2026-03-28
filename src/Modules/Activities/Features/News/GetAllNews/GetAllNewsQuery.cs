@@ -8,4 +8,5 @@ public class GetAllNewsQuery : IRequest<Fin<PagedResponse<GetAllNewsResponse>>>
 {
     public int Page { get; set; }
     public int PageSize { get; set; }
+    public required string Locale { get; set; }
 }

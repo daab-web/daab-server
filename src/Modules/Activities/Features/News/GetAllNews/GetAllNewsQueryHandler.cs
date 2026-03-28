@@ -17,24 +17,27 @@ public class GetAllNewsQueryHandler(ActivitiesDbContext context)
     )
     {
         var news = await context
-            .News.AsNoTracking()
-            .Select(n => new GetAllNewsResponse(
+            .News.Include(n => n.Translations.Where(t => t.Locale == request.Locale))
+            .AsNoTracking()
+            .ToArrayAsync(cancellationToken);
+
+        var dtos = news.Select(n =>
+        {
+            var translation = n.Translations.FirstOrDefault();
+            return new GetAllNewsResponse(
                 n.Id,
-                n.Title,
+                translation?.Title ?? n.Title,
                 n.Slug,
                 n.Thumbnail,
-                n.Excerpt,
+                translation?.Excerpt ?? n.Excerpt,
                 n.PublishedDate.ToString("yyyy-MM-dd"),
                 n.AuthorId,
                 n.AuthorName,
                 n.Category,
                 n.Tags
-            ))
-            .ToPagedResponseAsync(
-                new PageRequest { PageNumber = request.Page, PageSize = request.PageSize },
-                cancellationToken
             );
+        });
 
-        return news;
+        return PagedResponse<GetAllNewsResponse>.Create(dtos, request.Page, request.PageSize);
     }
 }

@@ -18,6 +18,7 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
     {
         var news = await context
             .News.AsNoTracking()
+            .Include(n => n.Translations.Where(t => t.Locale == request.Locale))
             .Include(n => n.Attachments)
             .SingleOrDefaultAsync(
                 n => n.Slug == request.IdOrSlug || n.Id == request.IdOrSlug,
@@ -28,14 +29,17 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
             return Error.New(StatusCodes.Status404NotFound, "Requested news does not exist");
         }
 
-        var state = JsonSerializer.Deserialize<object>(news.EditorState);
+        var translation = news.Translations.FirstOrDefault();
+        var state = JsonSerializer.Deserialize<object>(
+            translation?.EditorState ?? news.EditorState
+        );
 
         return new GetNewsResponse(
             news.Id,
-            news.Title,
+            translation?.Title ?? news.Title,
             news.Slug,
             news.Thumbnail,
-            news.Excerpt,
+            translation?.Excerpt ?? news.Excerpt,
             news.PublishedDate.ToString("yyyy-MM-dd"),
             news.AuthorId,
             news.AuthorName,

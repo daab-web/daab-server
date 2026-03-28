@@ -18,7 +18,12 @@ public class GetAllNewsEndpoint(IMediator mediator)
     public override async Task HandleAsync(GetAllNewsRequest request, CancellationToken ct)
     {
         var res = await mediator.Send(
-            new GetAllNewsQuery { Page = request.Page, PageSize = request.PageSize },
+            new GetAllNewsQuery
+            {
+                Page = request.Page,
+                PageSize = request.PageSize,
+                Locale = request.Locale,
+            },
             ct
         );
 
