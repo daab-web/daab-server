@@ -2,6 +2,7 @@ using System.Threading.Channels;
 using Daab.Modules.Scientists.Messages;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
+using Daab.SharedKernel.Constants;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;

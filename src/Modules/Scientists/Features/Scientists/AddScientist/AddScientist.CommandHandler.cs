@@ -3,6 +3,7 @@ using Daab.Modules.Scientists.Messages;
 using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
+using Daab.SharedKernel.Constants;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

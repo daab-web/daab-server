@@ -3,15 +3,14 @@ using Amazon.S3;
 using Daab.Modules.Scientists.Messages;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
+using Daab.SharedKernel.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using SixLabors.ImageSharp.Web.Caching.AWS;
 using SixLabors.ImageSharp.Web.DependencyInjection;
 using SixLabors.ImageSharp.Web.Providers.AWS;
-using SixLabors.ImageSharp.Web.Resolvers.AWS;
 
 namespace Daab.Modules.Scientists;
 

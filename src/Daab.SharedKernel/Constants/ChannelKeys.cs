@@ -1,4 +1,4 @@
-namespace Daab.SharedKernel;
+namespace Daab.SharedKernel.Constants;
 
 public static class ChannelKeys
 {

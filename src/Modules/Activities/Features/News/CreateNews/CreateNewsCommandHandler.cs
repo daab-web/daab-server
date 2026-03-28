@@ -1,8 +1,9 @@
 using System.Text.Json;
 using System.Threading.Channels;
 using Daab.Modules.Activities.Messages;
+using Daab.Modules.Activities.Models;
 using Daab.Modules.Activities.Persistence;
-using Daab.SharedKernel;
+using Daab.SharedKernel.Constants;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
@@ -33,6 +34,15 @@ public sealed class CreateNewsCommandHandler(
             Tags = request.Tags,
             Excerpt = request.Excerpt,
         };
+
+        news.Translations =
+        [
+            .. Localization.SupportedLocales.Select(locale => new NewsTranslation
+            {
+                Locale = locale,
+                NewsId = news.Id,
+            }),
+        ];
 
         var entityEntry = await context.News.AddAsync(news, cancellationToken);
         var statesWritten = await context.SaveChangesAsync(cancellationToken);

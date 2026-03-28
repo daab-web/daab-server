@@ -1,5 +1,4 @@
 using Daab.Modules.Scientists.Models;
-using Daab.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Persistence;
@@ -10,7 +9,6 @@ public class ScientistsDbContext : DbContext
     public DbSet<Application> Applications { get; set; }
     public DbSet<Publication> Publications { get; set; }
     public DbSet<Director> Directors { get; set; }
-    public DbSet<Translation> Translations { get; set; }
 
     public ScientistsDbContext(DbContextOptions<ScientistsDbContext> options)
         : base(options) { }

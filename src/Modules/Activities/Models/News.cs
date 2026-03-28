@@ -1,3 +1,5 @@
+using Daab.SharedKernel.Entities;
+
 namespace Daab.Modules.Activities.Models;
 
 public class News
@@ -17,4 +19,27 @@ public class News
     public List<string> Tags { get; set; } = [];
 
     public ICollection<Attachment> Attachments { get; set; } = [];
+
+    public ICollection<NewsTranslation> Translations { get; set; } = [];
+}
+
+public class NewsTranslation
+{
+    public required string NewsId { get; init; }
+    public News News { get; set; } = null!;
+    public required string Locale { get; init; }
+    public TranslationStatus Status { get; private set; } = TranslationStatus.Untranslated;
+
+    public string? Title { get; private set; }
+    public string? Excerpt { get; private set; }
+    public string? EditorState { get; private set; }
+
+    public void Update(string title, string excerpt, string editorState)
+    {
+        Title = title;
+        Excerpt = excerpt;
+        EditorState = editorState;
+
+        Status = TranslationStatus.Translated;
+    }
 }

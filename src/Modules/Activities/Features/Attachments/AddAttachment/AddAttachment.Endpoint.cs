@@ -3,6 +3,7 @@ using Daab.Modules.Activities.Messages;
 using Daab.Modules.Activities.Models;
 using Daab.Modules.Activities.Persistence;
 using Daab.SharedKernel;
+using Daab.SharedKernel.Constants;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Http;
