@@ -12,23 +12,12 @@ public class CreateNewsEndpoint(IMediator mediator)
     {
         Post("/news");
 
-        AllowFormData();
-        AllowFileUploads();
-
         // TODO: This should not be public
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(CreateNewsRequest req, CancellationToken ct)
     {
-        if (req.Thumbnail?.ContentType.StartsWith("image/") == false)
-        {
-            await Send.ResultAsync(
-                TypedResults.BadRequest("Invalid thumbnail format. Only image files are allowed.")
-            );
-            return;
-        }
-
         var res = await mediator.Send(new CreateNewsCommand(req), ct);
 
         await res.Match(

@@ -11,7 +11,6 @@ public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<Crea
     public object EditorState { get; } = req.EditorState;
     public string Slug { get; } = SlugHelper.GenerateSlug(req.Title);
 
-    public IFormFile? Thumbnail { get; } = req.Thumbnail;
     public string? Excerpt { get; } = req.Excerpt;
     public string? AuthorId { get; } = req.AuthorId;
     public string? AuthorName { get; } = req.Author;
