@@ -20,7 +20,7 @@ public sealed class CreateNewsCommandHandler(ActivitiesDbContext context)
         var news = new Models.News
         {
             Title = request.Title,
-            EditorState = JsonSerializer.Serialize(request.EditorState),
+            EditorState = request.EditorState,
             Slug = request.Slug,
             PublishedDate = request.PublishedDate,
             AuthorId = request.AuthorId,
