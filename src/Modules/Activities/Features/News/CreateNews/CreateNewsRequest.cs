@@ -5,7 +5,6 @@ namespace Daab.Modules.Activities.Features.News.CreateNews;
 public sealed record CreateNewsRequest(
     string Title,
     object EditorState,
-    IFormFile? Thumbnail,
     string? Excerpt,
     string? AuthorId,
     string? Author,

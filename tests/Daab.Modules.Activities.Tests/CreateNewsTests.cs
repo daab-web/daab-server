@@ -21,16 +21,12 @@ public sealed class CreateNewsTests : IAsyncLifetime, IDisposable
             null,
             "Test excerpt",
             null,
-            null,
             "Test Category",
             ["test-tag"],
             DateTime.UtcNow
         );
         var cmd = new CreateNewsCommand(req);
-        var handler = new CreateNewsCommandHandler(
-            _ctx,
-            Channel.CreateBounded<UploadMessage>(new BoundedChannelOptions(1))
-        );
+        var handler = new CreateNewsCommandHandler(_ctx);
 
         // Act
         var result = await handler.Handle(cmd, CancellationToken.None);
