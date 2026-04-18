@@ -9,7 +9,7 @@ public class News
     public required string Slug { get; init; }
     public string? Thumbnail { get; set; }
     public string? Excerpt { get; set; }
-    public required DateTimeOffset PublishedDate { get; init; }
+    public required DateTime PublishedDate { get; init; }
 
     public string? AuthorId { get; init; }
     public string? AuthorName { get; init; }

@@ -58,7 +58,7 @@ public sealed class GetNewsTranslationsTests : IDisposable, IAsyncLifetime
         {
             Title = "Test title",
             Slug = "test-title",
-            PublishedDate = DateTimeOffset.UtcNow,
+            PublishedDate = DateTime.UtcNow,
         };
         news.Translations = new List<NewsTranslation>
         {

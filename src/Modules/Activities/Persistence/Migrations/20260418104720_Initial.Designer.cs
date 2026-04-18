@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Daab.Modules.Activities.Persistence.Migrations
 {
     [DbContext(typeof(ActivitiesDbContext))]
-    [Migration("20260328153802_NewsTranslations")]
-    partial class NewsTranslations
+    [Migration("20260418104720_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -67,7 +67,7 @@ namespace Daab.Modules.Activities.Persistence.Migrations
                     b.Property<string>("Excerpt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("PublishedDate")
+                    b.Property<DateTime>("PublishedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Slug")

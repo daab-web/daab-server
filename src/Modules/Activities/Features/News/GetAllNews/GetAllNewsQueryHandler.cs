@@ -1,8 +1,6 @@
 using Daab.Modules.Activities.Persistence;
 using Daab.SharedKernel;
-using FastEndpoints;
 using LanguageExt;
-using LanguageExt.Common;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +17,7 @@ public class GetAllNewsQueryHandler(ActivitiesDbContext context)
         var news = await context
             .News.Include(n => n.Translations.Where(t => t.Locale == request.Locale))
             .AsNoTracking()
+            .OrderByDescending(n => n.PublishedDate)
             .ToArrayAsync(cancellationToken);
 
         var dtos = news.Select(n =>

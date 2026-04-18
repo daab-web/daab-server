@@ -64,7 +64,7 @@ namespace Daab.Modules.Activities.Persistence.Migrations
                     b.Property<string>("Excerpt")
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTimeOffset>("PublishedDate")
+                    b.Property<DateTime>("PublishedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Slug")

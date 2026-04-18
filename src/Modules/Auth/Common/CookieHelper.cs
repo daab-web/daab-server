@@ -14,7 +14,7 @@ public static class CookieHelper
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Expires = DateTimeOffset.UtcNow.AddMinutes(15),
+                    Expires = DateTime.UtcNow.AddMinutes(15),
                     SameSite = SameSiteMode.Lax,
                 }
             );
@@ -24,7 +24,7 @@ public static class CookieHelper
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    Expires = DateTime.UtcNow.AddDays(7),
                     SameSite = SameSiteMode.Lax,
                 }
             );
@@ -34,7 +34,7 @@ public static class CookieHelper
                 new CookieOptions
                 {
                     HttpOnly = true,
-                    Expires = DateTimeOffset.UtcNow.AddDays(7),
+                    Expires = DateTime.UtcNow.AddDays(7),
                     SameSite = SameSiteMode.Lax,
                 }
             );
