@@ -34,6 +34,24 @@ public class NewsTranslation
     public string? Excerpt { get; private set; }
     public string? EditorState { get; private set; }
 
+    public static NewsTranslation Create(
+        string newsId,
+        string locale,
+        string title,
+        string excerpt,
+        string editorState
+    )
+    {
+        return new NewsTranslation
+        {
+            NewsId = newsId,
+            Locale = locale,
+            Title = title,
+            Excerpt = excerpt,
+            EditorState = editorState,
+        };
+    }
+
     public void Update(string title, string excerpt, string editorState)
     {
         Title = title;

@@ -1,6 +1,4 @@
-﻿using System.Threading.Channels;
-using Daab.Modules.Activities.Features.News.CreateNews;
-using Daab.Modules.Activities.Messages;
+﻿using Daab.Modules.Activities.Features.News.CreateNews;
 using Daab.Modules.Activities.Persistence;
 using Daab.SharedKernel.Constants;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +15,7 @@ public sealed class CreateNewsTests : IAsyncLifetime, IDisposable
         // Arrange
         var req = new CreateNewsRequest(
             "Test title",
-            new object(),
+            "",
             null,
             "Test excerpt",
             null,

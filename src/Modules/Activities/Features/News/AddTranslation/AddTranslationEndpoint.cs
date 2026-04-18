@@ -1,3 +1,4 @@
+using Daab.Modules.Activities.Middlewares;
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
@@ -9,6 +10,7 @@ public class AddTranslationEndpoint(IMediator mediator) : Endpoint<AddTranslatio
     public override void Configure()
     {
         Post("/news/{newsId}/translations");
+        PreProcessor<LocalePreProcessor>();
         AllowAnonymous();
     }
 

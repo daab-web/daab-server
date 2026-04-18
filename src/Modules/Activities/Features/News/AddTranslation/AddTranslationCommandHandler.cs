@@ -1,3 +1,4 @@
+using Daab.Modules.Activities.Models;
 using Daab.Modules.Activities.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
@@ -14,12 +15,28 @@ public sealed class AddTranslationCommandHandler(ActivitiesDbContext ctx)
         CancellationToken cancellationToken
     )
     {
-        var translation = await ctx.NewsTranslations.SingleAsync(
+        var translation = await ctx.NewsTranslations.SingleOrDefaultAsync(
             nt => nt.NewsId == request.NewsId && nt.Locale == request.Locale,
             cancellationToken
         );
 
-        translation.Update(request.Title, request.Excerpt, request.EditorState);
+        if (translation is null)
+        {
+            await ctx.NewsTranslations.AddAsync(
+                NewsTranslation.Create(
+                    request.NewsId,
+                    request.Locale,
+                    request.Title,
+                    request.Excerpt,
+                    request.EditorState
+                ),
+                cancellationToken
+            );
+        }
+        else
+        {
+            translation.Update(request.Title, request.Excerpt, request.EditorState);
+        }
 
         var statesWritten = await ctx.SaveChangesAsync(cancellationToken);
 

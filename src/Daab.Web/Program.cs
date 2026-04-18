@@ -2,6 +2,7 @@ using Daab.Infrastructure;
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
 using Daab.Modules.Scientists;
+using Daab.SharedKernel.Options;
 using Daab.Web.Configuration;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -24,6 +25,8 @@ builder
     .ClearProviders()
     .AddScientistsModuleImages(config)
     .AddActivitiesModuleImages(config);
+
+builder.Services.Configure<LocaleOptions>(config.GetRequiredSection(nameof(LocaleOptions)));
 
 builder
     .Services.AddInfrastructure(config)
