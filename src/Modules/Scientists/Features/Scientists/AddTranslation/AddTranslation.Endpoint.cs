@@ -48,7 +48,7 @@ public sealed class AddTranslationCommandHandler(ScientistsDbContext ctx)
                     ScientistId = request.ScientistId,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
-                    Description = request.LastName,
+                    Description = request.Description,
                 },
                 cancellationToken
             );
