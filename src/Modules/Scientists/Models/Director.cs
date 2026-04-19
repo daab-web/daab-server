@@ -6,5 +6,5 @@ public class Director
     public string Role { get; set; } = string.Empty;
 
     public required string ScientistId { get; set; }
-    public Scientist? Scientist { get; set; }
+    public Scientist Scientist { get; set; } = null!;
 }

@@ -17,6 +17,7 @@ public class GetAllDirectorsQueryHandler(ScientistsDbContext context)
         var directors = await context
             .Directors.AsNoTracking()
             .Include(d => d.Scientist)
+                .ThenInclude(s => s.Translations.SingleOrDefault(t => t.Locale == request.Locale))
             .ToListAsync(cancellationToken);
 
         return directors;

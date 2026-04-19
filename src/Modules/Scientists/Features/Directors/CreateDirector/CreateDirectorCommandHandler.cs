@@ -20,12 +20,7 @@ public class CreateDirectorCommandHandler(ScientistsDbContext context)
             return Error.New($"Scientist with and Id of {request.ScientistId} not found");
         }
 
-        var director = new Director
-        {
-            Role = request.Role,
-            ScientistId = request.ScientistId,
-            Scientist = null,
-        };
+        var director = new Director { Role = request.Role, ScientistId = request.ScientistId };
 
         await context.Directors.AddAsync(director, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);

@@ -2,7 +2,7 @@ using Daab.SharedKernel.Options;
 using FastEndpoints;
 using Microsoft.Extensions.Options;
 
-namespace Daab.Modules.Activities.Middlewares;
+namespace Daab.SharedKernel.Middlewares;
 
 public interface ILocalized
 {

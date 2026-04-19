@@ -22,15 +22,12 @@ public class AddScientistCommandHandler(
     )
     {
         var scientist = request.Scientist;
+        var translation = request.Scientist.Translations.First();
+        var slug = SlugHelper.GenerateSlug($"{translation.FirstName} {translation.LastName}");
 
-        var slugExists = await context.Scientists.AnyAsync(
-            x => x.FirstName == scientist.FirstName && x.LastName == scientist.LastName,
-            cancellationToken
-        );
+        var slugExists = await context.Scientists.AnyAsync(x => x.Slug == slug, cancellationToken);
 
-        scientist.Slug = slugExists
-            ? $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}-{scientist.Id[..5]}"
-            : $"{scientist.FirstName.Replace(' ', '-')}-{scientist.LastName.Replace(' ', '-')}";
+        scientist.Slug = slugExists ? $"{slug}-{scientist.Id[..5]}" : slug;
 
         var publications = request.Scientist.Publications;
 

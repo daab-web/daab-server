@@ -169,25 +169,12 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .HasMaxLength(320)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
                     b.PrimitiveCollection<string>("Institutions")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LinkedInUrl")
@@ -219,6 +206,35 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.ToTable("Scientists");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.ScientistTranslation", b =>
+                {
+                    b.Property<string>("ScientistId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Locale")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ScientistId", "Locale");
+
+                    b.HasIndex("ScientistId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("ScientistTranslations");
+                });
+
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Director", b =>
                 {
                     b.HasOne("Daab.Modules.Scientists.Models.Scientist", "Scientist")
@@ -241,9 +257,22 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.Navigation("Scientist");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.ScientistTranslation", b =>
+                {
+                    b.HasOne("Daab.Modules.Scientists.Models.Scientist", "Scientist")
+                        .WithMany("Translations")
+                        .HasForeignKey("ScientistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Scientist");
+                });
+
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Scientist", b =>
                 {
                     b.Navigation("Publications");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

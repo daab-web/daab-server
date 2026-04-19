@@ -14,14 +14,15 @@ public class GetScientist(IMediator mediator) : EndpointWithoutRequest<GetScient
     public override async Task HandleAsync(CancellationToken ct)
     {
         var idOrSlug = Route<string>("idOrSlug");
+        var locale = Query<string>("locale");
 
-        if (string.IsNullOrWhiteSpace(idOrSlug))
+        if (string.IsNullOrWhiteSpace(idOrSlug) || string.IsNullOrEmpty(locale))
         {
             await Send.ErrorsAsync(cancellation: ct);
             return;
         }
 
-        var response = await mediator.Send(new GetScientistQuery(idOrSlug), ct);
+        var response = await mediator.Send(new GetScientistQuery(idOrSlug, locale), ct);
 
         if (response is null)
         {

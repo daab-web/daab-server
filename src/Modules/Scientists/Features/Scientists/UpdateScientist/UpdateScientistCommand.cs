@@ -14,10 +14,7 @@ public sealed class UpdateScientistCommand : IRequest<Fin<UpdateScientistRespons
         AcademicTitle = request.AcademicTitle;
         Institution = request.Institutions;
         PhoneNumber = request.PhoneNumber;
-        LastName = request.LastName;
         Institution = request.Institutions;
-        FirstName = request.FirstName;
-        Description = request.Description;
         Countries = request.Countries;
         Areas = request.Areas;
         LinkedInUrl = request.LinkedInUrl;
@@ -28,9 +25,6 @@ public sealed class UpdateScientistCommand : IRequest<Fin<UpdateScientistRespons
     public string Id { get; }
     public string? Email { get; }
     public string? PhoneNumber { get; }
-    public string FirstName { get; }
-    public string LastName { get; }
-    public string? Description { get; }
     public string AcademicTitle { get; }
     public string? LinkedInUrl { get; set; }
     public string? Orcid { get; set; }

@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Daab.Modules.Scientists.Persistence.Migrations
 {
     [DbContext(typeof(ScientistsDbContext))]
-    [Migration("20260315125652_ScientistDateofBirth")]
-    partial class ScientistDateofBirth
+    [Migration("20260419130958_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -106,6 +106,27 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.ToTable("Applications");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.Director", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ScientistId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScientistId")
+                        .IsUnique();
+
+                    b.ToTable("Directors");
+                });
+
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Publication", b =>
                 {
                     b.Property<string>("Id")
@@ -151,25 +172,12 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.Property<DateTime?>("DateOfBirth")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Email")
                         .HasMaxLength(320)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
                     b.PrimitiveCollection<string>("Institutions")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(64)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LinkedInUrl")
@@ -201,6 +209,46 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.ToTable("Scientists");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.ScientistTranslation", b =>
+                {
+                    b.Property<string>("ScientistId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Locale")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ScientistId", "Locale");
+
+                    b.HasIndex("ScientistId", "Locale")
+                        .IsUnique();
+
+                    b.ToTable("ScientistTranslations");
+                });
+
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.Director", b =>
+                {
+                    b.HasOne("Daab.Modules.Scientists.Models.Scientist", "Scientist")
+                        .WithMany()
+                        .HasForeignKey("ScientistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Scientist");
+                });
+
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Publication", b =>
                 {
                     b.HasOne("Daab.Modules.Scientists.Models.Scientist", "Scientist")
@@ -212,9 +260,22 @@ namespace Daab.Modules.Scientists.Persistence.Migrations
                     b.Navigation("Scientist");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Scientists.Models.ScientistTranslation", b =>
+                {
+                    b.HasOne("Daab.Modules.Scientists.Models.Scientist", "Scientist")
+                        .WithMany("Translations")
+                        .HasForeignKey("ScientistId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Scientist");
+                });
+
             modelBuilder.Entity("Daab.Modules.Scientists.Models.Scientist", b =>
                 {
                     b.Navigation("Publications");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }

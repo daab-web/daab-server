@@ -1,4 +1,4 @@
-using Daab.Modules.Activities.Middlewares;
+using Daab.SharedKernel.Middlewares;
 
 namespace Daab.Modules.Activities.Features.News.AddTranslation;
 

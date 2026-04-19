@@ -6,15 +6,16 @@ public static class GetAllScientists
 {
     extension(Scientist s)
     {
-        public GetAllScientistsResponse ToAllScientistsResponse()
+        public GetAllScientistsResponse ToAllScientistsResponse(string locale)
         {
+            var t = s.Translations.First(t => t.Locale == locale);
             return new GetAllScientistsResponse(
                 s.Id,
                 s.UserId,
                 s.Slug,
-                s.FirstName,
-                s.LastName,
-                s.Description,
+                t.FirstName!,
+                t.LastName!,
+                t.Description,
                 s.AcademicTitle,
                 [.. s.Institutions],
                 [.. s.Countries],
@@ -25,7 +26,7 @@ public static class GetAllScientists
 
     extension(IQueryable<Scientist> scientists)
     {
-        public IQueryable<GetAllScientistsResponse> ToAllScientistsResponse() =>
-            scientists.Select(s => s.ToAllScientistsResponse());
+        public IQueryable<GetAllScientistsResponse> ToAllScientistsResponse(string locale) =>
+            scientists.Select(s => s.ToAllScientistsResponse(locale));
     }
 }

@@ -46,11 +46,8 @@ public class AddScientistEndpoint(IMediator mediator)
         List<Publication> publications = [];
 
         var scientist = new Scientist(
-            r.FirstName,
-            r.LastName,
             r.Email,
             r.PhoneNumber,
-            r.Description,
             r.AcademicTitle,
             r.Institutions,
             r.Countries,
@@ -81,6 +78,17 @@ public class AddScientistEndpoint(IMediator mediator)
         {
             scientist.LinkUser(r.UserId);
         }
+
+        scientist.Translations.Add(
+            new ScientistTranslation
+            {
+                Locale = r.Locale,
+                ScientistId = scientist.Id,
+                FirstName = r.FirstName,
+                LastName = r.LastName,
+                Description = r.Description,
+            }
+        );
 
         return scientist;
     }

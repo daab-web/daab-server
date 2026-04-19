@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Daab.SharedKernel.Entities;
 
 namespace Daab.Modules.Scientists.Models;
 
@@ -16,14 +17,6 @@ public class Scientist
     [MaxLength(15)]
     public string? PhoneNumber { get; set; }
 
-    [MaxLength(64)]
-    public string FirstName { get; set; }
-
-    [MaxLength(64)]
-    public string LastName { get; set; }
-
-    public string? Description { get; set; }
-
     [MaxLength(320)]
     public string AcademicTitle { get; set; }
 
@@ -32,6 +25,8 @@ public class Scientist
     public string? LinkedInUrl { get; set; }
     public string? Orcid { get; set; }
     public string? Website { get; set; }
+
+    public ICollection<ScientistTranslation> Translations { get; set; } = [];
 
     public DateTime? DateOfBirth
     {
@@ -53,11 +48,8 @@ public class Scientist
     public ICollection<Publication> Publications { get; set; } = [];
 
     public Scientist(
-        string firstName,
-        string lastName,
         string? email,
         string? phoneNumber,
-        string? description,
         string academicTitle,
         ICollection<string> institutions,
         ICollection<string> countries,
@@ -71,9 +63,6 @@ public class Scientist
     {
         Email = email;
         PhoneNumber = phoneNumber;
-        FirstName = firstName;
-        LastName = lastName;
-        Description = description;
         AcademicTitle = academicTitle;
         Institutions = institutions;
         Countries = countries;
@@ -90,5 +79,26 @@ public class Scientist
         UserId = Ulid.TryParse(userId, out _)
             ? userId
             : throw new ArgumentException("Invalid ID format");
+    }
+}
+
+public class ScientistTranslation
+{
+    public required string Locale { get; init; }
+    public required string ScientistId { get; set; }
+    public Scientist Scientist { get; set; } = null!;
+
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public string? Description { get; set; }
+
+    public TranslationStatus Status { get; private set; } = TranslationStatus.Untranslated;
+
+    public void Update(string firstName, string lastName, string description)
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        Description = description;
+        Status = TranslationStatus.Translated;
     }
 }

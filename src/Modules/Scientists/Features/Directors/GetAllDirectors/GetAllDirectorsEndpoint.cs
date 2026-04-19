@@ -1,21 +1,25 @@
 using Daab.Modules.Scientists.Models;
+using Daab.SharedKernel.Middlewares;
 using FastEndpoints;
 using MediatR;
 
 namespace Daab.Modules.Scientists.Features.Directors.GetAllDirectors;
 
+public record GetAllDirectorsRequest(string Locale) : ILocalized;
+
 public class GetAllDirectorsEndpoint(IMediator mediator)
-    : EndpointWithMapping<EmptyRequest, GetAllDirectorsResponse, IEnumerable<Director>>
+    : EndpointWithMapping<GetAllDirectorsRequest, GetAllDirectorsResponse, IEnumerable<Director>>
 {
     public override void Configure()
     {
         Get("/directors");
+        PreProcessor<LocalePreProcessor>();
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(EmptyRequest req, CancellationToken ct)
+    public override async Task HandleAsync(GetAllDirectorsRequest req, CancellationToken ct)
     {
-        var data = await mediator.Send(new GetAllDirectorsQuery(), ct);
+        var data = await mediator.Send(new GetAllDirectorsQuery(req.Locale), ct);
         await Send.OkAsync(MapFromEntity(data), ct);
     }
 
@@ -30,12 +34,14 @@ public class GetAllDirectorsEndpoint(IMediator mediator)
                 );
             }
 
+            var t = director.Scientist.Translations.First();
+
             return new DirectorResponse(
                 director.Id,
                 director.ScientistId,
                 director.Scientist.PhotoUrl,
-                director.Scientist.FirstName,
-                director.Scientist.LastName,
+                t.FirstName!,
+                t.LastName!,
                 director.Role,
                 director.Scientist.AcademicTitle,
                 [.. director.Scientist.Countries]

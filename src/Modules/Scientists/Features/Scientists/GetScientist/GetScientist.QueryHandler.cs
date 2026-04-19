@@ -13,13 +13,14 @@ public class GetScientistQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        bool filter(Scientist s) => s.Id == request.IdOrSlug || s.Slug == request.IdOrSlug;
         var scientist = await context
             .Scientists.AsNoTracking()
             .Include(s => s.Publications)
+            .Include(s => s.Translations.Where(t => t.Locale == request.Locale))
             .AsAsyncEnumerable()
-            .SingleOrDefaultAsync(filter, cancellationToken);
+            .SingleOrDefaultAsync(Filter, cancellationToken);
 
         return scientist?.ToGetScientistResponse();
+        bool Filter(Scientist s) => s.Id == request.IdOrSlug || s.Slug == request.IdOrSlug;
     }
 }

@@ -1,5 +1,6 @@
 using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
+using Daab.SharedKernel;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
@@ -26,17 +27,12 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             return Error.New(StatusCodes.Status404NotFound, "Requested application does not exist");
         }
 
-        var slugExists = await context.Scientists.AnyAsync(
-            x => x.FirstName == application.Name && x.LastName == application.Surname,
-            cancellationToken
-        );
+        var slug = SlugHelper.GenerateSlug($"{application.Name} {application.Surname}");
+        var slugExists = await context.Scientists.AnyAsync(x => x.Slug == slug, cancellationToken);
 
         var scientist = new Scientist(
-            application.Name,
-            application.Surname,
             application.Email,
             application.PhoneNumber,
-            application.AdditionalInformation,
             application.AcademicTitle,
             [application.DegreeInstitution],
             application.Residence.Split(','),
@@ -51,9 +47,7 @@ public sealed class ApproveApplicationCommandHandler(ScientistsDbContext context
             Slug = string.Empty,
         };
 
-        scientist.Slug = slugExists
-            ? $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}-{scientist.Id[..5]}"
-            : $"{application.Name.Replace(' ', '-')}-{application.Surname.Replace(' ', '-')}";
+        scientist.Slug = slugExists ? $"{slug}-{scientist.Id[..5]}" : slug;
 
         application.Status = ApplicationStatus.Approved;
         var scientistEntity = await context.Scientists.AddAsync(scientist, cancellationToken);

@@ -13,7 +13,7 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        var scientists = context.Scientists.AsNoTracking();
+        var scientists = context.Scientists.Include(s => s.Translations).AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(request.Country))
         {
@@ -30,16 +30,18 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
             var search = $"%{request.Search}%";
 
             scientists = scientists.Where(s =>
-                EF.Functions.Like(s.FirstName, search)
-                || EF.Functions.Like(s.LastName, search)
-                || EF.Functions.Like(s.FirstName + " " + s.LastName, search)
-                || EF.Functions.Like(s.LastName + " " + s.FirstName, search)
+                s.Translations.Any(t =>
+                    EF.Functions.Like(t.FirstName, search)
+                    || EF.Functions.Like(t.LastName, search)
+                    || EF.Functions.Like(t.FirstName + " " + t.LastName, search)
+                    || EF.Functions.Like(t.LastName + " " + t.FirstName, search)
+                )
                 || s.Institutions.Any(x => EF.Functions.Like(x, search))
                 || s.Areas.Any(x => EF.Functions.Like(x, search))
             );
         }
 
-        var response = scientists.ToAllScientistsResponse();
+        var response = scientists.ToAllScientistsResponse(request.Locale);
         return await response.ToPagedResponseAsync(
             new PageRequest { PageNumber = request.PageNumber, PageSize = request.PageSize },
             cancellationToken: cancellationToken

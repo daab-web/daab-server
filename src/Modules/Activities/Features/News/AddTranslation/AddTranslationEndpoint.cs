@@ -1,5 +1,5 @@
-using Daab.Modules.Activities.Middlewares;
 using Daab.SharedKernel.Extensions;
+using Daab.SharedKernel.Middlewares;
 using FastEndpoints;
 using MediatR;
 

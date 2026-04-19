@@ -8,14 +8,15 @@ public static class GetScientistExtensions
     {
         public GetScientistResponse ToGetScientistResponse()
         {
+            var t = s.Translations.First();
             return new GetScientistResponse(
                 s.Id,
                 s.UserId,
                 s.Slug,
-                s.FirstName,
-                s.LastName,
+                t.FirstName!,
+                t.LastName!,
                 s.Email,
-                s.Description,
+                t.Description,
                 s.AcademicTitle,
                 s.PhotoUrl,
                 s.LinkedInUrl,
