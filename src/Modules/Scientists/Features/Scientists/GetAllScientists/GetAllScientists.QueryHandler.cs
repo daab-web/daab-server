@@ -1,3 +1,4 @@
+using System.Globalization;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using MediatR;
@@ -41,10 +42,21 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
             );
         }
 
-        var response = scientists.ToAllScientistsResponse(request.Locale);
-        return await response.ToPagedResponseAsync(
-            new PageRequest { PageNumber = request.PageNumber, PageSize = request.PageSize },
-            cancellationToken: cancellationToken
+        var culture = new CultureInfo(request.Locale);
+        var comparer = StringComparer.Create(culture, ignoreCase: true);
+
+        // TODO: Look through this
+        var sorted = scientists
+            .ToList()
+            .OrderBy(x => x.Translations.First(t => t.Locale == request.Locale).FirstName, comparer)
+            .ThenBy(x => x.Translations.First(t => t.Locale == request.Locale).LastName, comparer);
+
+        var response = sorted.ToAllScientistsResponse(request.Locale);
+        return PagedResponse<GetAllScientistsResponse>.Create(
+            response,
+            request.PageNumber,
+            request.PageSize,
+            response.Count
         );
     }
 }

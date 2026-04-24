@@ -24,9 +24,9 @@ public static class GetAllScientists
         }
     }
 
-    extension(IQueryable<Scientist> scientists)
+    extension(IEnumerable<Scientist> scientists)
     {
-        public IQueryable<GetAllScientistsResponse> ToAllScientistsResponse(string locale) =>
-            scientists.Select(s => s.ToAllScientistsResponse(locale));
+        public List<GetAllScientistsResponse> ToAllScientistsResponse(string locale) =>
+            [.. scientists.Select(s => s.ToAllScientistsResponse(locale))];
     }
 }

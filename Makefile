@@ -13,7 +13,7 @@ run:
 	dotnet run --project ./src/Daab.Web
 
 watch:
-	dotnet watch --project ./src/Daab.Web
+	dotnet watch --project ./src/Daab.Web --no-hot-reload
 
 add-activities-migration:
 	$(call add-migration,Activities,ActivitiesDbContext)
