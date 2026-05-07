@@ -1,9 +1,7 @@
 using System.Runtime.CompilerServices;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.Extensions.Caching.Memory;
 using Serilog;
-using ZiggyCreatures.Caching.Fusion;
 
 namespace Daab.Web.Configuration;
 
@@ -39,16 +37,6 @@ public static class ApiConfiguration
 
         public IServiceCollection ConfigureCache()
         {
-            services
-                .AddFusionCache()
-                .WithDefaultEntryOptions(options =>
-                    options
-                        .SetDuration(TimeSpan.FromMinutes(2))
-                        .SetPriority(CacheItemPriority.High)
-                        .SetFailSafe(true, TimeSpan.FromHours(2))
-                        .SetFactoryTimeouts(TimeSpan.FromMilliseconds(100), TimeSpan.FromSeconds(2))
-                );
-
             return services;
         }
 
