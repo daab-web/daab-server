@@ -29,7 +29,7 @@ public class GetAllNewsQueryHandler(ActivitiesDbContext context)
                 n.Slug,
                 n.Thumbnail,
                 translation?.Excerpt ?? n.Excerpt,
-                n.PublishedDate,
+                n.PublishedDate.ToString("dd.MM.yyyy"),
                 n.AuthorId,
                 n.AuthorName,
                 n.Category,

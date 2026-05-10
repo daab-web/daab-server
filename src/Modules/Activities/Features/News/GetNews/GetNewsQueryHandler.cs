@@ -40,7 +40,7 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
             news.Slug,
             news.Thumbnail,
             translation?.Excerpt ?? news.Excerpt,
-            news.PublishedDate.ToString("yyyy-MM-dd"),
+            news.PublishedDate.ToString("dd.MM.yyyy"),
             news.AuthorId,
             news.AuthorName,
             news.Category,

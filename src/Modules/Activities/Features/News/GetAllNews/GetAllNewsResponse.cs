@@ -6,7 +6,7 @@ public record GetAllNewsResponse(
     string Slug,
     string? Thumbnail,
     string? Excerpt,
-    DateTime PublishedDate,
+    string PublishedDate,
     string? AuthorId,
     string? AuthorName,
     string? Category,
