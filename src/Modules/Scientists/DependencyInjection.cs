@@ -4,6 +4,7 @@ using Daab.Modules.Scientists.Messages;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
 using Daab.SharedKernel.Constants;
+using Daab.SharedKernel.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -33,6 +34,8 @@ public static class DependencyInjection
             );
 
             services.AddHostedService<ProfilePictureUploadWorker>();
+
+            services.AddScoped<ILocaleResolver, LocaleResolver>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)

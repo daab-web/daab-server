@@ -1,4 +1,5 @@
 using Daab.SharedKernel.Extensions;
+using Daab.SharedKernel.Middlewares;
 using FastEndpoints;
 using MediatR;
 
@@ -10,6 +11,7 @@ public class CreateDirectorEndpoint(IMediator mediator)
     public override void Configure()
     {
         Post("/directors");
+        PreProcessor<LocaleCollectionPreProcessor>();
 
         // TODO: This should not be public
         AllowAnonymous();

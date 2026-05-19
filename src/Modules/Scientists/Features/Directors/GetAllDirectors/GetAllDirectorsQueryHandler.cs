@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 namespace Daab.Modules.Scientists.Features.Directors.GetAllDirectors;
 
 public class GetAllDirectorsQueryHandler(ScientistsDbContext context)
-    : IRequestHandler<GetAllDirectorsQuery, IEnumerable<Director>>
+    : IRequestHandler<GetAllDirectorsQuery, IEnumerable<DirectorResponse>>
 {
-    public async Task<IEnumerable<Director>> Handle(
+    public async Task<IEnumerable<DirectorResponse>> Handle(
         GetAllDirectorsQuery request,
         CancellationToken cancellationToken
     )
@@ -19,6 +19,29 @@ public class GetAllDirectorsQueryHandler(ScientistsDbContext context)
                 .ThenInclude(s => s.Translations.Where(t => t.Locale == request.Locale))
             .ToListAsync(cancellationToken);
 
-        return directors;
+        var response = directors.Select(s => MapToResponse(s, request.Locale));
+
+        return response;
+    }
+
+    private static DirectorResponse MapToResponse(Director d, string locale)
+    {
+        var t = d.Scientist.Translations.FirstOrDefault();
+        ArgumentNullException.ThrowIfNull(t);
+        var role =
+            d.RoleTranslations.GetValueOrDefault(locale)
+            ?? d.RoleTranslations.GetValueOrDefault("en")
+            ?? throw new InvalidOperationException($"No role translation for d {d.Id}");
+
+        return new DirectorResponse(
+            d.Id,
+            d.ScientistId,
+            d.Scientist.PhotoUrl,
+            t.FirstName!,
+            t.LastName!,
+            role,
+            d.Scientist.AcademicTitle,
+            [.. d.Scientist.Countries]
+        );
     }
 }

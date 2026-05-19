@@ -1,3 +1,5 @@
+using System.Runtime.Serialization;
+using System.Text.Json;
 using Daab.Modules.Scientists.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,10 +20,18 @@ public class ScientistsDbContext : DbContext
     {
         var application = modelBuilder.Entity<Application>();
         var scientistTranslations = modelBuilder.Entity<ScientistTranslation>();
+        var directors = modelBuilder.Entity<Director>();
 
         application.HasKey(s => s.Id);
 
-        modelBuilder.Entity<Director>().HasIndex(d => d.ScientistId).IsUnique();
+        directors.HasIndex(d => d.ScientistId).IsUnique();
+        directors
+            .Property(d => d.RoleTranslations)
+            .HasConversion(
+                x => JsonSerializer.Serialize(x),
+                // TODO: Oh boy oh boy ts is gonna blow up
+                x => JsonSerializer.Deserialize<Dictionary<string, string>>(x)!
+            );
 
         scientistTranslations.HasKey(nt => new { nt.ScientistId, nt.Locale });
         scientistTranslations.HasIndex(nt => new { nt.ScientistId, nt.Locale }).IsUnique();

@@ -20,6 +20,7 @@ builder
     .ConfigureCache()
     .ConfigureProblemDetails();
 
+builder.Services.AddHttpContextAccessor();
 builder
     .Services.AddImageSharp()
     .ClearProviders()

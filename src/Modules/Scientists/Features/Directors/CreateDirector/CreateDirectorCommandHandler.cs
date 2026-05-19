@@ -3,6 +3,7 @@ using Daab.Modules.Scientists.Persistence;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Scientists.Features.Directors.CreateDirector;
@@ -17,10 +18,17 @@ public class CreateDirectorCommandHandler(ScientistsDbContext context)
     {
         if (!await context.Scientists.AnyAsync(s => s.Id == request.ScientistId, cancellationToken))
         {
-            return Error.New($"Scientist with and Id of {request.ScientistId} not found");
+            return Error.New(
+                StatusCodes.Status404NotFound,
+                $"Scientist with an Id of {request.ScientistId} not found"
+            );
         }
 
-        var director = new Director { Role = request.Role, ScientistId = request.ScientistId };
+        var director = new Director { ScientistId = request.ScientistId };
+        foreach ((string locale, string translation) in request.Translations)
+        {
+            director.RoleTranslations.Add(locale, translation);
+        }
 
         await context.Directors.AddAsync(director, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
