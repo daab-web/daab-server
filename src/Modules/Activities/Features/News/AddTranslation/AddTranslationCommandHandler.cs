@@ -1,47 +1,51 @@
-using Daab.Modules.Activities.Models;
 using Daab.Modules.Activities.Persistence;
+using Daab.SharedKernel.Entities;
+using Daab.SharedKernel.Options;
 using LanguageExt;
 using LanguageExt.Common;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Daab.Modules.Activities.Features.News.AddTranslation;
 
-public sealed class AddTranslationCommandHandler(ActivitiesDbContext ctx)
-    : MediatR.IRequestHandler<AddTranslationCommand, Fin<Unit>>
+public sealed class AddTranslationCommandHandler(
+    ActivitiesDbContext ctx,
+    IOptionsMonitor<LocaleOptions> opts
+) : MediatR.IRequestHandler<AddTranslationCommand, Fin<Unit>>
 {
+    private readonly LocaleOptions _localeOptions = opts.CurrentValue;
+
     public async Task<Fin<Unit>> Handle(
         AddTranslationCommand request,
         CancellationToken cancellationToken
     )
     {
-        var translation = await ctx.NewsTranslations.SingleOrDefaultAsync(
-            nt => nt.NewsId == request.NewsId && nt.Locale == request.Locale,
-            cancellationToken
+        var news = await ctx
+            .News.Include(n => n.Translations)
+            .SingleOrDefaultAsync(n => n.Id == request.NewsId, cancellationToken);
+
+        if (news is null)
+        {
+            return Fin.Fail<Unit>(Error.New("News not found"));
+        }
+
+        news.AddOrUpdateTranslation(
+            request.Locale,
+            request.Title,
+            request.Excerpt,
+            request.EditorState
         );
 
-        if (translation is null)
+        var supportedLocales = _localeOptions.SupportedLocales;
+        var presentLocales = news.Translations.Select(t => t.Locale);
+
+        if (supportedLocales.Order().SequenceEqual(presentLocales.Order()))
         {
-            await ctx.NewsTranslations.AddAsync(
-                NewsTranslation.Create(
-                    request.NewsId,
-                    request.Locale,
-                    request.Title,
-                    request.Excerpt,
-                    request.EditorState
-                ),
-                cancellationToken
-            );
-        }
-        else
-        {
-            translation.Update(request.Title, request.Excerpt, request.EditorState);
+            news.Status = EntityStatus.ReadyToPublish;
         }
 
-        var statesWritten = await ctx.SaveChangesAsync(cancellationToken);
+        await ctx.SaveChangesAsync(cancellationToken);
 
-        return statesWritten <= 0
-            ? Error.New(StatusCodes.Status500InternalServerError, "Unable to save translation")
-            : Fin.Succ(Prelude.unit);
+        return Fin.Succ(Prelude.unit);
     }
 }

@@ -30,49 +30,40 @@ public class Endpoint(ActivitiesDbContext ctx, IOptionsMonitor<LocaleOptions> op
         //     .Where(x => x.MissingLocales.Count > 0) // only incomplete ones
         //     .ToListAsync(ct);
 
-        var newsWithTranslations = await ctx
-            .NewsTranslations.Where(t => _localeOptions.SupportedLocales.Contains(t.Locale))
-            .GroupBy(t => t.NewsId)
-            .Select(g => new
+        var result = await ctx
+            .News.Select(n => new
             {
-                NewsId = g.Key,
-                TranslatedLocales = g.Select(t => t.Locale).ToList(),
-            })
-            .ToListAsync(ct);
-
-        var newsIdsWithAnyTranslation = newsWithTranslations.Select(x => x.NewsId).ToHashSet();
-
-        var untranslatedNewsIds = await ctx
-            .News.Where(n => !newsIdsWithAnyTranslation.Contains(n.Id))
-            .Select(n => new { n.Id, n.Title })
-            .ToListAsync(ct);
-
-        var result = newsWithTranslations
-            .Select(x => new UntranslatedBreakdown
-            {
-                NewsId = x.NewsId,
-                MissingLocales = _localeOptions
-                    .SupportedLocales.Except(x.TranslatedLocales)
+                n.Id,
+                n.Title,
+                n.Status,
+                TranslatedLocales = n
+                    .Translations.Where(t => _localeOptions.SupportedLocales.Contains(t.Locale))
+                    .Select(t => t.Locale)
                     .ToList(),
             })
-            .Where(x => x.MissingLocales.Count > 0) // skip fully translated
-            .Concat(
-                untranslatedNewsIds.Select(obj => new UntranslatedBreakdown
-                {
-                    NewsId = obj.Id,
-                    Title = obj.Title,
-                    MissingLocales = _localeOptions.SupportedLocales.ToList(), // all locales missing
-                })
-            )
+            .ToListAsync(ct);
+
+        var breakdown = result
+            .Select(n => new UntranslatedBreakdown
+            {
+                NewsId = n.Id,
+                Title = n.Title,
+                Status = n.Status.ToString(),
+                MissingLocales = _localeOptions
+                    .SupportedLocales.Except(n.TranslatedLocales)
+                    .ToList(),
+            })
+            .Where(x => x.MissingLocales.Count > 0)
             .ToList();
 
-        await Send.OkAsync(result, ct);
+        await Send.OkAsync(breakdown, ct);
     }
 
     public record UntranslatedBreakdown
     {
         public required string NewsId { get; init; }
         public string? Title { get; init; }
+        public string? Status { get; init; }
         public List<string> MissingLocales { get; init; } = [];
     }
 }

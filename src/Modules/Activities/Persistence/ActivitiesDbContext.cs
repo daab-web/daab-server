@@ -1,4 +1,5 @@
 using Daab.Modules.Activities.Models;
+using Daab.SharedKernel.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Activities.Persistence;
@@ -18,6 +19,7 @@ public class ActivitiesDbContext(DbContextOptions<ActivitiesDbContext> options) 
         news.HasKey(n => n.Id);
         news.HasIndex(n => n.Title, "news_title_idx");
         news.HasIndex(n => n.Slug).IsUnique();
+        news.Property(n => n.Status).HasConversion<string>();
 
         newsTranslations.HasKey(nt => new { nt.NewsId, nt.Locale });
         newsTranslations.HasIndex(nt => new { nt.NewsId, nt.Locale }).IsUnique();

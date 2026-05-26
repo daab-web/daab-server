@@ -1,11 +1,15 @@
 ﻿using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
+using Daab.SharedKernel.Entities;
 using Daab.SharedKernel.Extensions;
 using Daab.SharedKernel.Middlewares;
+using Daab.SharedKernel.Options;
 using FastEndpoints;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Unit = LanguageExt.Unit;
 
 namespace Daab.Modules.Scientists.Features.Scientists.AddTranslation;
@@ -27,40 +31,48 @@ public sealed class AddTranslationCommand(AddTranslationRequest req) : IRequest<
     public string Description { get; } = req.Description;
 }
 
-public sealed class AddTranslationCommandHandler(ScientistsDbContext ctx)
-    : IRequestHandler<AddTranslationCommand, Fin<Unit>>
+public sealed class AddTranslationCommandHandler(
+    ScientistsDbContext ctx,
+    IOptionsMonitor<LocaleOptions> opts
+) : IRequestHandler<AddTranslationCommand, Fin<Unit>>
 {
+    private readonly LocaleOptions _localeOptions = opts.CurrentValue;
+
     public async Task<Fin<Unit>> Handle(
         AddTranslationCommand request,
         CancellationToken cancellationToken
     )
     {
-        var translation = ctx.ScientistTranslations.SingleOrDefault(st =>
-            st.ScientistId == request.ScientistId && st.Locale == request.Locale
+        var scientist = await ctx
+            .Scientists.Include(s => s.Translations)
+            .SingleOrDefaultAsync(
+                st => st.Id == request.ScientistId,
+                cancellationToken: cancellationToken
+            );
+
+        if (scientist is null)
+        {
+            return Fin.Fail<Unit>(Error.New("Scientist not found"));
+        }
+
+        scientist.AddOrUpdateTranslation(
+            request.Locale,
+            request.FirstName,
+            request.LastName,
+            request.Description
         );
 
-        if (translation is null)
+        var supportedLocales = _localeOptions.SupportedLocales;
+        var presentLocales = scientist.Translations.Select(t => t.Locale);
+
+        if (supportedLocales.Order().SequenceEqual(presentLocales.Order()))
         {
-            await ctx.ScientistTranslations.AddAsync(
-                new ScientistTranslation
-                {
-                    Locale = request.Locale,
-                    ScientistId = request.ScientistId,
-                    FirstName = request.FirstName,
-                    LastName = request.LastName,
-                    Description = request.Description,
-                },
-                cancellationToken
-            );
-        }
-        else
-        {
-            translation.Update(request.FirstName, request.LastName, request.Description);
+            scientist.Status = EntityStatus.ReadyToPublish;
         }
 
-        var statesWritten = await ctx.SaveChangesAsync(cancellationToken);
+        await ctx.SaveChangesAsync(cancellationToken);
 
-        return statesWritten > 0 ? Prelude.unit : Error.New(500, "Unable to add translation");
+        return Prelude.unit;
     }
 }
 

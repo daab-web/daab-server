@@ -21,6 +21,9 @@ public class ScientistsDbContext : DbContext
         var application = modelBuilder.Entity<Application>();
         var scientistTranslations = modelBuilder.Entity<ScientistTranslation>();
         var directors = modelBuilder.Entity<Director>();
+        var scientists = modelBuilder.Entity<Scientist>();
+
+        scientists.Property(s => s.Status).HasConversion<string>();
 
         application.HasKey(s => s.Id);
 
