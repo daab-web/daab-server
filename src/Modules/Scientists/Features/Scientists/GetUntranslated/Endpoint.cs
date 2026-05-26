@@ -30,49 +30,40 @@ public class GetUntranslatedEndpoint(ScientistsDbContext ctx, IOptionsMonitor<Lo
         //     .Where(x => x.MissingLocales.Count > 0) // only incomplete ones
         //     .ToListAsync(ct);
 
-        var newsWithTranslations = await ctx
-            .ScientistTranslations.Where(t => _localeOptions.SupportedLocales.Contains(t.Locale))
-            .GroupBy(t => t.ScientistId)
-            .Select(g => new
+        var result = await ctx
+            .Scientists.Select(s => new
             {
-                NewsId = g.Key,
-                TranslatedLocales = g.Select(t => t.Locale).ToList(),
-            })
-            .ToListAsync(ct);
-
-        var newsIdsWithAnyTranslation = newsWithTranslations.Select(x => x.NewsId).ToHashSet();
-
-        var untranslatedNewsIds = await ctx
-            .Scientists.Where(n => !newsIdsWithAnyTranslation.Contains(n.Id))
-            .Select(n => n.Id)
-            .ToListAsync(ct);
-
-        var result = newsWithTranslations
-            .Select(x => new UntranslatedBreakdown
-            {
-                ScientistId = x.NewsId,
-                MissingLocales = _localeOptions
-                    .SupportedLocales.Except(x.TranslatedLocales)
+                s.Id,
+                s.Slug,
+                s.Status,
+                TranslatedLocales = s
+                    .Translations.Where(t => _localeOptions.SupportedLocales.Contains(t.Locale))
+                    .Select(t => t.Locale)
                     .ToList(),
             })
-            .Where(x => x.MissingLocales.Count > 0) // skip fully translated
-            .Concat(
-                untranslatedNewsIds.Select(id => new UntranslatedBreakdown
-                {
-                    ScientistId = id,
-                    MissingLocales = _localeOptions.SupportedLocales.ToList(), // all locales missing
-                })
-            )
+            .ToListAsync(ct);
+
+        var breakdown = result
+            .Select(s => new UntranslatedBreakdown
+            {
+                ScientistId = s.Id,
+                Slug = s.Slug,
+                Status = s.Status.ToString(),
+                MissingLocales = _localeOptions
+                    .SupportedLocales.Except(s.TranslatedLocales)
+                    .ToList(),
+            })
+            .Where(x => x.MissingLocales.Count > 0)
             .ToList();
 
-        await Send.OkAsync(result, ct);
+        await Send.OkAsync(breakdown, ct);
     }
 
     public record UntranslatedBreakdown
     {
         public required string ScientistId { get; init; }
-        public string? FirstName { get; init; }
-        public string? LastName { get; init; }
+        public required string Slug { get; init; }
+        public required string Status { get; init; }
         public List<string> MissingLocales { get; init; } = [];
     }
 }
