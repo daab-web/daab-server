@@ -1,7 +1,6 @@
 namespace Daab.Modules.Scientists.Features.Scientists.GetAllScientists;
 
 public sealed record GetAllScientistsRequest(
-    string Locale,
     string? Search,
     string? Country,
     string? Area,
