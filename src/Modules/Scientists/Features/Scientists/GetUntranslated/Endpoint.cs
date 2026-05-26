@@ -1,4 +1,5 @@
 using Daab.Modules.Scientists.Persistence;
+using Daab.SharedKernel.Entities;
 using Daab.SharedKernel.Options;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,8 @@ public class GetUntranslatedEndpoint(ScientistsDbContext ctx, IOptionsMonitor<Lo
         //     .ToListAsync(ct);
 
         var result = await ctx
-            .Scientists.Select(s => new
+            .Scientists.Where(s => s.Status != EntityStatus.Published)
+            .Select(s => new
             {
                 s.Id,
                 s.Slug,
@@ -53,7 +55,6 @@ public class GetUntranslatedEndpoint(ScientistsDbContext ctx, IOptionsMonitor<Lo
                     .SupportedLocales.Except(s.TranslatedLocales)
                     .ToList(),
             })
-            .Where(x => x.MissingLocales.Count > 0)
             .ToList();
 
         await Send.OkAsync(breakdown, ct);

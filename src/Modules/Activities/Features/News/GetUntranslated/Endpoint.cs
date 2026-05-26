@@ -1,4 +1,5 @@
 using Daab.Modules.Activities.Persistence;
+using Daab.SharedKernel.Entities;
 using Daab.SharedKernel.Options;
 using FastEndpoints;
 using Microsoft.EntityFrameworkCore;
@@ -31,7 +32,8 @@ public class Endpoint(ActivitiesDbContext ctx, IOptionsMonitor<LocaleOptions> op
         //     .ToListAsync(ct);
 
         var result = await ctx
-            .News.Select(n => new
+            .News.Where(n => n.Status != EntityStatus.Published)
+            .Select(n => new
             {
                 n.Id,
                 n.Title,
@@ -53,7 +55,6 @@ public class Endpoint(ActivitiesDbContext ctx, IOptionsMonitor<LocaleOptions> op
                     .SupportedLocales.Except(n.TranslatedLocales)
                     .ToList(),
             })
-            .Where(x => x.MissingLocales.Count > 0)
             .ToList();
 
         await Send.OkAsync(breakdown, ct);
