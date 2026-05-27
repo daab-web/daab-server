@@ -21,6 +21,27 @@ public class News
     public ICollection<Attachment> Attachments { get; set; } = [];
 
     public ICollection<NewsTranslation> Translations { get; set; } = [];
+
+    public EntityStatus Status { get; set; } = EntityStatus.Untranslated;
+
+    public void AddOrUpdateTranslation(
+        string locale,
+        string title,
+        string excerpt,
+        string editorState
+    )
+    {
+        var existing = Translations.SingleOrDefault(t => t.Locale == locale);
+
+        if (existing is null)
+        {
+            Translations.Add(NewsTranslation.Create(Id, locale, title, excerpt, editorState));
+        }
+        else
+        {
+            existing.Update(title, excerpt, editorState);
+        }
+    }
 }
 
 public class NewsTranslation

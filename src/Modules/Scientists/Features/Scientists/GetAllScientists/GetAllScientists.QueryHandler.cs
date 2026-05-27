@@ -1,6 +1,7 @@
 using System.Globalization;
 using Daab.Modules.Scientists.Persistence;
 using Daab.SharedKernel;
+using Daab.SharedKernel.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,7 +15,10 @@ public class GetAllScientistsQueryHandler(ScientistsDbContext context)
         CancellationToken cancellationToken
     )
     {
-        var scientists = context.Scientists.Include(s => s.Translations).AsNoTracking();
+        var scientists = context
+            .Scientists.Include(s => s.Translations)
+            .Where(s => s.Status == EntityStatus.Published)
+            .AsNoTracking();
 
         if (!string.IsNullOrWhiteSpace(request.Country))
         {

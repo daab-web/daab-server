@@ -28,6 +28,8 @@ public class Scientist
 
     public ICollection<ScientistTranslation> Translations { get; set; } = [];
 
+    public EntityStatus Status { get; set; } = EntityStatus.Untranslated;
+
     public DateTime? DateOfBirth
     {
         get;
@@ -79,6 +81,34 @@ public class Scientist
         UserId = Ulid.TryParse(userId, out _)
             ? userId
             : throw new ArgumentException("Invalid ID format");
+    }
+
+    public void AddOrUpdateTranslation(
+        string locale,
+        string firstName,
+        string lastName,
+        string description
+    )
+    {
+        var existing = Translations.SingleOrDefault(t => t.Locale == locale);
+
+        if (existing is null)
+        {
+            Translations.Add(
+                new ScientistTranslation
+                {
+                    ScientistId = Id,
+                    Locale = locale,
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Description = description,
+                }
+            );
+        }
+        else
+        {
+            existing.Update(firstName, lastName, description);
+        }
     }
 }
 
