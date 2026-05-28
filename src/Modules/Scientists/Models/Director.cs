@@ -1,3 +1,5 @@
+using Daab.SharedKernel.Entities;
+
 namespace Daab.Modules.Scientists.Models;
 
 public class Director
@@ -7,4 +9,6 @@ public class Director
 
     public required string ScientistId { get; init; }
     public Scientist Scientist { get; set; } = null!;
+
+    public EntityStatus Status { get; set; } = EntityStatus.Untranslated;
 }

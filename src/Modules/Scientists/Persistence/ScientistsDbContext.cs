@@ -28,6 +28,7 @@ public class ScientistsDbContext : DbContext
         application.HasKey(s => s.Id);
 
         directors.HasIndex(d => d.ScientistId).IsUnique();
+        directors.Property(s => s.Status).HasConversion<string>();
         directors
             .Property(d => d.RoleTranslations)
             .HasConversion(

@@ -1,5 +1,6 @@
 using Daab.Modules.Scientists.Models;
 using Daab.Modules.Scientists.Persistence;
+using Daab.SharedKernel.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +16,7 @@ public class GetAllDirectorsQueryHandler(ScientistsDbContext context)
     {
         var directors = await context
             .Directors.AsNoTracking()
+            .Where(d => d.Status == EntityStatus.Published)
             .Include(d => d.Scientist)
                 .ThenInclude(s => s.Translations.Where(t => t.Locale == request.Locale))
             .ToListAsync(cancellationToken);

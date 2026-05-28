@@ -1,11 +1,14 @@
 using Daab.Modules.Scientists.Persistence;
+using Daab.SharedKernel.Entities;
 using Daab.SharedKernel.Extensions;
 using Daab.SharedKernel.Middlewares;
+using Daab.SharedKernel.Options;
 using FastEndpoints;
 using LanguageExt;
 using LanguageExt.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 
 namespace Daab.Modules.Scientists.Features.Directors.UpdateDirector;
 
@@ -44,9 +47,13 @@ public sealed class UpdateDirectorCommand(UpdateDirectorRequest req) : IRequest<
     public string Role { get; } = req.Role;
 }
 
-public sealed class UpdateDirectorCommandHandler(ScientistsDbContext ctx)
-    : IRequestHandler<UpdateDirectorCommand, Fin<string>>
+public sealed class UpdateDirectorCommandHandler(
+    ScientistsDbContext ctx,
+    IOptionsMonitor<LocaleOptions> opts
+) : IRequestHandler<UpdateDirectorCommand, Fin<string>>
 {
+    private readonly LocaleOptions _localeOptions = opts.CurrentValue;
+
     public async Task<Fin<string>> Handle(
         UpdateDirectorCommand request,
         CancellationToken cancellationToken
@@ -63,6 +70,15 @@ public sealed class UpdateDirectorCommandHandler(ScientistsDbContext ctx)
         }
 
         director.RoleTranslations[request.Locale] = request.Role;
+
+        var supportedLocales = _localeOptions.SupportedLocales;
+        var presentLocales = director.RoleTranslations.Keys;
+
+        if (supportedLocales.Order().SequenceEqual(presentLocales.Order()))
+        {
+            director.Status = EntityStatus.ReadyToPublish;
+        }
+
         ctx.Entry(director).Property(d => d.RoleTranslations).IsModified = true;
         await ctx.SaveChangesAsync(cancellationToken);
 
