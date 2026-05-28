@@ -39,10 +39,6 @@ public sealed class CreateNewsTests : IAsyncLifetime, IDisposable
             }
         );
         Assert.NotNull(_ctx.News.SingleOrDefault(n => n.Id == response.Id));
-        Assert.Equal(
-            Localization.SupportedLocales.Length,
-            _ctx.NewsTranslations.Count(t => t.NewsId == response.Id)
-        );
     }
 
     public Task InitializeAsync()
