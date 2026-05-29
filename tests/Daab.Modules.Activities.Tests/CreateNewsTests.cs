@@ -15,9 +15,7 @@ public sealed class CreateNewsTests : IAsyncLifetime, IDisposable
         // Arrange
         var req = new CreateNewsRequest(
             "Test title",
-            "",
             null,
-            "Test excerpt",
             null,
             "Test Category",
             ["test-tag"],

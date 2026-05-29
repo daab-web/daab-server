@@ -7,11 +7,8 @@ namespace Daab.Modules.Activities.Features.News.CreateNews;
 
 public sealed class CreateNewsCommand(CreateNewsRequest req) : IRequest<Fin<CreateNewsResponse>>
 {
-    public string Title { get; } = req.Title;
-    public string EditorState { get; } = req.EditorState;
     public string Slug { get; } = SlugHelper.GenerateSlug(req.Title);
 
-    public string? Excerpt { get; } = req.Excerpt;
     public string? AuthorId { get; } = req.AuthorId;
     public string? AuthorName { get; } = req.Author;
 

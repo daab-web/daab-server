@@ -54,12 +54,7 @@ public sealed class GetNewsTranslationsTests : IDisposable, IAsyncLifetime
 
         _ctx = new ActivitiesDbContext(opts);
 
-        var news = new News
-        {
-            Title = "Test title",
-            Slug = "test-title",
-            PublishedDate = DateTime.UtcNow,
-        };
+        var news = new News { Slug = "test-title", PublishedDate = DateTime.UtcNow };
         news.Translations = new List<NewsTranslation>
         {
             new() { NewsId = news.Id, Locale = "en" },

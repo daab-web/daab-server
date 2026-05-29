@@ -30,16 +30,14 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
         }
 
         var translation = news.Translations.FirstOrDefault();
-        var state = JsonSerializer.Deserialize<object>(
-            translation?.EditorState ?? news.EditorState
-        );
+        var state = JsonSerializer.Deserialize<object>(translation?.EditorState ?? "{}");
 
         return new GetNewsResponse(
             news.Id,
-            translation?.Title ?? news.Title,
+            translation?.Title ?? "Empty",
             news.Slug,
             news.Thumbnail,
-            translation?.Excerpt ?? news.Excerpt,
+            translation?.Excerpt ?? "Empty",
             news.PublishedDate.ToString("dd.MM.yyyy"),
             news.AuthorId,
             news.AuthorName,

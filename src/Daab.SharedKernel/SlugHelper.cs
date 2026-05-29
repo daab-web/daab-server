@@ -6,36 +6,59 @@ namespace Daab.SharedKernel;
 
 public static partial class SlugHelper
 {
+    private static readonly Dictionary<char, string> CharMap = new()
+    {
+        { 'ə', "e" },
+        { 'Ə', "E" },
+        { 'ı', "i" },
+        { 'İ', "I" },
+        { 'ğ', "g" },
+        { 'Ğ', "G" },
+        { 'ş', "s" },
+        { 'Ş', "S" },
+        { 'ç', "c" },
+        { 'Ç', "C" },
+        { 'ö', "o" },
+        { 'Ö', "O" },
+        { 'ü', "u" },
+        { 'Ü', "U" },
+    };
+
     public static string GenerateSlug(string title)
     {
         if (string.IsNullOrWhiteSpace(title))
             return string.Empty;
 
-        // Lowercase
         var slug = title.ToLowerInvariant();
-
-        // Replace accented characters with ASCII equivalents
-        slug = RemoveDiacritics(slug);
-
-        // Replace anything that's not a letter, digit, or space with a hyphen
+        slug = Transliterate(slug);
         slug = LettersRegex().Replace(slug, "-");
-
-        // Replace multiple spaces/hyphens with a single hyphen
         slug = SymbolsRegex().Replace(slug, "-");
-
-        // Trim hyphens from start and end
         slug = slug.Trim('-');
 
         return slug;
     }
 
-    private static string RemoveDiacritics(string text)
+    private static string Transliterate(string text)
     {
-        var normalized = text.Normalize(NormalizationForm.FormD);
-        var chars = normalized.Where(c =>
-            CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark
-        );
-        return new string([.. chars]).Normalize(NormalizationForm.FormC);
+        var sb = new StringBuilder(text.Length);
+        foreach (char c in text)
+        {
+            if (CharMap.TryGetValue(c, out var mapped))
+                sb.Append(mapped);
+            else
+                sb.Append(c);
+        }
+
+        var decomposed = sb.ToString().Normalize(NormalizationForm.FormD);
+        sb.Clear();
+
+        foreach (char c in decomposed)
+        {
+            if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                sb.Append(c);
+        }
+
+        return sb.ToString();
     }
 
     [GeneratedRegex(@"[^a-z0-9\s-]")]

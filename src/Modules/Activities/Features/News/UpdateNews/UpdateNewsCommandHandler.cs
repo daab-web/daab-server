@@ -31,10 +31,7 @@ public sealed class UpdateNewsCommandHandler(
             );
         }
 
-        news.EditorState = request.EditorState;
         news.Category = request.Category;
-        news.Title = request.Title;
-        news.Excerpt = request.Excerpt;
         news.Tags = request.Tags;
 
         // remove old thumbnail and create a new one

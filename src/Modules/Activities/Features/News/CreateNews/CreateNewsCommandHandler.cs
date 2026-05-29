@@ -16,15 +16,12 @@ public sealed class CreateNewsCommandHandler(ActivitiesDbContext context)
     {
         var news = new Models.News
         {
-            Title = request.Title,
-            EditorState = request.EditorState,
             Slug = request.Slug,
             PublishedDate = request.PublishedDate,
             AuthorId = request.AuthorId,
             AuthorName = request.AuthorName,
             Category = request.Category,
             Tags = request.Tags,
-            Excerpt = request.Excerpt,
         };
 
         var entityEntry = await context.News.AddAsync(news, cancellationToken);
