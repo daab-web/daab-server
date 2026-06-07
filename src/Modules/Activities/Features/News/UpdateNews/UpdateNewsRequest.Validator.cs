@@ -11,17 +11,9 @@ public class UpdateNewsRequestValidator : Validator<UpdateNewsRequest>
 
     public UpdateNewsRequestValidator()
     {
-        RuleFor(x => x.Title).NotEmpty().MaximumLength(300);
-
-        RuleFor(x => x.Excerpt)
-            .MaximumLength(1000)
-            .When(x => !string.IsNullOrWhiteSpace(x.Excerpt));
-
         RuleFor(x => x.Category)
             .MaximumLength(150)
             .When(x => !string.IsNullOrWhiteSpace(x.Category));
-
-        RuleFor(x => x.EditorState).NotEmpty().WithMessage("Editor content cannot be empty.");
 
         RuleFor(x => x.Tags).NotNull();
 

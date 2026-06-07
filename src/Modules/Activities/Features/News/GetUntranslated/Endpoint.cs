@@ -36,7 +36,7 @@ public class Endpoint(ActivitiesDbContext ctx, IOptionsMonitor<LocaleOptions> op
             .Select(n => new
             {
                 n.Id,
-                n.Title,
+                n.Slug,
                 n.Status,
                 TranslatedLocales = n
                     .Translations.Where(t => _localeOptions.SupportedLocales.Contains(t.Locale))
@@ -45,17 +45,13 @@ public class Endpoint(ActivitiesDbContext ctx, IOptionsMonitor<LocaleOptions> op
             })
             .ToListAsync(ct);
 
-        var breakdown = result
-            .Select(n => new UntranslatedBreakdown
-            {
-                NewsId = n.Id,
-                Title = n.Title,
-                Status = n.Status.ToString(),
-                MissingLocales = _localeOptions
-                    .SupportedLocales.Except(n.TranslatedLocales)
-                    .ToList(),
-            })
-            .ToList();
+        var breakdown = result.ConvertAll(n => new UntranslatedBreakdown
+        {
+            NewsId = n.Id,
+            Title = n.Slug,
+            Status = n.Status.ToString(),
+            MissingLocales = _localeOptions.SupportedLocales.Except(n.TranslatedLocales).ToList(),
+        });
 
         await Send.OkAsync(breakdown, ct);
     }

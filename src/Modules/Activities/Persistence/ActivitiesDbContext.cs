@@ -1,5 +1,4 @@
 using Daab.Modules.Activities.Models;
-using Daab.SharedKernel.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Daab.Modules.Activities.Persistence;
@@ -17,7 +16,6 @@ public class ActivitiesDbContext(DbContextOptions<ActivitiesDbContext> options) 
         var attachments = modelBuilder.Entity<Attachment>();
 
         news.HasKey(n => n.Id);
-        news.HasIndex(n => n.Title, "news_title_idx");
         news.HasIndex(n => n.Slug).IsUnique();
         news.Property(n => n.Status).HasConversion<string>();
 

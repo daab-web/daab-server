@@ -27,10 +27,10 @@ public class GetAllNewsQueryHandler(ActivitiesDbContext context)
             var translation = n.Translations.FirstOrDefault();
             return new GetAllNewsResponse(
                 n.Id,
-                translation?.Title ?? n.Title,
+                translation?.Title ?? "Empty",
                 n.Slug,
                 n.Thumbnail,
-                translation?.Excerpt ?? n.Excerpt,
+                translation?.Excerpt ?? "Empty",
                 n.PublishedDate.ToString("dd.MM.yyyy"),
                 n.AuthorId,
                 n.AuthorName,
