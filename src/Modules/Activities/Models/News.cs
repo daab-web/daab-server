@@ -48,9 +48,9 @@ public class NewsTranslation
     public required string Locale { get; init; }
     public TranslationStatus Status { get; private set; } = TranslationStatus.Untranslated;
 
-    public string? Title { get; private set; }
-    public string? Excerpt { get; private set; }
-    public string? EditorState { get; private set; }
+    public required string Title { get; set; }
+    public string Excerpt { get; private set; } = string.Empty;
+    public string EditorState { get; private set; } = string.Empty;
 
     public static NewsTranslation Create(
         string newsId,

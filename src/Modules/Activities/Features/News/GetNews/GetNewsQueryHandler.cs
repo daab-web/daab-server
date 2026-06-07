@@ -19,39 +19,47 @@ public sealed class GetNewsQueryHandler(ActivitiesDbContext context)
         var news = await context
             .News.AsNoTracking()
             .Include(n => n.Translations.Where(t => t.Locale == request.Locale))
-            .Include(n => n.Attachments)
             .SingleOrDefaultAsync(
                 n => n.Slug == request.IdOrSlug || n.Id == request.IdOrSlug,
                 cancellationToken: cancellationToken
             );
+
         if (news is null)
         {
             return Error.New(StatusCodes.Status404NotFound, "Requested news does not exist");
         }
 
         var translation = news.Translations.FirstOrDefault();
-        var state = JsonSerializer.Deserialize<object>(translation?.EditorState ?? "{}");
+
+        if (translation is null)
+        {
+            return new GetNewsResponse(
+                news.Id,
+                "Untranslated",
+                news.Slug,
+                news.Thumbnail,
+                "Untranslated",
+                news.PublishedDate.ToString("dd.MM.yyyy"),
+                news.AuthorId,
+                news.AuthorName,
+                news.Category,
+                news.Tags.ToList(),
+                null
+            );
+        }
 
         return new GetNewsResponse(
             news.Id,
-            translation?.Title ?? "Empty",
+            translation.Title,
             news.Slug,
             news.Thumbnail,
-            translation?.Excerpt ?? "Empty",
+            translation.Excerpt,
             news.PublishedDate.ToString("dd.MM.yyyy"),
             news.AuthorId,
             news.AuthorName,
             news.Category,
             news.Tags.ToList(),
-            state,
-            news.Attachments.Select(n => new AttachmentDto(
-                    n.Id,
-                    n.FileUrl,
-                    n.Caption,
-                    n.FileType,
-                    n.ParentObjectId
-                ))
-                .ToList()
+            translation.EditorState
         );
     }
 }

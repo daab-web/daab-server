@@ -11,8 +11,7 @@ public sealed record GetNewsResponse(
     string? AuthorName,
     string? Category,
     List<string> Tags,
-    object? EditorState,
-    List<AttachmentDto> Attachments
+    string? EditorState
 );
 
 public sealed record AttachmentDto(

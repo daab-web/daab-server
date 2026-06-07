@@ -1,10 +1,12 @@
+using Daab.SharedKernel.Entities;
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
 
 namespace Daab.Modules.Activities.Features.News.GetNews;
 
-public class GetNewsEndpoint(IMediator mediator) : Endpoint<GetNewsRequest, GetNewsResponse>
+public class GetNewsEndpoint(IMediator mediator, ILocaleResolver localeResolver)
+    : Endpoint<GetNewsRequest, GetNewsResponse>
 {
     public override void Configure()
     {
@@ -14,7 +16,8 @@ public class GetNewsEndpoint(IMediator mediator) : Endpoint<GetNewsRequest, GetN
 
     public override async Task HandleAsync(GetNewsRequest req, CancellationToken ct)
     {
-        var res = await mediator.Send(new GetNewsQuery(req.IdOrSlug, req.Locale), ct);
+        var locale = localeResolver.Resolve();
+        var res = await mediator.Send(new GetNewsQuery(req.IdOrSlug, locale), ct);
 
         await res.Match(
             news => Send.OkAsync(news, ct),
