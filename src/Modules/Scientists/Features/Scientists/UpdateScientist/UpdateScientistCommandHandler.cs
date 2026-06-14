@@ -27,7 +27,8 @@ public class UpdateScientistCommandHandler(ScientistsDbContext context)
                         .SetProperty(s => s.Institutions, request.Institution)
                         .SetProperty(s => s.Orcid, request.Orcid)
                         .SetProperty(s => s.LinkedInUrl, request.LinkedInUrl)
-                        .SetProperty(s => s.Website, request.Website),
+                        .SetProperty(s => s.Website, request.Website)
+                        .SetProperty(s => s.DateOfBirth, request.DateOfBirth),
                 cancellationToken: cancellationToken
             );
 

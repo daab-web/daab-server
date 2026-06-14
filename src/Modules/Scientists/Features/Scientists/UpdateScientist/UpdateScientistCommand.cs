@@ -20,6 +20,7 @@ public sealed class UpdateScientistCommand : IRequest<Fin<UpdateScientistRespons
         LinkedInUrl = request.LinkedInUrl;
         Orcid = request.Orcid;
         Website = request.Website;
+        DateOfBirth = request.DateOfBirth;
     }
 
     public string Id { get; }
@@ -32,4 +33,5 @@ public sealed class UpdateScientistCommand : IRequest<Fin<UpdateScientistRespons
     public string[] Institution { get; }
     public string[] Countries { get; }
     public string[] Areas { get; }
+    public DateTime? DateOfBirth { get; }
 }

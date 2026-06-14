@@ -9,5 +9,6 @@ public sealed record UpdateScientistRequest(
     string? Website,
     string[] Institutions,
     string[] Countries,
-    string[] Areas
+    string[] Areas,
+    DateTime? DateOfBirth
 );

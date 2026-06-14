@@ -22,7 +22,7 @@ public static class GetScientistExtensions
                 s.LinkedInUrl,
                 s.Orcid,
                 s.Website,
-                s.DateOfBirth?.ToString("dd/MM/yyyy"),
+                s.DateOfBirth?.ToString("yyyy-MM-dd"),
                 [.. s.Institutions],
                 [.. s.Countries],
                 [.. s.Areas]
