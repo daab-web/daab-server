@@ -1,31 +1,30 @@
 using Daab.SharedKernel.Extensions;
 using FastEndpoints;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
-namespace Daab.Modules.Activities.Features.News.UpdateNews;
+namespace Daab.Modules.Activities.Features.News.DeleteThumbnail;
 
-public class UpdateNewsEndpoint(IMediator mediator)
-    : Endpoint<UpdateNewsRequest, UpdateNewsResponse>
+public class DeleteThumbnailEndpoint(IMediator mediator) : EndpointWithoutRequest
 {
     public override void Configure()
     {
-        Put("/news/{id}");
+        Delete("/news/{id}/thumbnail");
 
         // TODO: This should not be public
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(UpdateNewsRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CancellationToken ct)
     {
         var id = Route<string>("id");
+
         if (string.IsNullOrEmpty(id))
         {
             await Send.ErrorsAsync(cancellation: ct);
             return;
         }
 
-        var res = await mediator.Send(new UpdateNewsCommand(id, req), ct);
+        var res = await mediator.Send(new DeleteThumbnailCommand(id), ct);
 
         await res.Match(
             entity => Send.OkAsync(entity, cancellation: ct),

@@ -18,13 +18,6 @@ public class UpdateNewsRequestValidator : Validator<UpdateNewsRequest>
         RuleFor(x => x.Tags).NotNull();
 
         RuleForEach(x => x.Tags).NotEmpty().MaximumLength(100);
-
-        RuleFor(x => x.Thumbnail)
-            .Must(BeValidImage)
-            .When(x => x.Thumbnail is not null)
-            .WithMessage(
-                "Thumbnail must be a valid image file (jpg, jpeg, png, webp) and less than 5MB."
-            );
     }
 
     private static bool BeValidImage(IFormFile? file)

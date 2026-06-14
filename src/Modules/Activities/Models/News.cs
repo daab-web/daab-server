@@ -7,7 +7,7 @@ public class News
     public string Id { get; } = Ulid.NewUlid().ToString();
     public required string Slug { get; init; }
     public string? Thumbnail { get; set; }
-    public required DateTime PublishedDate { get; init; }
+    public required DateTime PublishedDate { get; set; }
 
     public string? AuthorId { get; init; }
     public string? AuthorName { get; init; }

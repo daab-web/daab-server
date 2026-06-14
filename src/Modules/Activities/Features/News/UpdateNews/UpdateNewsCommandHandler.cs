@@ -11,11 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Daab.Modules.Activities.Features.News.UpdateNews;
 
-public sealed class UpdateNewsCommandHandler(
-    ActivitiesDbContext context,
-    IBlobStorage blobStorage,
-    [FromKeyedServices(ChannelKeys.ThumbnailUpload)] Channel<UploadMessage> thumbnailUploadChannel
-) : IRequestHandler<UpdateNewsCommand, Fin<UpdateNewsResponse>>
+public sealed class UpdateNewsCommandHandler(ActivitiesDbContext context)
+    : IRequestHandler<UpdateNewsCommand, Fin<UpdateNewsResponse>>
 {
     public async Task<Fin<UpdateNewsResponse>> Handle(
         UpdateNewsCommand request,
@@ -33,43 +30,9 @@ public sealed class UpdateNewsCommandHandler(
 
         news.Category = request.Category;
         news.Tags = request.Tags;
+        news.PublishedDate = request.PublishedDate;
 
-        // remove old thumbnail and create a new one
-        if (
-            request.Thumbnail is not null
-            && await blobStorage.ExistsAsync(
-                "activities",
-                $"news/{news.Id}.webp",
-                cancellationToken
-            )
-        )
-        {
-            await using var stream = new MemoryStream();
-            await request.Thumbnail.CopyToAsync(stream, cancellationToken);
-            stream.Position = 0;
-
-            var res = await blobStorage.UploadAsync(
-                "activities",
-                $"news/{news.Id}.webp",
-                stream,
-                cancellationToken
-            );
-            if (res is < 200 or > 299)
-            {
-                await blobStorage.DeleteAsync(
-                    "activities",
-                    $"news/{news.Id}.webp",
-                    cancellationToken
-                );
-                var message = new UploadMessage(
-                    news.Id,
-                    news.Id,
-                    stream.ToArray(),
-                    MessageType.Thumbnail
-                );
-                await thumbnailUploadChannel.Writer.WriteAsync(message, cancellationToken);
-            }
-        }
+        await context.SaveChangesAsync(cancellationToken);
 
         return new UpdateNewsResponse(news.Id);
     }

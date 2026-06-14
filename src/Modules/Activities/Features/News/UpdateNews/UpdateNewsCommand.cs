@@ -11,13 +11,13 @@ public sealed class UpdateNewsCommand : IRequest<Fin<UpdateNewsResponse>>
     public UpdateNewsCommand(string id, UpdateNewsRequest request)
     {
         Id = id;
-        Thumbnail = request.Thumbnail;
         Category = request.Category;
         Tags = request.Tags;
+        PublishedDate = request.PublishedDate;
     }
 
     public required string Id { get; init; }
-    public IFormFile? Thumbnail { get; init; }
     public string? Category { get; init; }
     public List<string> Tags { get; init; }
+    public DateTime PublishedDate { get; init; }
 }
