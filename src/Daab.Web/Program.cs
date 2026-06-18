@@ -1,6 +1,7 @@
 using Daab.Infrastructure;
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
+using Daab.Modules.ReferenceData;
 using Daab.Modules.Scientists;
 using Daab.SharedKernel.Options;
 using Daab.Web.Configuration;
@@ -32,6 +33,7 @@ builder.Services.Configure<LocaleOptions>(config.GetRequiredSection(nameof(Local
 builder
     .Services.AddInfrastructure(config)
     .AddAuthModule(config)
+    .AddReferenceDataModule(config)
     .AddScientistsModule(config)
     .AddActivitiesModule(config)
     .ConfigureEndpoints();
@@ -43,6 +45,7 @@ app.UseCors();
 app.UseImageSharp();
 app.UseStaticFiles();
 app.UseAuthModule();
+app.UseReferenceDataModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();
 app.UseFastEndpoints(static c => c.Errors.UseProblemDetails());

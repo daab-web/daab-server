@@ -9,6 +9,7 @@
     <Project Path="tests/Scientists/Daab.Modules.Scientists.Tests.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
+    <Project Path="src/Modules/Daab.Modules.ReferenceData/Daab.Modules.ReferenceData.csproj" />
     <Project Path="src/Modules/Scientists/Daab.Modules.Scientists.csproj" />
     <Project Path="src/Modules/Auth/Daab.Modules.Auth.csproj" />
     <Project Path="src\Modules\Activities\Daab.Modules.Activities.csproj" />
