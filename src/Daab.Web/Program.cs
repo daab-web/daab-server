@@ -7,6 +7,7 @@ using Daab.SharedKernel.Options;
 using Daab.Web.Configuration;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using SixLabors.ImageSharp.Web.DependencyInjection;
 
