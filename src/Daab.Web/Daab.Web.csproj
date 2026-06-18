@@ -17,6 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="../Daab.Infrastructure/Daab.Infrastructure.csproj" />
     <ProjectReference Include="..\Modules\Activities\Daab.Modules.Activities.csproj" />
+    <ProjectReference Include="..\Modules\ReferenceData\Daab.Modules.ReferenceData.csproj" />
     <ProjectReference Include="..\Modules\Scientists\Daab.Modules.Scientists.csproj" />
     <ProjectReference Include="..\Modules\Auth\Daab.Modules.Auth.csproj" />
   </ItemGroup>
