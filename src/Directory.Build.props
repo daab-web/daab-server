@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- GHSA-2m69-gcr7-jv3q: SQLite vuln in transitive SQLitePCLRaw.lib.e_sqlite3 2.1.11
+         (pulled by Microsoft.EntityFrameworkCore.Sqlite). No patched 2.x release; SQLitePCLRaw v3
+         dropped this package but EF Core 10 is not yet on v3. Re-evaluate when EF ships a fixed native. -->
+    <NuGetAuditSuppress Include="https://github.com/advisories/GHSA-2m69-gcr7-jv3q" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Roslynator.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

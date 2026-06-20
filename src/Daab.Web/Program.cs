@@ -43,10 +43,12 @@ var app = builder.Build();
 
 app.UseExceptionHandler();
 app.UseCors();
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-});
+app.UseForwardedHeaders(
+    new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    }
+);
 app.UseImageSharp();
 app.UseStaticFiles();
 app.UseAuthModule();
