@@ -1,9 +1,11 @@
+using Daab.SharedKernel.Entities;
 using FastEndpoints;
 using MediatR;
 
 namespace Daab.Modules.Scientists.Features.Scientists.GetScientist;
 
-public class GetScientist(IMediator mediator) : EndpointWithoutRequest<GetScientistResponse>
+public class GetScientist(IMediator mediator, ILocaleResolver localeResolver)
+    : EndpointWithoutRequest<GetScientistResponse>
 {
     public override void Configure()
     {
@@ -14,7 +16,7 @@ public class GetScientist(IMediator mediator) : EndpointWithoutRequest<GetScient
     public override async Task HandleAsync(CancellationToken ct)
     {
         var idOrSlug = Route<string>("idOrSlug");
-        var locale = Query<string>("locale");
+        var locale = localeResolver.Resolve();
 
         if (string.IsNullOrWhiteSpace(idOrSlug) || string.IsNullOrEmpty(locale))
         {
