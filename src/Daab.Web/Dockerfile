@@ -15,6 +15,7 @@ COPY ["src/Daab.Infrastructure/Daab.Infrastructure.csproj", "src/Daab.Infrastruc
 COPY ["src/Modules/Scientists/Daab.Modules.Scientists.csproj", "src/Modules/Scientists/"]
 COPY ["src/Modules/Auth/Daab.Modules.Auth.csproj", "src/Modules/Auth/"]
 COPY ["src/Modules/Activities/Daab.Modules.Activities.csproj", "src/Modules/Activities/"]
+COPY ["src/Modules/ReferenceData/Daab.Modules.ReferenceData.csproj", "src/Modules/ReferenceData/"]
 RUN dotnet restore "src/Daab.Web/Daab.Web.csproj"
 COPY . .
 WORKDIR "/src/src/Daab.Web"
