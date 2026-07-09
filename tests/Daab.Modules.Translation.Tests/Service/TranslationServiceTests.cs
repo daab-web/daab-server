@@ -22,12 +22,16 @@ public sealed class TranslationServiceTests
             null
         );
 
-    static TranslationService Service(TranslationDb db, FakeTranslator translator) =>
-        new(
+    static TranslationService Service(TranslationDb db, FakeTranslator translator)
+    {
+        var embedder = new FakeEmbedder();
+        return new(
             translator,
-            new TranslationMemory(db.Context, new FakeEmbedder()),
+            new TranslationMemory(db.Context, embedder),
+            embedder,
             FakeGlossaryProvider.Empty
         );
+    }
 
     static string TextOf(string json, int blockIndex) =>
         LexicalDocs.Children(json, blockIndex)[0]!["text"]!.GetValue<string>();

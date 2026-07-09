@@ -1,5 +1,6 @@
 using Daab.Modules.Translation.Lexical;
 using Daab.Modules.Translation.Memory;
+using Daab.Modules.Translation.Models;
 using LanguageExt;
 using LanguageExt.Common;
 using static LanguageExt.Prelude;
@@ -18,6 +19,7 @@ namespace Daab.Modules.Translation.Service;
 internal sealed class TranslationService(
     ITranslator translator,
     ITranslationMemory memory,
+    IEmbedder embedder,
     IGlossaryProvider glossaryProvider
 ) : ITranslationService
 {
@@ -31,6 +33,124 @@ internal sealed class TranslationService(
                 Succ: extract => TranslateExtractedAsync(extract, request, cancellationToken),
                 Fail: error => Task.FromResult<Fin<TranslationDraft>>(error)
             );
+
+    public Task<Fin<ApprovalResult>> ApproveDocumentAsync(
+        ApprovalRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var extracted = LexicalWalker
+            .Extract(request.SourceEditorStateJson)
+            .Bind(source =>
+                LexicalWalker.Extract(request.TargetEditorStateJson).Map(target => (source, target))
+            );
+
+        return extracted.Match(
+            Succ: pair => WriteBackAsync(pair.source, pair.target, request, cancellationToken),
+            Fail: error => Task.FromResult<Fin<ApprovalResult>>(error)
+        );
+    }
+
+    /// <summary>
+    /// Align the approved source and target block for block, and for every source block not already
+    /// remembered, embed its plain text and store the pair. A structural mismatch (differing block
+    /// count or type) or a broken tag multiset rejects the whole approval so the memory stays clean.
+    /// </summary>
+    async Task<Fin<ApprovalResult>> WriteBackAsync(
+        ExtractResult source,
+        ExtractResult target,
+        ApprovalRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var sourceBlocks = source.Blocks;
+        var targetBlocks = target.Blocks;
+
+        if (sourceBlocks.Count != targetBlocks.Count)
+        {
+            return Error.New(
+                422,
+                $"Source has {sourceBlocks.Count} blocks but the approved target has "
+                    + $"{targetBlocks.Count}; only structurally parallel documents can be approved"
+            );
+        }
+
+        var added = 0;
+        var skipped = 0;
+
+        for (var i = 0; i < sourceBlocks.Count; i++)
+        {
+            var sourceBlock = sourceBlocks[i];
+            var targetBlock = targetBlocks[i];
+
+            if (sourceBlock.BlockType != targetBlock.BlockType)
+            {
+                return Error.New(
+                    422,
+                    $"Block {i} is a {sourceBlock.BlockType} in the source but a "
+                        + $"{targetBlock.BlockType} in the target"
+                );
+            }
+
+            var validation = LexicalWalker.ValidateTags(sourceBlock.Source, targetBlock.Source);
+            if (!validation.Ok)
+            {
+                return Error.New(422, $"Block {i}: {validation.Violation}");
+            }
+
+            var existing = await memory.FindExactAsync(
+                new TranslationLookup(
+                    sourceBlock.Source,
+                    request.ContentType,
+                    sourceBlock.BlockType,
+                    request.SourceLocale,
+                    request.TargetLocale
+                ),
+                cancellationToken
+            );
+            if (existing is not null)
+            {
+                skipped++;
+                continue;
+            }
+
+            float[] embedding;
+            try
+            {
+                embedding = await embedder.EmbedAsync(
+                    SourceKey.Plain(sourceBlock.Source),
+                    cancellationToken
+                );
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // Unlike retrieval, approval must not silently store an un-embedded pair: that would
+                // quietly disable the semantic tier for it. Fail so the caller can retry.
+                return Error.New(502, $"Embedding block {i} for approval failed: {ex.Message}");
+            }
+
+            var stored = await memory.AddAsync(
+                TranslationMemoryEntry.Create(
+                    sourceBlock.Source,
+                    targetBlock.Source,
+                    request.ContentType,
+                    sourceBlock.BlockType,
+                    request.SourceLocale,
+                    request.TargetLocale,
+                    embedding
+                ),
+                cancellationToken
+            );
+            if (stored.IsFail)
+            {
+                return stored.Map(_ => new ApprovalResult(sourceBlocks.Count, added, skipped));
+            }
+
+            added++;
+        }
+
+        return new ApprovalResult(sourceBlocks.Count, added, skipped);
+    }
 
     async Task<Fin<TranslationDraft>> TranslateExtractedAsync(
         ExtractResult extract,

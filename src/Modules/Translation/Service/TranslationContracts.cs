@@ -31,11 +31,42 @@ public sealed record TranslationDraft(
     IReadOnlyList<TranslationExample> ExamplesUsed
 );
 
+/// <summary>An approved source+target document pair to fold back into the translation memory.</summary>
+/// <param name="SourceEditorStateJson">The Lexical editor state that was translated.</param>
+/// <param name="TargetEditorStateJson">
+/// The approved translation. It must be structurally parallel to the source — same blocks in the
+/// same order, each carrying the same inline tags — which is guaranteed for AI-drafted documents.
+/// </param>
+public sealed record ApprovalRequest(
+    string SourceEditorStateJson,
+    string TargetEditorStateJson,
+    ContentType ContentType,
+    string SourceLocale,
+    string TargetLocale
+);
+
+/// <summary>What an approval wrote back to the memory.</summary>
+/// <param name="BlockCount">Translatable blocks in the document.</param>
+/// <param name="Added">Newly embedded and stored pairs.</param>
+/// <param name="Skipped">Blocks already remembered (same source), left untouched.</param>
+public sealed record ApprovalResult(int BlockCount, int Added, int Skipped);
+
 /// <summary>Translates a Lexical document: extract, retrieve, prompt once, validate, reinsert.</summary>
 public interface ITranslationService
 {
     Task<Fin<TranslationDraft>> TranslateDocumentAsync(
         TranslationRequest request,
+        CancellationToken cancellationToken
+    );
+
+    /// <summary>
+    /// Folds an approved source+target document back into the memory: aligns the two documents block
+    /// by block, embeds each source block, and stores the pairs — closing the learning loop so future
+    /// translations of the same or similar blocks are served from memory. Blocks whose source is
+    /// already remembered are skipped.
+    /// </summary>
+    Task<Fin<ApprovalResult>> ApproveDocumentAsync(
+        ApprovalRequest request,
         CancellationToken cancellationToken
     );
 }
