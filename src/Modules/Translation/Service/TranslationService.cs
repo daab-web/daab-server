@@ -9,9 +9,11 @@ using IGlossaryProvider = Daab.Modules.Translation.Glossary.IGlossaryProvider;
 namespace Daab.Modules.Translation.Service;
 
 /// <summary>
-/// Wires Step 1–3 together: extract blocks, serve exact matches from the memory edit cache, and
-/// for the rest assemble one prompt (glossary + pooled few-shot examples + numbered tasks), make a
-/// single model call, validate the tag multiset per block, and reinsert into the Lexical tree.
+/// Wires Step 1–3 together: extract blocks, serve exact matches from the memory edit cache, and for
+/// the rest assemble one prompt (glossary + pooled few-shot examples + numbered tasks) and call the
+/// model. Each translated block must carry the same tag multiset as its source; a block that fails
+/// is re-prompted with the error fed back, up to a retry budget. The reinserted document is then
+/// round-tripped back through the Lexical schema before being returned.
 /// </summary>
 internal sealed class TranslationService(
     ITranslator translator,
@@ -37,7 +39,7 @@ internal sealed class TranslationService(
     )
     {
         var blocks = extract.Blocks;
-        var translations = new Dictionary<int, string>();
+        var cache = new Dictionary<int, string>();
         var misses = new List<LexicalBlock>();
 
         // Exact-hash tier: verbatim from the edit cache, never sent to the model.
@@ -56,7 +58,7 @@ internal sealed class TranslationService(
 
             if (cached is not null)
             {
-                translations[block.Index] = cached;
+                cache[block.Index] = cached;
             }
             else
             {
@@ -67,36 +69,121 @@ internal sealed class TranslationService(
         if (misses.Count == 0)
         {
             // Whole document was in cache — no glossary, no examples, no model call.
-            return LexicalWalker
-                .Reinsert(extract.OriginalJson, translations)
-                .Map(json => new TranslationDraft(json, blocks.Count, translations.Count, 0, []));
+            return Reinsert(extract.OriginalJson, cache)
+                .Map(json => new TranslationDraft(json, blocks.Count, cache.Count, 0, []));
         }
 
         var glossary = await SafeGlossaryAsync(request, cancellationToken);
         var examples = await PoolExamplesAsync(misses, request, cancellationToken);
 
-        var (system, user) = PromptBuilder.Build(
-            request.ContentType,
-            request.SourceLocale,
-            request.TargetLocale,
-            glossary,
+        var translated = await TranslateMissesAsync(
+            misses,
             examples,
-            misses
+            glossary,
+            request,
+            cancellationToken
         );
 
-        var generation = await translator.GenerateAsync(system, user, cancellationToken);
-
-        return generation
-            .Bind(ModelResponse.ParseArray)
-            .Bind(outputs => MapOutputs(outputs, misses, translations))
-            .Bind(map => LexicalWalker.Reinsert(extract.OriginalJson, map))
+        return translated
+            .Bind(model => Reinsert(extract.OriginalJson, Merge(cache, model)))
             .Map(json => new TranslationDraft(
                 json,
                 blocks.Count,
-                blocks.Count - misses.Count,
+                cache.Count,
                 misses.Count,
                 examples
             ));
+    }
+
+    /// <summary>
+    /// Translate the miss blocks, re-prompting any that fail tag validation with the error fed back,
+    /// until every block validates or the retry budget is spent.
+    /// </summary>
+    async Task<Fin<IReadOnlyDictionary<int, string>>> TranslateMissesAsync(
+        IReadOnlyList<LexicalBlock> misses,
+        IReadOnlyList<TranslationExample> examples,
+        GlossarySet glossary,
+        TranslationRequest request,
+        CancellationToken cancellationToken
+    )
+    {
+        var results = new Dictionary<int, string>();
+        var pending = misses.ToList();
+        var problems = new Dictionary<int, string>();
+
+        for (var attempt = 0; ; attempt++)
+        {
+            var (system, user) =
+                attempt == 0
+                    ? PromptBuilder.Build(
+                        request.ContentType,
+                        request.SourceLocale,
+                        request.TargetLocale,
+                        glossary,
+                        examples,
+                        pending
+                    )
+                    : PromptBuilder.BuildRetry(
+                        request.ContentType,
+                        request.SourceLocale,
+                        request.TargetLocale,
+                        glossary,
+                        pending,
+                        problems
+                    );
+
+            var parsed = (await translator.GenerateAsync(system, user, cancellationToken)).Bind(
+                ModelResponse.ParseArray
+            );
+            if (parsed.IsFail)
+            {
+                // Propagate the model/parse error, retyped to this method's result.
+                return parsed.Map(_ => (IReadOnlyDictionary<int, string>)results);
+            }
+
+            var outputs = parsed.Match(Succ: o => o, Fail: _ => (IReadOnlyList<string>)[]);
+            if (outputs.Count != pending.Count)
+            {
+                return Error.New(
+                    502,
+                    $"Model returned {outputs.Count} translations for {pending.Count} blocks"
+                );
+            }
+
+            var stillPending = new List<LexicalBlock>();
+            var nextProblems = new Dictionary<int, string>();
+            for (var i = 0; i < pending.Count; i++)
+            {
+                var block = pending[i];
+                var problem = ValidateBlock(block.Source, outputs[i]);
+                if (problem is null)
+                {
+                    results[block.Index] = outputs[i];
+                }
+                else
+                {
+                    stillPending.Add(block);
+                    nextProblems[block.Index] = problem;
+                }
+            }
+
+            if (stillPending.Count == 0)
+            {
+                return FinSucc<IReadOnlyDictionary<int, string>>(results);
+            }
+
+            if (attempt >= request.MaxTagRetries)
+            {
+                var detail = string.Join(
+                    "; ",
+                    nextProblems.Select(p => $"block {p.Key}: {p.Value}")
+                );
+                return Error.New(422, $"Tag validation failed after retries: {detail}");
+            }
+
+            pending = stillPending;
+            problems = nextProblems;
+        }
     }
 
     /// <summary>Pool per-block examples into one deduped, score-ranked set for the whole document.</summary>
@@ -153,42 +240,38 @@ internal sealed class TranslationService(
         }
     }
 
-    static Fin<IReadOnlyDictionary<int, string>> MapOutputs(
-        IReadOnlyList<string> outputs,
-        IReadOnlyList<LexicalBlock> misses,
-        Dictionary<int, string> cached
+    /// <summary>Reinsert translations, then confirm the result still parses as valid Lexical.</summary>
+    static Fin<string> Reinsert(
+        string originalJson,
+        IReadOnlyDictionary<int, string> translations
+    ) =>
+        LexicalWalker
+            .Reinsert(originalJson, translations)
+            .Bind(json => LexicalWalker.Extract(json).Map(_ => json));
+
+    static Dictionary<int, string> Merge(
+        Dictionary<int, string> cache,
+        IReadOnlyDictionary<int, string> model
     )
     {
-        if (outputs.Count != misses.Count)
+        var map = new Dictionary<int, string>(cache);
+        foreach (var (index, text) in model)
         {
-            return Error.New(
-                502,
-                $"Model returned {outputs.Count} translations for {misses.Count} blocks"
-            );
+            map[index] = text;
         }
 
-        var map = new Dictionary<int, string>(cached);
-        var violations = new List<string>();
-        for (var i = 0; i < misses.Count; i++)
+        return map;
+    }
+
+    /// <summary>Null when the block is valid, otherwise the reason to feed back to the model.</summary>
+    static string? ValidateBlock(string source, string translated)
+    {
+        if (string.IsNullOrWhiteSpace(translated))
         {
-            var block = misses[i];
-            var translated = outputs[i];
-
-            var validation = LexicalWalker.ValidateTags(block.Source, translated);
-            if (!validation.Ok)
-            {
-                violations.Add($"block {block.Index}: {validation.Violation}");
-            }
-
-            map[block.Index] = translated;
+            return "the translation is empty";
         }
 
-        // Per-block retry with the error fed back is Step 5; for now this is a hard gate.
-        if (violations.Count > 0)
-        {
-            return Error.New(422, "Tag validation failed: " + string.Join("; ", violations));
-        }
-
-        return FinSucc<IReadOnlyDictionary<int, string>>(map);
+        var validation = LexicalWalker.ValidateTags(source, translated);
+        return validation.Ok ? null : validation.Violation;
     }
 }

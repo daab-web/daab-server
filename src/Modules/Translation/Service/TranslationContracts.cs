@@ -7,12 +7,17 @@ namespace Daab.Modules.Translation.Service;
 /// <summary>A request to translate one Lexical document end to end.</summary>
 /// <param name="EditorStateJson">The Lexical editor-state JSON for the field.</param>
 /// <param name="MaxExamples">Upper bound on few-shot pairs injected into the prompt.</param>
+/// <param name="MaxTagRetries">
+/// How many times a block that fails tag validation is re-prompted with the error fed back before
+/// the whole document fails.
+/// </param>
 public sealed record TranslationRequest(
     string EditorStateJson,
     ContentType ContentType,
     string SourceLocale,
     string TargetLocale,
-    int MaxExamples = 5
+    int MaxExamples = 5,
+    int MaxTagRetries = 2
 );
 
 /// <summary>The translated document plus a small accounting of how it was produced.</summary>

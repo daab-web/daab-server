@@ -161,4 +161,73 @@ public sealed class TranslationServiceTests
         Assert.Equal(0, translator.CallCount);
         Assert.False(string.IsNullOrEmpty(error.Message));
     }
+
+    [Fact]
+    public async Task Translate_TagDroppedThenFixed_RetriesAndSucceeds()
+    {
+        using var db = new TranslationDb();
+        // First attempt drops the <0> tag; the retry restores it.
+        var translator = FakeTranslator.Sequence(["Salam"], ["<0>Salam</0>"]);
+        var doc = LexicalDocs.Doc(LexicalDocs.Paragraph(LexicalDocs.Text("Hello", format: 1)));
+
+        var draft = (
+            await Service(db, translator)
+                .TranslateDocumentAsync(Request(doc), CancellationToken.None)
+        ).ExpectSucc();
+
+        Assert.Equal(2, translator.CallCount);
+        Assert.Equal("Salam", TextOf(draft.TranslatedJson, 0));
+        // The retry prompt fed the tag error back.
+        Assert.Contains("PROBLEM", translator.LastUser!, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Translate_TagAlwaysBroken_FailsAfterRetries()
+    {
+        using var db = new TranslationDb();
+        // MaxTagRetries defaults to 2 → three attempts, all broken.
+        var translator = FakeTranslator.Sequence(["Salam"], ["Salam"], ["Salam"]);
+        var doc = LexicalDocs.Doc(LexicalDocs.Paragraph(LexicalDocs.Text("Hello", format: 1)));
+
+        var error = (
+            await Service(db, translator)
+                .TranslateDocumentAsync(Request(doc), CancellationToken.None)
+        ).ExpectFail();
+
+        Assert.Equal(3, translator.CallCount);
+        Assert.Contains("after retries", error.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Translate_EmptyBlockThenFixed_Retries()
+    {
+        using var db = new TranslationDb();
+        var translator = FakeTranslator.Sequence([""], ["Salam"]);
+        var doc = LexicalDocs.Doc(LexicalDocs.Paragraph(LexicalDocs.Text("Hello")));
+
+        var draft = (
+            await Service(db, translator)
+                .TranslateDocumentAsync(Request(doc), CancellationToken.None)
+        ).ExpectSucc();
+
+        Assert.Equal(2, translator.CallCount);
+        Assert.Equal("Salam", TextOf(draft.TranslatedJson, 0));
+    }
+
+    [Fact]
+    public async Task Translate_Success_ReturnsReExtractableLexical()
+    {
+        using var db = new TranslationDb();
+        var translator = FakeTranslator.Returning("Salam");
+        var doc = LexicalDocs.Doc(LexicalDocs.Paragraph(LexicalDocs.Text("Hello")));
+
+        var draft = (
+            await Service(db, translator)
+                .TranslateDocumentAsync(Request(doc), CancellationToken.None)
+        ).ExpectSucc();
+
+        // The returned document round-trips back through the Lexical schema.
+        var reExtracted = LexicalWalker.Extract(draft.TranslatedJson).ExpectSucc();
+        Assert.Equal("Salam", reExtracted.Blocks[0].Source);
+    }
 }

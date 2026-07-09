@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Daab.Modules.Translation.Service;
 using LanguageExt;
+using LanguageExt.Common;
 
 namespace Daab.Modules.Translation.Tests.Service;
 
@@ -17,6 +18,18 @@ internal sealed class FakeTranslator(Func<string, string, Fin<string>> handler) 
 
     /// <summary>Responds with a verbatim (possibly malformed) body.</summary>
     public static FakeTranslator Raw(string response) => new((_, _) => (Fin<string>)response);
+
+    /// <summary>Responds with a different JSON array per successive call (drives retry tests).</summary>
+    public static FakeTranslator Sequence(params string[][] outputsPerCall)
+    {
+        var queue = new Queue<string[]>(outputsPerCall);
+        return new FakeTranslator(
+            (_, _) =>
+                queue.Count > 0
+                    ? (Fin<string>)JsonSerializer.Serialize(queue.Dequeue())
+                    : (Fin<string>)Error.New(502, "FakeTranslator: no more responses")
+        );
+    }
 
     public Task<Fin<string>> GenerateAsync(
         string systemInstruction,

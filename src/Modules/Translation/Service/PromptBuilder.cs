@@ -22,23 +22,6 @@ internal static class PromptBuilder
         IReadOnlyList<LexicalBlock> tasks
     )
     {
-        var system = $"""
-            You are a professional translator for a national academy of sciences.
-            Translate {LocaleName(sourceLocale)} source text into {LocaleName(targetLocale)}.
-
-            Rules:
-            - Keep a formal, encyclopedic register and preserve the source meaning.
-            - Preserve every inline tag such as <0>...</0> exactly: identical numbers and nesting,
-              never add, drop, or renumber a tag. Translate only the text between tags.
-            - Do not translate proper names or institution labels; render any glossary term exactly
-              as its target.
-            - Respond with a JSON array of strings only. No prose, no code fences.
-
-            Content type: {ContentTypeName(contentType)}
-            Glossary (render each source exactly as its target):
-            {(glossary.IsEmpty ? "(none)" : glossary.Render())}
-            """;
-
         var user = new StringBuilder();
         if (examples.Count > 0)
         {
@@ -63,8 +46,65 @@ internal static class PromptBuilder
             user.AppendLine($"{i + 1}. {tasks[i].Source}");
         }
 
-        return (system, user.ToString());
+        return (BuildSystem(contentType, sourceLocale, targetLocale, glossary), user.ToString());
     }
+
+    /// <summary>
+    /// A corrective re-prompt for blocks whose previous translation broke the tag invariant. Each
+    /// item carries the specific problem so the model can fix exactly what it got wrong.
+    /// </summary>
+    public static (string System, string User) BuildRetry(
+        ContentType contentType,
+        string sourceLocale,
+        string targetLocale,
+        GlossarySet glossary,
+        IReadOnlyList<LexicalBlock> failed,
+        IReadOnlyDictionary<int, string> problems
+    )
+    {
+        var user = new StringBuilder();
+        user.AppendLine(
+            $"A previous attempt broke the tag rules. Re-translate these {failed.Count} items into "
+                + $"{LocaleName(targetLocale)}, fixing each problem. Return a JSON array of exactly "
+                + $"{failed.Count} strings in order. Every inline tag in the source must appear "
+                + "exactly once in your output, unchanged."
+        );
+        user.AppendLine();
+        for (var i = 0; i < failed.Count; i++)
+        {
+            var block = failed[i];
+            user.AppendLine($"{i + 1}. SOURCE: {block.Source}");
+            if (problems.TryGetValue(block.Index, out var problem))
+            {
+                user.AppendLine($"   PROBLEM: {problem}");
+            }
+        }
+
+        return (BuildSystem(contentType, sourceLocale, targetLocale, glossary), user.ToString());
+    }
+
+    static string BuildSystem(
+        ContentType contentType,
+        string sourceLocale,
+        string targetLocale,
+        GlossarySet glossary
+    ) =>
+        $"""
+            You are a professional translator for a national academy of sciences.
+            Translate {LocaleName(sourceLocale)} source text into {LocaleName(targetLocale)}.
+
+            Rules:
+            - Keep a formal, encyclopedic register and preserve the source meaning.
+            - Preserve every inline tag such as <0>...</0> exactly: identical numbers and nesting,
+              never add, drop, or renumber a tag. Translate only the text between tags.
+            - Do not translate proper names or institution labels; render any glossary term exactly
+              as its target.
+            - Respond with a JSON array of strings only. No prose, no code fences.
+
+            Content type: {ContentTypeName(contentType)}
+            Glossary (render each source exactly as its target):
+            {(glossary.IsEmpty ? "(none)" : glossary.Render())}
+            """;
 
     static string LocaleName(string code) =>
         code switch
