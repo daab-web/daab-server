@@ -1,4 +1,4 @@
-.PHONY: run watch add-activities-migration add-scientists-migration add-auth-migration add-reference-data-migration
+.PHONY: run watch add-activities-migration add-scientists-migration add-auth-migration add-reference-data-migration add-translation-migration
 
 define add-migration
 	@[ -n "$(name)" ] || { echo "Usage: make $@ name=MigrationName"; exit 1; }
@@ -26,3 +26,6 @@ add-auth-migration:
 
 add-reference-data-migration:
 	$(call add-migration,ReferenceData,ReferenceDataDbContext)
+
+add-translation-migration:
+	$(call add-migration,Translation,TranslationDbContext)

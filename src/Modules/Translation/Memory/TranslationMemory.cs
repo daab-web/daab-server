@@ -92,10 +92,20 @@ internal sealed class TranslationMemory(TranslationDbContext context, IEmbedder 
         }
 
         // Semantic tier: embed the incoming block's PLAIN text once, rank stored vectors with MMR.
-        var queryVector = await embedder.EmbedAsync(
-            SourceKey.Plain(query.SourceText),
-            cancellationToken
-        );
+        // A real embedder does network I/O and can throw; keep the Fin contract honest so the
+        // caller can degrade to the fuzzy/glossary floor instead of faulting the whole document.
+        float[] queryVector;
+        try
+        {
+            queryVector = await embedder.EmbedAsync(
+                SourceKey.Plain(query.SourceText),
+                cancellationToken
+            );
+        }
+        catch (Exception ex) when (ex is not OperationCanceledException)
+        {
+            return Error.New(502, $"Embedding the query block failed: {ex.Message}");
+        }
 
         var selected = Similarity.SelectMmr(
             queryVector,
