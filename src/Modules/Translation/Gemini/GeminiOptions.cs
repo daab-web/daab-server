@@ -14,7 +14,7 @@ public sealed class GeminiOptions
     /// <summary>Base address; must end with a slash so relative model paths resolve.</summary>
     public string BaseUrl { get; init; } = "https://generativelanguage.googleapis.com/v1beta/";
 
-    public string GenerationModel { get; init; } = "gemini-2.5-flash";
+    public string GenerationModel { get; init; } = "gemini-3.1-flash-lite";
 
     public string EmbeddingModel { get; init; } = "gemini-embedding-001";
 
