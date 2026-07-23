@@ -3,8 +3,11 @@ using Daab.Modules.Activities;
 using Daab.Modules.Auth;
 using Daab.Modules.ReferenceData;
 using Daab.Modules.Scientists;
+using Daab.Modules.Translation;
+using Daab.Modules.Translation.Glossary;
 using Daab.SharedKernel.Options;
 using Daab.Web.Configuration;
+using Daab.Web.Translation;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -37,7 +40,11 @@ builder
     .AddReferenceDataModule(config)
     .AddScientistsModule(config)
     .AddActivitiesModule(config)
+    .AddTranslationModule(config)
     .ConfigureEndpoints();
+
+// Glossary bridges the translation module to ReferenceData; registered by the host that owns both.
+builder.Services.AddScoped<IGlossaryProvider, ReferenceDataGlossaryProvider>();
 
 var app = builder.Build();
 
@@ -55,6 +62,7 @@ app.UseAuthModule();
 app.UseReferenceDataModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();
+app.UseTranslationModule();
 app.UseFastEndpoints(static c => c.Errors.UseProblemDetails());
 
 app.UseSwaggerGen(options => options.Path = "/openapi/{documentName}.json");

@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Modules\ReferenceData\Daab.Modules.ReferenceData.csproj" />
     <ProjectReference Include="..\Modules\Scientists\Daab.Modules.Scientists.csproj" />
     <ProjectReference Include="..\Modules\Auth\Daab.Modules.Auth.csproj" />
+    <ProjectReference Include="..\Modules\Translation\Daab.Modules.Translation.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -7,11 +7,13 @@
   <Folder Name="/tests/">
     <Project Path="tests/Daab.Modules.Activities.Tests/Daab.Modules.Activities.Tests.csproj" />
     <Project Path="tests/Scientists/Daab.Modules.Scientists.Tests.csproj" />
+    <Project Path="tests/Daab.Modules.Translation.Tests/Daab.Modules.Translation.Tests.csproj" />
   </Folder>
   <Folder Name="/src/Modules/">
     <Project Path="src/Modules/ReferenceData/Daab.Modules.ReferenceData.csproj" />
     <Project Path="src/Modules/Scientists/Daab.Modules.Scientists.csproj" />
     <Project Path="src/Modules/Auth/Daab.Modules.Auth.csproj" />
     <Project Path="src\Modules\Activities\Daab.Modules.Activities.csproj" />
+    <Project Path="src/Modules/Translation/Daab.Modules.Translation.csproj" />
   </Folder>
 </Solution>

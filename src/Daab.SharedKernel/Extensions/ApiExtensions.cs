@@ -14,7 +14,7 @@ public static class ApiExtensions
             return new ProblemDetails
             {
                 Detail = error.Message,
-                Status = error.Code,
+                Status = error.Code is > 599 or < 100 ? 500 : error.Code,
                 Instance = httpContext.Request.Path,
                 TraceId = Activity.Current?.Id ?? httpContext.TraceIdentifier,
             };
