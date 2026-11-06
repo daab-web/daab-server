@@ -25,7 +25,7 @@ EF Core migrations, one `DbContext` per module. Add via Make targets:
 ```bash
 make add-translation-migration name=AddFooTable   # -> src/Modules/Translation/Persistence/Migrations
 ```
-Targets exist for `activities`, `scientists`, `auth`, `reference-data`, `translation`. Each module calls `context.Database.Migrate()` at startup in its `UseXModule()` — migrations apply automatically on boot.
+Targets exist for `activities`, `scientists`, `auth`, `reference-data`, `translation`, `blog`. Each module calls `context.Database.Migrate()` at startup in its `UseXModule()` — migrations apply automatically on boot.
 
 ### Secrets
 Gemini API key is not in config files — set via user-secrets in `Daab.Web`:
@@ -40,7 +40,7 @@ Module DI throws at startup if it is missing.
 
 ### Projects
 - `src/Daab.Web` — host. `Program.cs` wires every module in order: `AddXModule(config)` (services) then `UseXModule()` (middleware + auto-migrate).
-- `src/Modules/*` — the modules: `Auth`, `Scientists`, `Activities`, `ReferenceData`, `Translation`. Each is a class library with a public `DependencyInjection.cs` exposing `AddXModule` / `UseXModule`.
+- `src/Modules/*` — the modules: `Auth`, `Scientists`, `Activities`, `ReferenceData`, `Translation`, `Blog`. Each is a class library with a public `DependencyInjection.cs` exposing `AddXModule` / `UseXModule`.
 - `src/Daab.SharedKernel` — cross-cutting contracts only: `IBlobStorage`, locale options/resolvers, `ChannelKeys`, `PagedResponse`, FastEndpoints pre-processors. Modules depend on it; **modules do not reference each other.**
 - `src/Daab.Infrastructure` — concrete infra (`MinioStorageService`, `IAmazonS3`).
 - `tests/*` — xUnit per module.
@@ -62,6 +62,17 @@ Endpoints are thin: bind request → `mediator.Send(command)` → `result.Match(
 No message bus. Async/background work uses **`System.Threading.Channels`**: a keyed unbounded `Channel<TMessage>` (keys in `SharedKernel/Constants/ChannelKeys.cs`) registered in module DI, drained by an `IHostedService` worker (e.g. `ProfilePictureUploadWorker`, Activities `BackgroundWorkers`).
 
 When two modules must interact, the **host** bridges them, not the modules. Example: `Translation` defines `IGlossaryProvider` but never references `ReferenceData`; `Program.cs` registers `ReferenceDataGlossaryProvider` (in `Daab.Web/Translation/`) to connect them.
+
+### Accounts & roles
+Roles are stored in Auth (`Roles` table, seeded: `admin`, `user`, `scientist`) and travel in the access token as a JSON array (`RoleClaimType = "roles"`). Endpoints that need the bearer token must set `AuthSchemes("Bearer")` — the default scheme is the `cookie` one used by `/authorize`.
+- `scientist` may write blog posts and, in the client's admin panel, sees only the Blogs tab. Admins grant/remove it with `PUT`/`DELETE /users/{id}/roles/{role}` (only roles in `AuthRoles.Assignable`); `GET /users` lists accounts. Role changes reach the user at their next sign-in.
+- At token issuance Auth calls `IAccountLinker` (host: `Daab.Web/Accounts/ScientistAccountLinker`), which only adds the `scientist_id` claim when a Scientist profile's `UserId` points to the user (never by e-mail matching).
+- Invitations: `POST /scientists/{id}/invitation` (admin, host endpoint `InviteScientistEndpoint`) uses `IInvitationService` to create a password-less account for the profile's e-mail, links the profile, grants `scientist`, and returns a one-time link to `GET/POST /auth/invitations/{token}` (server-rendered set-password page, 7-day expiry, only the token's SHA-256 is stored, re-inviting revokes older links). An existing account with a password that is not already the profile's is refused with 409.
+- Google sign-in (enabled only when `Google:ClientId` + `Google:ClientSecret` are set; redirect URI `{backend}/signin-google`): "Continue with Google" on the sign-in page → Google → `external` cookie → `GET /auth/external/callback`, which resolves the account by `ExternalLogins` (provider + Google `sub`), else attaches to the account with the same e-mail only if Google marks it verified, else creates a `user` account from the Google name, e-mail and picture.
+- `POST /auth/register` (no UI) creates a `user` account; `GET /auth/logout` ends the sign-in cookie session. `Auth:PublicUrl` overrides the backend address in invitation links; `Auth:AppUrl` is where "Continue to the site" goes after activation.
+
+### Blog module
+Scientists write posts (Lexical editor state, single language); any signed-in user may comment on published posts. A post is published only via `POST /blog/posts/{id}/submit`, which runs `ContentRules` and then `IContentVerifier`; failing posts become `Rejected` with feedback, and any edit sends a post back to `Draft`. Comments store a detected language; `POST /blog/comments/{id}/translation` translates into a supported locale and caches the result per locale. Both AI seams (`IContentVerifier`, `ICommentLanguageService`) are implemented in the host (`Daab.Web/Blog/`) on top of the translation module's Gemini `ITranslator`.
 
 ### Localization
 `LocaleOptions.SupportedLocales` (`en`, `az`) drives validation. Requests implementing `ILocalized` / `ILocalizedCollection` are validated by FastEndpoints pre-processors in SharedKernel (`LocaleCollectionPreProcessor`); unsupported locales become validation failures. `LocalePreProcessor` is `[Obsolete]` — use the collection variant.

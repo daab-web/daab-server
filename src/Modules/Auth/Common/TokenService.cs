@@ -9,27 +9,46 @@ namespace Daab.Modules.Auth.Common;
 
 public interface ITokenService
 {
-    string GenerateAccessToken(User user);
+    string GenerateAccessToken(User user, AccountLink? link = null);
 }
 
 public class TokenService(IOptions<JwtOptions> options) : ITokenService
 {
     private readonly JwtOptions _options = options.Value;
 
-    public string GenerateAccessToken(User user)
+    public string GenerateAccessToken(User user, AccountLink? link = null)
     {
+        link ??= AccountLink.None;
         var handler = new JsonWebTokenHandler();
+
+        var roles = user
+            .Roles.Select(r => r.Name)
+            .Concat(link.Roles)
+            .Distinct(StringComparer.Ordinal)
+            .ToArray();
+
+        var claims = new Dictionary<string, object>
+        {
+            [JwtRegisteredClaimNames.Sub] = user.Id,
+            [JwtRegisteredClaimNames.Name] = user.DisplayName,
+            [JwtRegisteredClaimNames.PreferredUsername] = user.Username,
+            [AuthClaims.Roles] = roles,
+        };
+
+        if (!string.IsNullOrWhiteSpace(user.Email))
+        {
+            claims[JwtRegisteredClaimNames.Email] = user.Email;
+        }
+
+        foreach (var (key, value) in link.Claims)
+        {
+            claims[key] = value;
+        }
 
         return handler.CreateToken(
             new SecurityTokenDescriptor
             {
-                Claims = new Dictionary<string, object>
-                {
-                    [JwtRegisteredClaimNames.Sub] = user.Id,
-                    [JwtRegisteredClaimNames.Name] = user.Username,
-                    [JwtRegisteredClaimNames.Email] = "admin@waas.org",
-                    ["roles"] = string.Join(',', user.Roles.Select(r => r.Name)),
-                },
+                Claims = claims,
                 IssuedAt = DateTime.UtcNow,
                 Expires = DateTime.UtcNow.AddMinutes(_options.AccessExpiryMinutes),
                 TokenType = "Bearer",

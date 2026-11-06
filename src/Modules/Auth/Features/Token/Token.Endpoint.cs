@@ -15,6 +15,7 @@ namespace Daab.Modules.Auth.Features.Token;
 public class TokenEndpoint(
     AuthDbContext ctx,
     ITokenService tokenService,
+    IAccountLinker accountLinker,
     IDataProtectionProvider dataProtectionProvider,
     ILogger<TokenEndpoint> logger
 ) : Endpoint<OAuthTokenRequest, OAuthTokenResponse>
@@ -58,7 +59,8 @@ public class TokenEndpoint(
             return;
         }
 
-        var accessToken = tokenService.GenerateAccessToken(user);
+        var link = await accountLinker.LinkAsync(user.Id, user.Email, ct);
+        var accessToken = tokenService.GenerateAccessToken(user, link);
 
         // TODO: Generate refresh tokens in service
         var refreshToken = Ulid.NewUlid().ToString().ToLower();

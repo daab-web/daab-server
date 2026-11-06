@@ -1,9 +1,11 @@
 using System.Web;
+using Daab.Modules.Auth.Options;
 using FastEndpoints;
+using Microsoft.Extensions.Options;
 
 namespace Daab.Modules.Auth.Features.Login;
 
-public class LoginPageEndpoint : EndpointWithoutRequest
+public class LoginPageEndpoint(IOptions<GoogleOptions> google) : EndpointWithoutRequest
 {
     public override void Configure()
     {
@@ -14,6 +16,29 @@ public class LoginPageEndpoint : EndpointWithoutRequest
     public override async Task HandleAsync(CancellationToken ct)
     {
         var returnUrl = Query<string>("returnUrl", isRequired: false) ?? "/";
+
+        var errorMessage = Query<string>("error", isRequired: false) switch
+        {
+            "google" => "Google sign-in did not complete. Please try again.",
+            "google-existing" =>
+                "An account with this e-mail already exists. Sign in with your password.",
+            _ => null,
+        };
+        var errorBanner = errorMessage is null
+            ? string.Empty
+            : $"""<div class="error-banner" role="alert">{HttpUtility.HtmlEncode(errorMessage)}</div>""";
+
+        var googleButton = google.Value.IsConfigured
+            ? $"""
+                <div class="divider">or</div>
+                <a class="google-button" href="/auth/external/google?returnUrl={HttpUtility.UrlEncode(
+                    returnUrl
+                )}">
+                  <svg width="16" height="16" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>
+                  Continue with Google
+                </a>
+                """
+            : string.Empty;
 
         var html = $$"""
             <!DOCTYPE html>
@@ -196,6 +221,28 @@ public class LoginPageEndpoint : EndpointWithoutRequest
                 .error-banner svg {
                   flex-shrink: 0;
                 }
+
+                .google-button {
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 0.5rem;
+                  width: 100%;
+                  height: 36px;
+                  background: transparent;
+                  border: 1px solid var(--border);
+                  border-radius: var(--radius);
+                  color: var(--text);
+                  font-size: 0.875rem;
+                  font-weight: 500;
+                  text-decoration: none;
+                  transition: border-color 0.15s, background 0.15s;
+                }
+
+                .google-button:hover {
+                  border-color: var(--border-focus);
+                  background: rgba(250,250,250,.04);
+                }
               </style>
             </head>
             <body>
@@ -204,6 +251,8 @@ public class LoginPageEndpoint : EndpointWithoutRequest
                   <h1 class="card-title">Sign in</h1>
                   <p class="card-description">Enter your credentials to continue</p>
                 </div>
+
+                {{errorBanner}}
 
                 <form method="post" action="/auth/login?returnUrl={{HttpUtility.UrlEncode(
                 returnUrl
@@ -234,6 +283,7 @@ public class LoginPageEndpoint : EndpointWithoutRequest
 
                   <div class="form-footer">
                     <button type="submit">Sign in</button>
+                    {{googleButton}}
                   </div>
                 </form>
               </div>

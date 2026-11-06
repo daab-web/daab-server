@@ -42,8 +42,11 @@ public sealed class OAuthLoginEndpoint(IMediator mediator, ILogger<OAuthLoginEnd
                         new ClaimsIdentity(
                             [
                                 new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-                                new Claim(JwtRegisteredClaimNames.Name, user.Username),
-                                new Claim(JwtRegisteredClaimNames.Email, "admin@waas.org"),
+                                new Claim(JwtRegisteredClaimNames.Name, user.DisplayName),
+                                new Claim(
+                                    JwtRegisteredClaimNames.Email,
+                                    user.Email ?? string.Empty
+                                ),
                                 new Claim(
                                     "roles",
                                     string.Join(',', user.Roles.Select(r => r.Name))
