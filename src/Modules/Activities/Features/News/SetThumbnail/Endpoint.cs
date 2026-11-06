@@ -24,7 +24,9 @@ public class SetThumbnailEndpoint(IMediator mediator)
         Post("/news/{newsId}/thumbnail");
         AllowFileUploads();
 
-        AllowAnonymous();
+        // Admin only: uploaded images go through the ImageSharp decoder (see Directory.Build.props).
+        AuthSchemes("Bearer");
+        Roles("admin");
     }
 
     public override async Task HandleAsync(SetThumbnailRequest req, CancellationToken ct)

@@ -27,8 +27,9 @@ public class UpdateProfilePictureEndpoint(IMediator mediator) : EndpointWithoutR
         Put("/scientists/{scientistId}/profile-picture");
         AllowFileUploads();
 
-        // TODO: This should not be public
-        AllowAnonymous();
+        // Admin only: uploaded images go through the ImageSharp decoder (see Directory.Build.props).
+        AuthSchemes("Bearer");
+        Roles("admin");
     }
 
     public override async Task HandleAsync(CancellationToken ct)
