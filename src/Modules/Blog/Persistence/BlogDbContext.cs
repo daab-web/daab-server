@@ -7,8 +7,9 @@ namespace Daab.Modules.Blog.Persistence;
 public class BlogDbContext(DbContextOptions<BlogDbContext> options) : DbContext(options)
 {
     public DbSet<Post> Posts { get; init; }
+    public DbSet<PostTranslation> PostTranslations { get; init; }
     public DbSet<Comment> Comments { get; init; }
-    public DbSet<CommentTranslation> CommentTranslations { get; init; }
+    public DbSet<CommentText> CommentTexts { get; init; }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
@@ -26,32 +27,42 @@ public class BlogDbContext(DbContextOptions<BlogDbContext> options) : DbContext(
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         var posts = modelBuilder.Entity<Post>();
+        var postTranslations = modelBuilder.Entity<PostTranslation>();
         var comments = modelBuilder.Entity<Comment>();
-        var translations = modelBuilder.Entity<CommentTranslation>();
+        var commentTexts = modelBuilder.Entity<CommentText>();
 
         posts.HasKey(p => p.Id);
         posts.HasIndex(p => p.Slug).IsUnique();
         posts.HasIndex(p => p.AuthorId);
         posts.HasIndex(p => new { p.Status, p.PublishedAt });
         posts.Property(p => p.Status).HasConversion<string>();
-        posts.Property(p => p.Title).HasMaxLength(200);
-        posts.Property(p => p.Excerpt).HasMaxLength(500);
-        posts.Property(p => p.Locale).HasMaxLength(10);
+        posts.Property(p => p.SourceLocale).HasMaxLength(10);
+
+        postTranslations.HasKey(t => new { t.PostId, t.Locale });
+        postTranslations.Property(t => t.Locale).HasMaxLength(10);
+        postTranslations.Property(t => t.Title).HasMaxLength(200);
+        postTranslations.Property(t => t.Excerpt).HasMaxLength(500);
+        postTranslations
+            .HasOne(t => t.Post)
+            .WithMany(p => p.Translations)
+            .HasForeignKey(t => t.PostId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         comments.HasKey(c => c.Id);
         comments.HasIndex(c => new { c.PostId, c.CreatedAt });
-        comments.Property(c => c.Content).HasMaxLength(2000);
-        comments.Property(c => c.Language).HasMaxLength(10);
+        comments.Property(c => c.SourceLocale).HasMaxLength(10);
         comments
             .HasOne(c => c.Post)
             .WithMany(p => p.Comments)
             .HasForeignKey(c => c.PostId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        translations.HasKey(t => new { t.CommentId, t.Locale });
-        translations
+        commentTexts.HasKey(t => new { t.CommentId, t.Locale });
+        commentTexts.Property(t => t.Locale).HasMaxLength(10);
+        commentTexts.Property(t => t.Content).HasMaxLength(2000);
+        commentTexts
             .HasOne(t => t.Comment)
-            .WithMany(c => c.Translations)
+            .WithMany(c => c.Texts)
             .HasForeignKey(t => t.CommentId)
             .OnDelete(DeleteBehavior.Cascade);
     }

@@ -55,9 +55,9 @@ builder.Services.AddScoped<IGlossaryProvider, ReferenceDataGlossaryProvider>();
 // Scientist accounts bridge Auth and Scientists: grants the scientist role at token issuance.
 builder.Services.AddScoped<IAccountLinker, ScientistAccountLinker>();
 
-// Blog content verification and comment translation run on the translation module's model.
+// Blog content verification and translation suggestions run on the translation module's model.
 builder.Services.AddScoped<IContentVerifier, GeminiContentVerifier>();
-builder.Services.AddScoped<ICommentLanguageService, GeminiCommentLanguageService>();
+builder.Services.AddScoped<ITextTranslator, GeminiTextTranslator>();
 
 var app = builder.Build();
 

@@ -9,11 +9,13 @@ namespace Daab.Modules.Blog.Features.Posts.GetAllPosts;
 public sealed record GetAllPostsQuery(int Page, int PageSize, PostStatus? Status)
     : IRequest<Fin<PagedResponse<AdminPostResponse>>>;
 
+/// <param name="Title">The title in the original language.</param>
 public sealed record AdminPostResponse(
     string Id,
     string Slug,
     string Title,
-    string Locale,
+    string SourceLocale,
+    IReadOnlyList<string> Locales,
     string AuthorId,
     string AuthorName,
     PostStatus Status,

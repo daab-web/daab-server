@@ -1,11 +1,12 @@
 using Daab.Modules.Blog.Common;
 using Daab.SharedKernel.Extensions;
+using Daab.SharedKernel.Middlewares;
 using FastEndpoints;
 using MediatR;
 
 namespace Daab.Modules.Blog.Features.Comments.AddComment;
 
-/// <summary>Any signed-in user may comment on a published post.</summary>
+/// <summary>Any signed-in user may comment on a published post, in every language.</summary>
 public sealed class AddCommentEndpoint(IMediator mediator)
     : Endpoint<AddCommentRequest, CommentResponse>
 {
@@ -13,6 +14,7 @@ public sealed class AddCommentEndpoint(IMediator mediator)
     {
         Post("/blog/posts/{postId}/comments");
         AuthSchemes(BlogUser.Scheme);
+        PreProcessor<LocaleCollectionPreProcessor>();
     }
 
     public override async Task HandleAsync(AddCommentRequest req, CancellationToken ct)
@@ -25,7 +27,7 @@ public sealed class AddCommentEndpoint(IMediator mediator)
         }
 
         var result = await mediator.Send(
-            new AddCommentCommand(author, req.PostId, req.Content),
+            new AddCommentCommand(author, req.PostId, req.SourceLocale, req.Texts),
             ct
         );
 

@@ -25,24 +25,28 @@ public sealed class GetAllPostsQueryHandler(BlogDbContext context)
 
         var total = await query.CountAsync(cancellationToken);
 
-        var items = await query
+        var posts = await query
             .OrderByDescending(p => p.UpdatedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(p => new AdminPostResponse(
-                p.Id,
-                p.Slug,
-                p.Title,
-                p.Locale,
-                p.AuthorId,
-                p.AuthorName,
-                p.Status,
-                p.VerificationFeedback,
-                p.UpdatedAt,
-                p.PublishedAt,
-                p.Comments.Count
-            ))
+            .Include(p => p.Translations)
+            .Select(p => new { Post = p, CommentCount = p.Comments.Count })
             .ToListAsync(cancellationToken);
+
+        var items = posts.ConvertAll(row => new AdminPostResponse(
+            row.Post.Id,
+            row.Post.Slug,
+            row.Post.In(row.Post.SourceLocale)?.Title ?? string.Empty,
+            row.Post.SourceLocale,
+            [.. row.Post.Translations.Select(t => t.Locale).Order(StringComparer.Ordinal)],
+            row.Post.AuthorId,
+            row.Post.AuthorName,
+            row.Post.Status,
+            row.Post.VerificationFeedback,
+            row.Post.UpdatedAt,
+            row.Post.PublishedAt,
+            row.CommentCount
+        ));
 
         return PagedResponse<AdminPostResponse>.Create(items, page, pageSize, total);
     }

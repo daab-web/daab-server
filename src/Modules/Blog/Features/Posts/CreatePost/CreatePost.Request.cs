@@ -1,13 +1,6 @@
-using Daab.SharedKernel.Middlewares;
-
 namespace Daab.Modules.Blog.Features.Posts.CreatePost;
 
-public sealed record CreatePostRequest(
-    string Title,
-    string Excerpt,
-    string EditorState,
-    string Locale
-) : IPostContent, ILocalizedCollection
-{
-    public IEnumerable<string> GetLocales() => [Locale];
-}
+/// <param name="SourceLocale">The language the author wrote the post in.</param>
+/// <param name="Translations">The post in every supported language.</param>
+public sealed record CreatePostRequest(string SourceLocale, List<PostTranslationInput> Translations)
+    : IPostContent;

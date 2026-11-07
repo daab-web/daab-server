@@ -1,3 +1,4 @@
+using Daab.Modules.Blog.Common;
 using Daab.Modules.Blog.Models;
 using Daab.Modules.Blog.Persistence;
 using LanguageExt;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Daab.Modules.Blog.Features.Posts.CreatePost;
 
-public sealed class CreatePostCommandHandler(BlogDbContext context)
+public sealed class CreatePostCommandHandler(BlogDbContext context, BlogLocales locales)
     : IRequestHandler<CreatePostCommand, Fin<CreatePostResponse>>
 {
     public async Task<Fin<CreatePostResponse>> Handle(
@@ -16,15 +17,23 @@ public sealed class CreatePostCommandHandler(BlogDbContext context)
     )
     {
         var (author, content) = request;
+        IPostContent input = content;
+
+        var complete = locales.RequireAll(
+            content.SourceLocale,
+            content.Translations.Select(t => t.Locale)
+        );
+        if (complete.IsFail)
+        {
+            return complete.Match(_ => Error.New("unreachable"), e => e);
+        }
 
         var post = Post.Create(
             author.Id,
             author.Name,
             author.ScientistId,
-            content.Title,
-            content.Excerpt,
-            content.EditorState,
-            content.Locale
+            content.SourceLocale,
+            input.ToContents()
         );
 
         await context.Posts.AddAsync(post, cancellationToken);

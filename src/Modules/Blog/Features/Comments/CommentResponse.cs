@@ -2,17 +2,15 @@ using Daab.Modules.Blog.Models;
 
 namespace Daab.Modules.Blog.Features.Comments;
 
-/// <param name="Language">
-/// ISO 639-1 code the comment is written in, or <c>null</c> if unknown. Clients compare it with
-/// the reader's locale to decide whether to offer a translation.
-/// </param>
+/// <param name="SourceLocale">The language the commenter wrote in.</param>
+/// <param name="Texts">The comment in every supported language, keyed by locale.</param>
 public sealed record CommentResponse(
     string Id,
     string PostId,
     string AuthorId,
     string AuthorName,
-    string Content,
-    string? Language,
+    string SourceLocale,
+    IReadOnlyDictionary<string, string> Texts,
     DateTime CreatedAt
 );
 
@@ -24,8 +22,8 @@ public static class CommentMappings
             comment.PostId,
             comment.AuthorId,
             comment.AuthorName,
-            comment.Content,
-            comment.Language,
+            comment.SourceLocale,
+            comment.Texts.ToDictionary(t => t.Locale, t => t.Content, StringComparer.Ordinal),
             comment.CreatedAt
         );
 }

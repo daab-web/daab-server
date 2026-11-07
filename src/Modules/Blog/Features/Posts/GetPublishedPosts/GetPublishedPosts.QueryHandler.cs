@@ -27,23 +27,30 @@ public sealed class GetPublishedPostsQueryHandler(BlogDbContext context)
 
         var total = await query.CountAsync(cancellationToken);
 
-        var items = await query
+        var posts = await query
             .OrderByDescending(p => p.PublishedAt)
             .Skip((page - 1) * pageSize)
             .Take(pageSize)
-            .Select(p => new PostSummaryResponse(
-                p.Id,
-                p.Slug,
-                p.Title,
-                p.Excerpt,
-                p.Locale,
-                p.AuthorId,
-                p.AuthorName,
-                p.ScientistId,
-                p.PublishedAt,
-                p.Comments.Count
-            ))
+            .Include(p => p.Translations)
+            .Select(p => new { Post = p, CommentCount = p.Comments.Count })
             .ToListAsync(cancellationToken);
+
+        var items = posts.ConvertAll(row =>
+        {
+            var content = row.Post.In(request.Locale)!;
+            return new PostSummaryResponse(
+                row.Post.Id,
+                row.Post.Slug,
+                content.Locale,
+                content.Title,
+                content.Excerpt,
+                row.Post.AuthorId,
+                row.Post.AuthorName,
+                row.Post.ScientistId,
+                row.Post.PublishedAt,
+                row.CommentCount
+            );
+        });
 
         return PagedResponse<PostSummaryResponse>.Create(items, page, pageSize, total);
     }

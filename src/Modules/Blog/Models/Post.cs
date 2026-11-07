@@ -2,6 +2,10 @@ using Daab.SharedKernel;
 
 namespace Daab.Modules.Blog.Models;
 
+/// <summary>The content of a post in one language.</summary>
+/// <param name="EditorState">Serialized Lexical editor state.</param>
+public sealed record PostContent(string Locale, string Title, string Excerpt, string EditorState);
+
 public class Post
 {
     public string Id { get; private init; } = Ulid.NewUlid().ToString();
@@ -13,14 +17,11 @@ public class Post
     /// <summary>The author's scientist profile, used to link back to it.</summary>
     public string? ScientistId { get; private set; }
 
-    public string Title { get; private set; } = string.Empty;
-    public string Excerpt { get; private set; } = string.Empty;
+    /// <summary>The language the author wrote the post in; the others are translations.</summary>
+    public string SourceLocale { get; private set; } = string.Empty;
 
-    /// <summary>Serialized Lexical editor state.</summary>
-    public string EditorState { get; private set; } = string.Empty;
-
-    /// <summary>The language the post is written in.</summary>
-    public string Locale { get; private set; } = string.Empty;
+    /// <summary>The post in every supported language.</summary>
+    public ICollection<PostTranslation> Translations { get; private init; } = [];
 
     public PostStatus Status { get; private set; } = PostStatus.Draft;
 
@@ -40,42 +41,44 @@ public class Post
         string authorId,
         string authorName,
         string? scientistId,
-        string title,
-        string excerpt,
-        string editorState,
-        string locale
+        string sourceLocale,
+        IReadOnlyCollection<PostContent> contents
     )
     {
         var id = Ulid.NewUlid().ToString();
-        var slug = SlugHelper.GenerateSlug(title);
+        var source = contents.First(c => c.Locale == sourceLocale);
+        var slug = SlugHelper.GenerateSlug(source.Title);
         var suffix = id[^6..].ToLowerInvariant();
 
-        return new Post
+        var post = new Post
         {
             Id = id,
             Slug = string.IsNullOrEmpty(slug) ? suffix : $"{slug}-{suffix}",
             AuthorId = authorId,
             AuthorName = authorName,
             ScientistId = scientistId,
-            Title = title.Trim(),
-            Excerpt = excerpt.Trim(),
-            EditorState = editorState,
-            Locale = locale,
+            SourceLocale = sourceLocale,
         };
+        post.ReplaceContents(contents);
+        return post;
     }
 
     public bool IsOwnedBy(string userId) => AuthorId == userId;
+
+    /// <summary>The post in <paramref name="locale"/>, falling back to the original language.</summary>
+    public PostTranslation? In(string? locale) =>
+        Translations.FirstOrDefault(t => t.Locale == locale)
+        ?? Translations.FirstOrDefault(t => t.Locale == SourceLocale)
+        ?? Translations.FirstOrDefault();
 
     /// <summary>
     /// Any edit sends the post back to draft: published content must always be the content that
     /// passed verification.
     /// </summary>
-    public void Update(string title, string excerpt, string editorState, string locale)
+    public void Update(string sourceLocale, IReadOnlyCollection<PostContent> contents)
     {
-        Title = title.Trim();
-        Excerpt = excerpt.Trim();
-        EditorState = editorState;
-        Locale = locale;
+        SourceLocale = sourceLocale;
+        ReplaceContents(contents);
         UpdatedAt = DateTime.UtcNow;
         Status = PostStatus.Draft;
         VerificationFeedback = null;
@@ -99,5 +102,58 @@ public class Post
             PublishedAt = null;
             VerificationFeedback = feedback;
         }
+    }
+
+    private void ReplaceContents(IReadOnlyCollection<PostContent> contents)
+    {
+        foreach (var content in contents)
+        {
+            var existing = Translations.FirstOrDefault(t => t.Locale == content.Locale);
+            if (existing is null)
+            {
+                Translations.Add(
+                    new PostTranslation
+                    {
+                        PostId = Id,
+                        Locale = content.Locale,
+                        Title = content.Title.Trim(),
+                        Excerpt = content.Excerpt.Trim(),
+                        EditorState = content.EditorState,
+                    }
+                );
+            }
+            else
+            {
+                existing.Update(content);
+            }
+        }
+
+        foreach (
+            var stale in Translations.Where(t => contents.All(c => c.Locale != t.Locale)).ToList()
+        )
+        {
+            Translations.Remove(stale);
+        }
+    }
+}
+
+/// <summary>A post's title, summary and body in one language.</summary>
+public class PostTranslation
+{
+    public required string PostId { get; init; }
+    public Post Post { get; init; } = null!;
+    public required string Locale { get; init; }
+
+    public required string Title { get; set; }
+    public string Excerpt { get; set; } = string.Empty;
+
+    /// <summary>Serialized Lexical editor state.</summary>
+    public string EditorState { get; set; } = string.Empty;
+
+    public void Update(PostContent content)
+    {
+        Title = content.Title.Trim();
+        Excerpt = content.Excerpt.Trim();
+        EditorState = content.EditorState;
     }
 }

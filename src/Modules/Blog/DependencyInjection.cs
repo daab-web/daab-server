@@ -1,3 +1,4 @@
+using Daab.Modules.Blog.Common;
 using Daab.Modules.Blog.Persistence;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +14,8 @@ public static class DependencyInjection
     {
         /// <summary>
         /// Registers the blog module. The host must also register an <c>IContentVerifier</c> and an
-        /// <c>ICommentLanguageService</c> (they bridge to the translation module, which this module
-        /// does not reference).
+        /// <c>ITextTranslator</c> (they bridge to the translation module, which this module does not
+        /// reference).
         /// </summary>
         public IServiceCollection AddBlogModule(IConfiguration config)
         {
@@ -25,6 +26,8 @@ public static class DependencyInjection
             services.AddDbContext<BlogDbContext>(optionsBuilder =>
                 optionsBuilder.UseSqlite(connectionString)
             );
+
+            services.AddScoped<BlogLocales>();
 
             services.AddMediatR(cfg =>
                 cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly)

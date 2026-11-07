@@ -30,6 +30,7 @@ public sealed class GetCommentsQueryHandler(BlogDbContext context)
 
         var comments = await context
             .Comments.AsNoTracking()
+            .Include(c => c.Texts)
             .Where(c => c.PostId == request.PostId)
             .OrderBy(c => c.CreatedAt)
             .Take(MaxComments)

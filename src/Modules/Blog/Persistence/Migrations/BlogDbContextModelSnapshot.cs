@@ -30,20 +30,16 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Language")
-                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PostId")
                         .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SourceLocale")
+                        .IsRequired()
+                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -53,24 +49,23 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                     b.ToTable("Comments");
                 });
 
-            modelBuilder.Entity("Daab.Modules.Blog.Models.CommentTranslation", b =>
+            modelBuilder.Entity("Daab.Modules.Blog.Models.CommentText", b =>
                 {
                     b.Property<string>("CommentId")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Locale")
+                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Content")
                         .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("CreatedAt")
+                        .HasMaxLength(2000)
                         .HasColumnType("TEXT");
 
                     b.HasKey("CommentId", "Locale");
 
-                    b.ToTable("CommentTranslations");
+                    b.ToTable("CommentTexts");
                 });
 
             modelBuilder.Entity("Daab.Modules.Blog.Models.Post", b =>
@@ -89,20 +84,6 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("EditorState")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Excerpt")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Locale")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime?>("PublishedAt")
                         .HasColumnType("TEXT");
 
@@ -113,13 +94,13 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Status")
+                    b.Property<string>("SourceLocale")
                         .IsRequired()
+                        .HasMaxLength(10)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Title")
+                    b.Property<string>("Status")
                         .IsRequired()
-                        .HasMaxLength(200)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -143,6 +124,34 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                     b.ToTable("Posts");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Blog.Models.PostTranslation", b =>
+                {
+                    b.Property<string>("PostId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Locale")
+                        .HasMaxLength(10)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("EditorState")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Excerpt")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("PostId", "Locale");
+
+                    b.ToTable("PostTranslations");
+                });
+
             modelBuilder.Entity("Daab.Modules.Blog.Models.Comment", b =>
                 {
                     b.HasOne("Daab.Modules.Blog.Models.Post", "Post")
@@ -154,10 +163,10 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                     b.Navigation("Post");
                 });
 
-            modelBuilder.Entity("Daab.Modules.Blog.Models.CommentTranslation", b =>
+            modelBuilder.Entity("Daab.Modules.Blog.Models.CommentText", b =>
                 {
                     b.HasOne("Daab.Modules.Blog.Models.Comment", "Comment")
-                        .WithMany("Translations")
+                        .WithMany("Texts")
                         .HasForeignKey("CommentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -165,14 +174,27 @@ namespace Daab.Modules.Blog.Persistence.Migrations
                     b.Navigation("Comment");
                 });
 
+            modelBuilder.Entity("Daab.Modules.Blog.Models.PostTranslation", b =>
+                {
+                    b.HasOne("Daab.Modules.Blog.Models.Post", "Post")
+                        .WithMany("Translations")
+                        .HasForeignKey("PostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Post");
+                });
+
             modelBuilder.Entity("Daab.Modules.Blog.Models.Comment", b =>
                 {
-                    b.Navigation("Translations");
+                    b.Navigation("Texts");
                 });
 
             modelBuilder.Entity("Daab.Modules.Blog.Models.Post", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("Translations");
                 });
 #pragma warning restore 612, 618
         }
