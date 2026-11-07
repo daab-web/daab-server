@@ -1,0 +1,110 @@
+using Daab.Modules.Blog.Features.Posts.SubmitPost;
+using Daab.Modules.Blog.Features.Posts.UpdatePost;
+using Daab.Modules.Blog.Models;
+using Microsoft.Extensions.Logging.Abstractions;
+using static Daab.Modules.Blog.Tests.TestSupport;
+
+namespace Daab.Modules.Blog.Tests;
+
+public sealed class SubmitPostTests
+{
+    [Fact]
+    public async Task ApprovedContent_IsPublished()
+    {
+        await using var context = NewContext();
+        var post = await AddPostAsync(context);
+        var verifier = FakeVerifier.Approving();
+
+        var result = await Handler(context, verifier)
+            .Handle(new SubmitPostCommand(Scientist, post.Id), CancellationToken.None);
+
+        var response = result.Match(r => r, e => throw new Xunit.Sdk.XunitException(e.Message));
+        Assert.Equal(PostStatus.Published, response.Status);
+        Assert.NotNull(context.Posts.Single().PublishedAt);
+        Assert.Contains("Quantum dots", verifier.LastRequest!.Body, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task RejectedContent_IsNotPublished_AndKeepsFeedback()
+    {
+        await using var context = NewContext();
+        var post = await AddPostAsync(context);
+
+        var result = await Handler(context, FakeVerifier.Rejecting("Contains advertising."))
+            .Handle(new SubmitPostCommand(Scientist, post.Id), CancellationToken.None);
+
+        Assert.True(result.IsSucc);
+        var saved = context.Posts.Single();
+        Assert.Equal(PostStatus.Rejected, saved.Status);
+        Assert.Null(saved.PublishedAt);
+        Assert.Equal("Contains advertising.", saved.VerificationFeedback);
+    }
+
+    [Fact]
+    public async Task TooShortContent_IsRejected_WithoutCallingTheVerifier()
+    {
+        await using var context = NewContext();
+        var post = await AddPostAsync(context, body: "Too short.");
+        var verifier = FakeVerifier.Approving();
+
+        await Handler(context, verifier)
+            .Handle(new SubmitPostCommand(Scientist, post.Id), CancellationToken.None);
+
+        Assert.Equal(0, verifier.Calls);
+        Assert.Equal(PostStatus.Rejected, context.Posts.Single().Status);
+    }
+
+    [Fact]
+    public async Task VerifierUnavailable_Fails_AndLeavesPostAsDraft()
+    {
+        await using var context = NewContext();
+        var post = await AddPostAsync(context);
+
+        var result = await Handler(context, FakeVerifier.Failing())
+            .Handle(new SubmitPostCommand(Scientist, post.Id), CancellationToken.None);
+
+        Assert.True(result.IsFail);
+        Assert.Equal(503, result.Match(_ => 0, e => e.Code));
+        Assert.Equal(PostStatus.Draft, context.Posts.Single().Status);
+    }
+
+    [Fact]
+    public async Task OnlyTheAuthor_CanSubmit()
+    {
+        await using var context = NewContext();
+        var post = await AddPostAsync(context);
+
+        var result = await Handler(context, FakeVerifier.Approving())
+            .Handle(new SubmitPostCommand(Reader, post.Id), CancellationToken.None);
+
+        Assert.Equal(403, result.Match(_ => 0, e => e.Code));
+    }
+
+    [Fact]
+    public async Task EditingAPublishedPost_UnpublishesItUntilVerifiedAgain()
+    {
+        await using var context = NewContext();
+        var post = await AddPostAsync(context, published: true);
+
+        var request = new UpdatePostRequest(
+            post.Id,
+            "On quantum dots, revised",
+            "New excerpt",
+            EditorState(LongBody),
+            "en"
+        );
+        await new UpdatePostCommandHandler(context).Handle(
+            new UpdatePostCommand(Scientist, request),
+            CancellationToken.None
+        );
+
+        var saved = context.Posts.Single();
+        Assert.Equal(PostStatus.Draft, saved.Status);
+        Assert.Null(saved.PublishedAt);
+    }
+
+    private static SubmitPostCommandHandler Handler(
+        Persistence.BlogDbContext context,
+        FakeVerifier verifier
+    ) => new(context, verifier, NullLogger<SubmitPostCommandHandler>.Instance);
+}

@@ -23,8 +23,9 @@ public class AddAttachmentEndpoint(
         Post("/news/{newsId}/attachments");
         AllowFileUploads();
 
-        // TODO: This should not be public
-        AllowAnonymous();
+        // Admin only: uploaded images go through the ImageSharp decoder (see Directory.Build.props).
+        AuthSchemes("Bearer");
+        Roles("admin");
     }
 
     public override async Task HandleAsync(AddAttachmentRequest req, CancellationToken ct)

@@ -20,17 +20,24 @@ public class LoginCommandHandler : IRequestHandler<LoginCommand, Fin<User>>
 
     public async Task<Fin<User>> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
+        var normalized = request.Username.Trim().ToLowerInvariant();
         var user = await _context
             .Users.Include(u => u.Roles)
             .AsNoTracking()
             .SingleOrDefaultAsync(
-                u => u.Username == request.Username,
+                u => u.Username == request.Username || u.Username == normalized,
                 cancellationToken: cancellationToken
             );
 
         if (user is null)
         {
             return Error.New(StatusCodes.Status404NotFound, "Requested user does not exist");
+        }
+
+        // Invited accounts cannot sign in until the invitation sets a password.
+        if (!user.HasPassword)
+        {
+            return Error.New(StatusCodes.Status401Unauthorized, "Invalid credentials");
         }
 
         var hasher = new PasswordHasher<User>();

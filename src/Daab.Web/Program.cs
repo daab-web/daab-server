@@ -1,11 +1,16 @@
 using Daab.Infrastructure;
 using Daab.Modules.Activities;
 using Daab.Modules.Auth;
+using Daab.Modules.Auth.Common;
+using Daab.Modules.Blog;
+using Daab.Modules.Blog.Common;
 using Daab.Modules.ReferenceData;
 using Daab.Modules.Scientists;
 using Daab.Modules.Translation;
 using Daab.Modules.Translation.Glossary;
 using Daab.SharedKernel.Options;
+using Daab.Web.Accounts;
+using Daab.Web.Blog;
 using Daab.Web.Configuration;
 using Daab.Web.Translation;
 using FastEndpoints;
@@ -41,10 +46,18 @@ builder
     .AddScientistsModule(config)
     .AddActivitiesModule(config)
     .AddTranslationModule(config)
+    .AddBlogModule(config)
     .ConfigureEndpoints();
 
 // Glossary bridges the translation module to ReferenceData; registered by the host that owns both.
 builder.Services.AddScoped<IGlossaryProvider, ReferenceDataGlossaryProvider>();
+
+// Scientist accounts bridge Auth and Scientists: grants the scientist role at token issuance.
+builder.Services.AddScoped<IAccountLinker, ScientistAccountLinker>();
+
+// Blog content verification and comment translation run on the translation module's model.
+builder.Services.AddScoped<IContentVerifier, GeminiContentVerifier>();
+builder.Services.AddScoped<ICommentLanguageService, GeminiCommentLanguageService>();
 
 var app = builder.Build();
 
@@ -63,6 +76,7 @@ app.UseReferenceDataModule();
 app.UseScientistsModule();
 app.UseActivitiesModule();
 app.UseTranslationModule();
+app.UseBlogModule();
 app.UseFastEndpoints(static c => c.Errors.UseProblemDetails());
 
 app.UseSwaggerGen(options => options.Path = "/openapi/{documentName}.json");

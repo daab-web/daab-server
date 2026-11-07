@@ -21,6 +21,7 @@
     <ProjectReference Include="..\Modules\Scientists\Daab.Modules.Scientists.csproj" />
     <ProjectReference Include="..\Modules\Auth\Daab.Modules.Auth.csproj" />
     <ProjectReference Include="..\Modules\Translation\Daab.Modules.Translation.csproj" />
+    <ProjectReference Include="..\Modules\Blog\Daab.Modules.Blog.csproj" />
   </ItemGroup>
 
   <ItemGroup>
