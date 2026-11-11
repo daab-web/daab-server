@@ -4,5 +4,9 @@ using MediatR;
 
 namespace Daab.Modules.Blog.Features.Posts.GetPublishedPosts;
 
-public sealed record GetPublishedPostsQuery(int Page, int PageSize, string? ScientistId)
-    : IRequest<Fin<PagedResponse<PostSummaryResponse>>>;
+public sealed record GetPublishedPostsQuery(
+    int Page,
+    int PageSize,
+    string? ScientistId,
+    string? Locale
+) : IRequest<Fin<PagedResponse<PostSummaryResponse>>>;

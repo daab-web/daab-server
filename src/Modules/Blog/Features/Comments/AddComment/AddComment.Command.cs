@@ -4,5 +4,9 @@ using MediatR;
 
 namespace Daab.Modules.Blog.Features.Comments.AddComment;
 
-public sealed record AddCommentCommand(BlogUser Author, string PostId, string Content)
-    : IRequest<Fin<CommentResponse>>;
+public sealed record AddCommentCommand(
+    BlogUser Author,
+    string PostId,
+    string SourceLocale,
+    IReadOnlyDictionary<string, string> Texts
+) : IRequest<Fin<CommentResponse>>;

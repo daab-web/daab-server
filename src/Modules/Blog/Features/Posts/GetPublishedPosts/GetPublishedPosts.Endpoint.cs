@@ -17,7 +17,7 @@ public sealed class GetPublishedPostsEndpoint(IMediator mediator)
     public override async Task HandleAsync(GetPublishedPostsRequest req, CancellationToken ct)
     {
         var result = await mediator.Send(
-            new GetPublishedPostsQuery(req.Page, req.PageSize, req.ScientistId),
+            new GetPublishedPostsQuery(req.Page, req.PageSize, req.ScientistId, req.Locale),
             ct
         );
 

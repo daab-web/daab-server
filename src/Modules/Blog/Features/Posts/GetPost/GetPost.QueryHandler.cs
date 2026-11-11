@@ -18,6 +18,7 @@ public sealed class GetPostQueryHandler(BlogDbContext context)
     {
         var post = await context
             .Posts.AsNoTracking()
+            .Include(p => p.Translations)
             .SingleOrDefaultAsync(
                 p => p.Id == request.IdOrSlug || p.Slug == request.IdOrSlug,
                 cancellationToken

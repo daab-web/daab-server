@@ -6,21 +6,23 @@ using LanguageExt.Common;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Daab.Modules.Blog.Features.Comments.AddComment;
 
-public sealed class AddCommentCommandHandler(
-    BlogDbContext context,
-    ICommentLanguageService languageService,
-    ILogger<AddCommentCommandHandler> logger
-) : IRequestHandler<AddCommentCommand, Fin<CommentResponse>>
+public sealed class AddCommentCommandHandler(BlogDbContext context, BlogLocales locales)
+    : IRequestHandler<AddCommentCommand, Fin<CommentResponse>>
 {
     public async Task<Fin<CommentResponse>> Handle(
         AddCommentCommand request,
         CancellationToken cancellationToken
     )
     {
+        var complete = locales.RequireAll(request.SourceLocale, request.Texts.Keys);
+        if (complete.IsFail)
+        {
+            return complete.Match(_ => Error.New("unreachable"), e => e);
+        }
+
         var published = await context.Posts.AnyAsync(
             p => p.Id == request.PostId && p.Status == PostStatus.Published,
             cancellationToken
@@ -31,26 +33,12 @@ public sealed class AddCommentCommandHandler(
             return Error.New(StatusCodes.Status404NotFound, "Post not found");
         }
 
-        // Detection is best effort: a comment is never rejected because it failed.
-        var detected = await languageService.DetectLanguageAsync(
-            request.Content,
-            cancellationToken
-        );
-        var language = detected.Match(
-            code => code,
-            err =>
-            {
-                logger.LogWarning("Comment language detection failed: {Error}", err.Message);
-                return (string?)null;
-            }
-        );
-
         var comment = Comment.Create(
             request.PostId,
             request.Author.Id,
             request.Author.Name,
-            request.Content,
-            language
+            request.SourceLocale,
+            request.Texts
         );
 
         await context.Comments.AddAsync(comment, cancellationToken);

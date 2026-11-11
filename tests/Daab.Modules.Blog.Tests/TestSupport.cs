@@ -1,6 +1,8 @@
 using Daab.Modules.Blog.Common;
+using Daab.Modules.Blog.Features.Posts;
 using Daab.Modules.Blog.Models;
 using Daab.Modules.Blog.Persistence;
+using Daab.SharedKernel.Options;
 using LanguageExt;
 using LanguageExt.Common;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,12 @@ internal static class TestSupport
     public static readonly BlogUser Reader = new("01READER", "Reader", null, false);
     public static readonly BlogUser Admin = new("01ADMIN", "Admin", null, true);
 
+    public static readonly BlogLocales Locales = new(
+        Microsoft.Extensions.Options.Options.Create(
+            new LocaleOptions { SupportedLocales = ["en", "az"] }
+        )
+    );
+
     public static BlogDbContext NewContext() =>
         new(
             new DbContextOptionsBuilder<BlogDbContext>()
@@ -26,24 +34,39 @@ internal static class TestSupport
             {"root":{"children":[{"children":[{"text":"{{{text}}}","type":"text"}],"type":"paragraph"}],"type":"root"}}
             """;
 
-    public static readonly string LongBody = string.Concat(
+    public static readonly string LongBodyEn = string.Concat(
         Enumerable.Repeat("Quantum dots emit light at tunable wavelengths. ", 5)
     );
+
+    public static readonly string LongBodyAz = string.Concat(
+        Enumerable.Repeat("Kvant nöqtələri tənzimlənən dalğa uzunluqlarında işıq yayır. ", 5)
+    );
+
+    public static List<PostTranslationInput> BothLanguages(
+        string? enBody = null,
+        string? azBody = null
+    ) =>
+        [
+            new("en", "On quantum dots", "A short excerpt", EditorState(enBody ?? LongBodyEn)),
+            new("az", "Kvant nöqtələri haqqında", "Qısa xülasə", EditorState(azBody ?? LongBodyAz)),
+        ];
 
     public static async Task<Post> AddPostAsync(
         BlogDbContext context,
         bool published = false,
-        string? body = null
+        string? enBody = null,
+        string? azBody = null
     )
     {
         var post = Post.Create(
             Scientist.Id,
             Scientist.Name,
             Scientist.ScientistId,
-            "On quantum dots",
-            "A short excerpt",
-            EditorState(body ?? LongBody),
-            "en"
+            "en",
+            [
+                .. BothLanguages(enBody, azBody)
+                    .Select(t => new PostContent(t.Locale, t.Title, t.Excerpt, t.EditorState)),
+            ]
         );
 
         if (published)
@@ -57,51 +80,48 @@ internal static class TestSupport
     }
 }
 
-internal sealed class FakeVerifier(Fin<ContentVerificationResult> result) : IContentVerifier
+internal sealed class FakeVerifier(
+    Func<ContentVerificationRequest, Fin<ContentVerificationResult>> verify
+) : IContentVerifier
 {
-    public int Calls { get; private set; }
-    public ContentVerificationRequest? LastRequest { get; private set; }
+    public List<ContentVerificationRequest> Requests { get; } = [];
 
-    public static FakeVerifier Approving() => new(ContentVerificationResult.Approve());
+    public static FakeVerifier Approving() => new(_ => ContentVerificationResult.Approve());
 
     public static FakeVerifier Rejecting(string reason) =>
-        new(ContentVerificationResult.Reject(reason));
+        new(_ => ContentVerificationResult.Reject(reason));
 
     public static FakeVerifier Failing() =>
-        new(FinFail<ContentVerificationResult>(Error.New(502, "model down")));
+        new(_ => FinFail<ContentVerificationResult>(Error.New(502, "model down")));
 
     public Task<Fin<ContentVerificationResult>> VerifyAsync(
         ContentVerificationRequest request,
         CancellationToken cancellationToken
     )
     {
-        Calls++;
-        LastRequest = request;
-        return Task.FromResult(result);
+        Requests.Add(request);
+        return Task.FromResult(verify(request));
     }
 }
 
-internal sealed class FakeLanguageService(string detected = "az", bool fail = false)
-    : ICommentLanguageService
+internal sealed class FakeTranslator(bool fail = false) : ITextTranslator
 {
-    public int TranslateCalls { get; private set; }
+    public int Calls { get; private set; }
+    public IReadOnlyList<string>? LastTexts { get; private set; }
 
-    public Task<Fin<string>> DetectLanguageAsync(
-        string text,
-        CancellationToken cancellationToken
-    ) => Task.FromResult(fail ? FinFail<string>(Error.New(502, "model down")) : FinSucc(detected));
-
-    public Task<Fin<string>> TranslateAsync(
-        string text,
+    public Task<Fin<IReadOnlyList<string>>> TranslateAsync(
+        IReadOnlyList<string> texts,
+        string sourceLocale,
         string targetLocale,
         CancellationToken cancellationToken
     )
     {
-        TranslateCalls++;
+        Calls++;
+        LastTexts = texts;
         return Task.FromResult(
             fail
-                ? FinFail<string>(Error.New(502, "model down"))
-                : FinSucc($"[{targetLocale}] {text}")
+                ? FinFail<IReadOnlyList<string>>(Error.New(502, "model down"))
+                : FinSucc<IReadOnlyList<string>>([.. texts.Select(t => $"[{targetLocale}] {t}")])
         );
     }
 }
