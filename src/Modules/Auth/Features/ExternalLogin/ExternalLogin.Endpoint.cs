@@ -4,6 +4,7 @@ using Daab.Modules.Auth.Options;
 using FastEndpoints;
 using MediatR;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using ExternalLoginEntity = Daab.Modules.Auth.Models.ExternalLogin;
@@ -38,7 +39,9 @@ public sealed class GoogleSignInEndpoint(IOptions<GoogleOptions> google) : Endpo
             Items = { [GoogleCallbackEndpoint.ReturnUrlItem] = returnUrl },
         };
 
-        await HttpContext.ChallengeAsync(ExternalLoginEntity.Google, properties);
+        // Sent through FastEndpoints so it knows the response was produced; a bare
+        // HttpContext.ChallengeAsync gets its 302 overwritten by the default 204.
+        await Send.ResultAsync(Results.Challenge(properties, [ExternalLoginEntity.Google]));
     }
 }
 
